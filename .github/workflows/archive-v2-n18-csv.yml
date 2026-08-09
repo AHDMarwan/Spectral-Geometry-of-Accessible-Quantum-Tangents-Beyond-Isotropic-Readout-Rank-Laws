@@ -1,0 +1,69 @@
+name: Archive rigorous-v2 n18 CSV results
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  archive:
+    if: ${{ startsWith(github.head_ref, 'archive-v2-n18-csv') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+      - name: Download immutable n18 artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf artifact-analysis shard-artifacts
+          mkdir -p artifact-analysis shard-artifacts
+          gh run download 31317047080 \
+            --repo AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws \
+            --name rigorous-v2_n18-analysis \
+            --dir artifact-analysis
+          gh run download 31317047080 \
+            --repo AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws \
+            --pattern 'rigorous-v2_n18-shard-*' \
+            --dir shard-artifacts
+      - name: Stage aggregate and shard CSV files
+        shell: bash
+        run: |
+          set -euo pipefail
+          dest='results/rigorous-v2_n18/run-31317047080'
+          rm -rf "$dest"
+          mkdir -p "$dest/analysis" "$dest/shards"
+
+          # Aggregate artifacts may contain pre-existing repository results.
+          # Archive only this run's top-level analysis CSV files.
+          find artifact-analysis/analysis -maxdepth 1 -type f -name '*.csv' -exec cp {} "$dest/analysis/" \;
+          test "$(find "$dest/analysis" -maxdepth 1 -type f -name '*.csv' | wc -l)" -eq 15
+          test -f "$dest/analysis/pooled_summary.csv"
+          test -f "$dest/analysis/rank_law_equivalence.csv"
+          test -f "$dest/analysis/anisotropy_normalized.csv"
+
+          for d in shard-artifacts/rigorous-v2_n18-shard-*; do
+            name="$(basename "$d")"
+            mkdir -p "$dest/shards/$name"
+            find "$d" -maxdepth 1 -type f -name '*.csv' -exec cp {} "$dest/shards/$name/" \;
+          done
+
+          test "$(find "$dest/shards" -type f -name 'raw.csv' | wc -l)" -eq 32
+          test "$(find "$dest/shards" -type f -name '*.csv' | wc -l)" -eq 32
+          echo 'Aggregate CSVs:'
+          find "$dest/analysis" -maxdepth 1 -type f -name '*.csv' -printf '%f\n' | sort
+          echo 'Shard CSV count:'
+          find "$dest/shards" -type f -name '*.csv' | wc -l
+      - name: Commit n18 CSV archive to PR branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f results/rigorous-v2_n18/run-31317047080
+          git commit -m 'Archive rigorous-v2 n18 CSV results from run 31317047080'
+          git push origin HEAD:${{ github.head_ref }}
