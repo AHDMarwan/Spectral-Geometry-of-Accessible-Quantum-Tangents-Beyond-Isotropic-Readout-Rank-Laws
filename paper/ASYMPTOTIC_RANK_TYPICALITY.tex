@@ -1,0 +1,125 @@
+\section{Asymptotic rank typicality without isotropy}
+\label{sec:asymptotic-rank-typicality}
+
+This section separates a mathematical random-orientation statement from the empirical question of whether a physical circuit/readout pair realizes that orientation regime.  Let $C\succeq0$ be an arbitrary real $N\times N$ covariance operator with $\Tr C=1$, and let $P$ be a rank-$r$ orthogonal projector drawn uniformly from the real Grassmannian, independently of $C$.  Define
+\begin{equation}
+ \rho(P,C)=\frac{\Tr(PC)}{r/N},
+ \qquad
+ d_{\rm eff}(C)=\frac{1}{\Tr(C^2)}.
+\end{equation}
+No isotropy assumption $C=I/N$ is made.
+
+\paragraph{Theorem 1 (exact random-orientation moments).}
+Conditionally on any fixed $C$,
+\begin{align}
+ \mathbb E_P[\rho\mid C]&=1,\\
+ \operatorname{Var}_P(\rho\mid C)
+ &=\frac{2(N-r)\left(N\Tr(C^2)-1\right)}
+ {r(N-1)(N+2)}.
+ \label{eq:rho-exact-var}
+\end{align}
+
+\paragraph{Proof.}
+Rotational invariance of the Grassmannian gives $\mathbb E P=(r/N)I$, hence the first identity.  The real Grassmannian second moment for a rank-$r$ projector gives
+\begin{equation}
+ \operatorname{Var}_P[\Tr(PC)\mid C]
+ =\frac{2r(N-r)\left(N\Tr(C^2)-1\right)}
+ {N^2(N-1)(N+2)}.
+\end{equation}
+Multiplying by $(N/r)^2$ yields Eq.~\eqref{eq:rho-exact-var}. \hfill$\square$
+
+\paragraph{Theorem 2 (anisotropy-independent concentration bound).}
+For every admissible $N,r,C$,
+\begin{equation}
+ \operatorname{Var}_P(\rho\mid C)
+ \le \frac{2\Tr(C^2)}{r}
+ =\frac{2}{r d_{\rm eff}(C)}.
+ \label{eq:rho-deff-bound}
+\end{equation}
+Consequently, for every $\varepsilon>0$,
+\begin{equation}
+ \Pr_P\!\left(|\rho-1|\ge\varepsilon\mid C\right)
+ \le \min\!\left\{1,
+ \frac{2}{\varepsilon^2 r d_{\rm eff}(C)}\right\}.
+ \label{eq:rho-chebyshev}
+\end{equation}
+
+\paragraph{Proof.}
+Write $q=\Tr(C^2)$.  Since $1/N\le q\le1$, Eq.~\eqref{eq:rho-exact-var} and
+\begin{equation}
+ \frac{(N-r)(Nq-1)}{(N-1)(N+2)}\le q
+\end{equation}
+imply Eq.~\eqref{eq:rho-deff-bound}.  Equation~\eqref{eq:rho-chebyshev} follows from Chebyshev's inequality. \hfill$\square$
+
+\paragraph{Corollary 1 (asymptotic rank typicality).}
+Consider any sequence $(N_n,r_n,C_n)$ with $N_n\to\infty$, $1\le r_n<N_n$, $C_n\succeq0$, and $\Tr C_n=1$.  If
+\begin{equation}
+ r_n d_{{\rm eff},n}\longrightarrow\infty,
+\end{equation}
+then for independent Haar/Grassmann relative orientation,
+\begin{equation}
+ \rho_n\xrightarrow[n\to\infty]{P}1.
+\end{equation}
+Thus rank typicality does not require $d_{{\rm eff},n}/N_n\to1$ and is compatible with increasingly anisotropic covariance sequences.
+
+\paragraph{Corollary 2 (fixed-weight readout law).}
+For the centered computational-basis score space of an $n$-qubit system,
+\begin{equation}
+ N_n=2^n-1.
+\end{equation}
+For diagonal Pauli-$Z$ strings of weight at most fixed $k$,
+\begin{equation}
+ r_k(n)=\sum_{j=1}^{k}{n\choose j}
+ =\frac{n^k}{k!}\left(1+O(n^{-1})\right).
+\end{equation}
+Because $d_{{\rm eff},n}\ge1$, $r_k(n)d_{{\rm eff},n}\to\infty$ for every fixed $k\ge1$.  Hence under random relative orientation,
+\begin{equation}
+ \rho_k\xrightarrow{P}1,
+\end{equation}
+and therefore
+\begin{equation}
+ \Tr(P_kC_n)
+ =(1+o_P(1))\frac{r_k(n)}{2^n-1}
+ =(1+o_P(1))\frac{n^k}{k!\,2^n}.
+ \label{eq:fixed-weight-exp-scaling}
+\end{equation}
+The accessible fraction can therefore be exponentially small in $n$ even when the global tangent covariance is strongly anisotropic.
+
+\paragraph{Corollary 3 (almost-sure form).}
+Place the sequence of random projectors on a common probability space.  If
+\begin{equation}
+ \sum_{n=1}^{\infty}\frac{1}{r_n d_{{\rm eff},n}}<\infty,
+\end{equation}
+then $\rho_n\to1$ almost surely by Eq.~\eqref{eq:rho-chebyshev} and the first Borel--Cantelli lemma.  For fixed $k\ge2$, this condition holds automatically because $d_{{\rm eff},n}\ge1$ and $r_k(n)=\Theta(n^k)$.  For $k=1$, additional growth of $d_{{\rm eff},n}$ is sufficient but not required for convergence in probability.
+
+\subsection{Bridge to a fixed physical readout}
+\label{sec:physical-orientation-bridge}
+
+The preceding results concern a random relative orientation and do not by themselves assert that a particular physical low-weight readout is Haar-random.  They nevertheless define a scale against which a fixed physical projector can be compared.  Let
+\begin{equation}
+ \sigma_{\rho,n}^2
+ =\frac{2(N_n-r_n)(N_n\Tr(C_n^2)-1)}
+ {r_n(N_n-1)(N_n+2)}
+\end{equation}
+and define, when $\sigma_{\rho,n}>0$,
+\begin{equation}
+ z_n^{\rm(pop)}
+ =\frac{\rho_n^{\rm(phys)}-1}{\sigma_{\rho,n}}.
+ \label{eq:z-pop}
+\end{equation}
+This is an identity-based orientation diagnostic, not an additional randomization assumption.  Equation~\eqref{eq:z-pop} implies
+\begin{equation}
+ |\rho_n^{\rm(phys)}-1|
+ =|z_n^{\rm(pop)}|\,\sigma_{\rho,n}
+ \le |z_n^{\rm(pop)}|\sqrt{\frac{2}{r_nd_{{\rm eff},n}}}.
+ \label{eq:physical-bridge-bound}
+\end{equation}
+Therefore the sufficient condition
+\begin{equation}
+ |z_n^{\rm(pop)}|=o\!\left(\sqrt{r_nd_{{\rm eff},n}}\right)
+\end{equation}
+implies $\rho_n^{\rm(phys)}\to1$.  Conversely, a symmetry can evade the rank-typical regime by generating an orientation anomaly whose growth compensates for, or exceeds, the shrinking random-orientation scale.
+
+\subsection{Status of the numerical bridge analysis}
+
+The rigorous-v2 primary inference was frozen before outcomes were inspected.  The population-null diagnostic in Eq.~\eqref{eq:z-pop} is introduced after inspection of those outcomes and is therefore labeled exploratory.  Its numerical implementation uses the already archived pairwise U-statistic estimator of $\Tr(C^2)$ and does not run new quantum circuits.  Rows in which the U-statistic estimate falls outside the population PSD interval $[1/N,1]$ are retained but their population-null standardized diagnostics are marked invalid rather than clipped into a favorable result.
