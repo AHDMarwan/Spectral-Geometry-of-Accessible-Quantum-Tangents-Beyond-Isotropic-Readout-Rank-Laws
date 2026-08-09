@@ -1,0 +1,170 @@
+name: V3 n20 orientation confirmation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v3_n20_orientation_confirmatory.trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+
+concurrency:
+  group: v3-n20-orientation-confirmatory-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  technical-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - run: pytest -q
+      - name: Frozen profile smoke validation
+        run: |
+          python -m aqt.rigorous run --profile profiles/v2_smoke.json --output smoke
+          python -m aqt.rigorous validate --profile profiles/v2_smoke.json --raw 'smoke/raw.csv' --output smoke/validation.json
+
+  run-shards:
+    needs: technical-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Run frozen confirmatory shard
+        run: >-
+          python -m aqt.rigorous run
+          --profile profiles/v3_n20_orientation_confirmatory.json
+          --output results/shard-${{ matrix.shard }}
+          --shard-index ${{ matrix.shard }}
+          --num-shards 16
+      - name: Record numerical environment and provenance
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p results/shard-${{ matrix.shard }}
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "git_ref=${GITHUB_REF}"
+            echo "profile=v3_n20_orientation_confirmatory"
+            echo "shard=${{ matrix.shard }}/16"
+            echo "runner=${RUNNER_OS}"
+            python --version
+            uname -a
+            echo "--- pip freeze ---"
+            python -m pip freeze
+            echo "--- numpy configuration ---"
+            python - <<'PY'
+          import numpy as np
+          np.show_config()
+          PY
+          } > results/shard-${{ matrix.shard }}/environment.txt 2>&1
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: v3-n20-orientation-confirmatory-shard-${{ matrix.shard }}
+          path: results/shard-${{ matrix.shard }}/
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate-and-decide:
+    needs: run-shards
+    if: ${{ always() && needs.run-shards.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: v3-n20-orientation-confirmatory-shard-*
+          path: downloaded
+      - name: Technical validity gate
+        run: >-
+          python -m aqt.rigorous validate
+          --profile profiles/v3_n20_orientation_confirmatory.json
+          --raw 'downloaded/**/raw.csv'
+          --output results/analysis/technical_validation.json
+      - name: Standard circuit and family analysis
+        run: >-
+          python -m aqt.rigorous analyze
+          --raw 'downloaded/**/raw.csv'
+          --spectrum 'downloaded/**/spectrum.csv'
+          --null 'downloaded/**/random_readout_null.csv'
+          --output results/analysis
+          --master-seed 77124000
+      - name: Frozen inference tables
+        run: >-
+          python -m aqt.rigorous_inference
+          --raw 'downloaded/**/raw.csv'
+          --profile profiles/v3_n20_orientation_confirmatory.json
+          --output results/analysis
+          --master-seed 77124000
+      - name: Auxiliary paired and visibility tables
+        run: |
+          python -m aqt.rigorous_paired --raw 'downloaded/**/raw.csv' --output results/analysis --master-seed 77124000
+          python -m aqt.rigorous_visibility --raw 'downloaded/**/raw.csv' --output results/analysis --master-seed 77124000
+      - name: Build population-null bridge from new data only
+        run: >-
+          python -m aqt.asymptotic_bridge
+          --raw results/analysis/merged_raw.csv
+          --output results/analysis/asymptotic_bridge
+          --master-seed 77124000
+      - name: Apply frozen confirmatory decisions
+        run: >-
+          python -m aqt.v3_orientation_confirmatory
+          --rank-equivalence results/analysis/rank_law_equivalence.csv
+          --family-summary results/analysis/family_summary.csv
+          --bridge-summary results/analysis/asymptotic_bridge/summary.csv
+          --bridge-manifest results/analysis/asymptotic_bridge/manifest.json
+          --output results/analysis/confirmatory
+      - name: Record aggregate provenance
+        shell: bash
+        run: |
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "git_ref=${GITHUB_REF}"
+            echo "profile=v3_n20_orientation_confirmatory"
+            python --version
+            echo "--- pip freeze ---"
+            python -m pip freeze
+          } > results/analysis/environment.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: v3-n20-orientation-confirmatory-analysis
+          path: results/
+          if-no-files-found: error
+          retention-days: 90
