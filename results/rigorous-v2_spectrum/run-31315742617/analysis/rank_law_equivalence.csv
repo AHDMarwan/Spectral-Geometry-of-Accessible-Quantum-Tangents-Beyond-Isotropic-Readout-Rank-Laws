@@ -1,0 +1,19 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,mean_enhancement,ci95_low,ci95_high,equivalence_margin,equivalence_low,equivalence_high,ci_entirely_inside_equivalence_band,families,circuits
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,0.9458336829638319,0.933111522772961,0.958714196610408,0.1,0.9,1.1,True,2,16
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,1,SU2-CNOT-line,0.9674162370984872,0.9449744703359516,0.9889469067038349,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,1,SU2-HaarU4-brickwork,0.9242511288291766,0.9110112618511639,0.9385089362763364,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,0.977624943533437,0.9709880709182039,0.9842154186123137,0.1,0.9,1.1,True,2,16
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,2,SU2-CNOT-line,0.9857917620324297,0.9787218379309082,0.9928058815699007,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,2,SU2-HaarU4-brickwork,0.9694581250344443,0.9585111770433439,0.980975831239892,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,0.9471316354449213,0.9332596613299219,0.960858445288323,0.1,0.9,1.1,True,2,16
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,1,SU2-CNOT-line,0.9753494858318105,0.955697040757068,0.9943642598785284,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,1,SU2-HaarU4-brickwork,0.9189137850580322,0.9003669979995,0.9397431055887647,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,0.972725712463945,0.9666852972430748,0.9793403073789075,0.1,0.9,1.1,True,2,16
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,2,SU2-CNOT-line,0.9821299391621208,0.9747622963255556,0.9901848547730397,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,2,SU2-HaarU4-brickwork,0.9633214857657693,0.9541054605444177,0.9738968086356674,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,0.9431860718117623,0.9339879654653881,0.9524476109249638,0.1,0.9,1.1,True,2,16
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,1,SU2-CNOT-line,0.9678324874187691,0.9640798400808225,0.9719027484532973,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,1,SU2-HaarU4-brickwork,0.9185396562047554,0.9005171565479284,0.9361037666437053,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,0.9702740916567903,0.9669093771954236,0.9736556357414223,0.1,0.9,1.1,True,2,16
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,2,SU2-CNOT-line,0.9830353487481989,0.978950001960249,0.9871185655921656,0.1,0.9,1.1,True,1,8
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,2,SU2-HaarU4-brickwork,0.9575128345653818,0.9522383597283678,0.9630202943500817,0.1,0.9,1.1,True,1,8

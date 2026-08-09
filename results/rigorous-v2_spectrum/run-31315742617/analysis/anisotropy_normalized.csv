@@ -1,0 +1,25 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,metric,mean,ci95_low,ci95_high,isotropic_reference
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,N_times_pairwise_purity,1.7008036923586272,1.6911146712768061,1.7115077042405342,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,deff_over_N,0.596453623827823,0.593216785624033,0.5994312590195876,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,1,U1,N_times_pairwise_purity,4.112299435694661,3.998566394311284,4.228030869122606,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,1,U1,deff_over_N,0.24365793846781272,0.23695327402753244,0.2502788312749207,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,N_times_pairwise_purity,1.7008036923586272,1.6913726608662616,1.7115831276129112,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,deff_over_N,0.596453623827823,0.5932261880996235,0.5993651107467096,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,2,U1,N_times_pairwise_purity,4.112299435694661,3.999962256374128,4.2278446131251295,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,8,6.0,gaussian,Z,0.0,512,2,U1,deff_over_N,0.24365793846781272,0.23695307815210434,0.2502030743555258,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,N_times_pairwise_purity,2.671595984184944,2.6546546842531424,2.690718226542804,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,deff_over_N,0.38613059978567543,0.3834075058407332,0.38853833542147265,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,1,U1,N_times_pairwise_purity,9.403058584377826,9.222542199696706,9.619069068179668,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,1,U1,deff_over_N,0.10646723128480592,0.10414876257870641,0.10845323304053775,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,N_times_pairwise_purity,2.671595984184944,2.6541576688343604,2.6900875547787417,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,deff_over_N,0.38613059978567543,0.3834153000076608,0.38862625022730246,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,2,U1,N_times_pairwise_purity,9.403058584377826,9.223508941569875,9.61322380220732,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,10,6.0,gaussian,Z,0.0,512,2,U1,deff_over_N,0.10646723128480592,0.10415950031289803,0.10844659214671601,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,N_times_pairwise_purity,5.416898389549228,5.381496443894094,5.458743991579747,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,1,generic_family_balanced,deff_over_N,0.19494581558809143,0.1938201914212849,0.19603350319597596,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,1,U1,N_times_pairwise_purity,23.469889169258185,23.263103724223445,23.698326880461515,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,1,U1,deff_over_N,0.04261772597006319,0.04219425103748834,0.04299968881103532,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,N_times_pairwise_purity,5.416898389549228,5.381355260078542,5.457319255614174,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,2,generic_family_balanced,deff_over_N,0.19494581558809143,0.1938071241590132,0.19606799641169895,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,2,U1,N_times_pairwise_purity,23.469889169258185,23.26053126790004,23.70514369989751,1.0
+v2_spectrum,dedicated spectrum and optimal-compression study,12,6.0,gaussian,Z,0.0,512,2,U1,deff_over_N,0.04261772597006319,0.04219396188703786,0.04299787049819425,1.0
