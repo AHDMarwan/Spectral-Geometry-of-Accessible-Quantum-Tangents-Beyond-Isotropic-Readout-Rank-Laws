@@ -24,6 +24,11 @@ on:
 
 env:
   EXPERIMENT_PROFILE: ${{ github.event_name == 'workflow_dispatch' && inputs.profile || 'reproduce_paper' }}
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
 
 permissions:
   contents: read
@@ -38,7 +43,9 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -e '.[dev]'
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
       - run: pytest
 
   run:
@@ -56,7 +63,9 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -e .
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
       - name: Run deterministic shard
         run: >-
           aqt run
@@ -64,6 +73,24 @@ jobs:
           --output results/shard-${{ matrix.shard }}
           --shard-index ${{ matrix.shard }}
           --num-shards 16
+      - name: Record numerical environment
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p results/shard-${{ matrix.shard }}
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "runner=${RUNNER_OS}"
+            python --version
+            uname -a
+            echo "--- pip freeze ---"
+            python -m pip freeze
+            echo "--- numpy configuration ---"
+            python - <<'PY'
+          import numpy as np
+          np.show_config()
+          PY
+          } > results/shard-${{ matrix.shard }}/environment.txt 2>&1
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -83,7 +110,9 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -e .
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
       - uses: actions/download-artifact@v8
         with:
           pattern: ${{ env.EXPERIMENT_PROFILE }}-shard-*
@@ -101,6 +130,15 @@ jobs:
           --output results/analysis
       - name: Exact isotropic controls
         run: aqt controls --output results/controls --samples 30000
+      - name: Record aggregate provenance
+        shell: bash
+        run: |
+          mkdir -p results/analysis
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            python --version
+            python -m pip freeze
+          } > results/analysis/environment.txt
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ env.EXPERIMENT_PROFILE }}-analysis
