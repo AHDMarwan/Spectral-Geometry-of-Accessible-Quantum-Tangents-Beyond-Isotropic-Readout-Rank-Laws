@@ -1,6 +1,6 @@
 {
   "name": "v2_directions",
-  "analysis_role": "tangent-ensemble robustness and scope",
+  "analysis_role": "dense tangent-ensemble robustness: Gaussian versus Rademacher",
   "master_seed": 77124107,
   "rng_scheme": "independent_streams",
   "probability_floor": 1e-13,
@@ -13,7 +13,7 @@
   "tangent_prefixes": [128],
   "simulation_batch_size": 16,
   "readout_orders": [1, 2],
-  "direction_samplers": ["gaussian", "rademacher", "coordinate"],
+  "direction_samplers": ["gaussian", "rademacher"],
   "measurement_bases": ["Z"],
   "bitflip_rates": [0.0],
   "min_regular_fraction": 0.99,
