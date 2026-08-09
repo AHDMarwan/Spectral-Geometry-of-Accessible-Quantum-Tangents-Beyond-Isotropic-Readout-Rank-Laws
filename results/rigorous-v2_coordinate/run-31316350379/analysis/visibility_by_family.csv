@@ -1,0 +1,7 @@
+profile,analysis_role,family,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,mean_regular_fraction,ci95_low,ci95_high,median_regular_fraction,minimum_regular_fraction,circuits
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,SU2-CNOT-line,8,6.0,coordinate,Z,0.0,128,0.98984375,0.984375,0.9953125,0.9921875,0.9765625,10
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,SU2-CNOT-line,12,6.0,coordinate,Z,0.0,128,0.99609375,0.99375,0.9984375,0.99609375,0.9921875,10
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,SU2-HaarU4-brickwork,8,6.0,coordinate,Z,0.0,128,0.99921875,0.99765625,1.0,1.0,0.9921875,10
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,SU2-HaarU4-brickwork,12,6.0,coordinate,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,U1-RZ-XY-line,8,6.0,coordinate,Z,0.0,128,0.9811197916666666,0.9765625,0.9856770833333334,0.98046875,0.96875,12
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,U1-RZ-XY-line,12,6.0,coordinate,Z,0.0,128,0.9895833333333334,0.9869791666666666,0.9921875,0.9921875,0.984375,12
