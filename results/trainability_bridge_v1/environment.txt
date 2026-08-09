@@ -1,8 +1,8 @@
-git_sha=560481a3bd00f5435efecc7a7674731b59fcae69
+git_sha=5228cc7e887e0397032d78cb8bb1ca9d0486a34e
 git_ref=refs/pull/30/merge
 Python 3.12.13
 --- pip freeze ---
--e git+https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws@d2940ff8a65602e5034c6873fa31bc750eb847eb#egg=accessible_quantum_tangents
+-e git+https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws@a68cfaa721c38f5deb7f441e7ed2b52b39cdff59#egg=accessible_quantum_tangents
 contourpy==1.3.3
 cycler==0.12.1
 fonttools==4.63.0
