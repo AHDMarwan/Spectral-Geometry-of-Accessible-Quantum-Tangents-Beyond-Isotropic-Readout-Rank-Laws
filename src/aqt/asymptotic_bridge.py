@@ -25,7 +25,7 @@ def haar_rank_law_variance_rho(
 
     Here C is positive semidefinite with Tr(C)=1, P is an independent
     Haar-random real rank-r projector in N dimensions, and
-    purity=Tr(C^2).  The formula is conditional on C.
+    purity=Tr(C^2). The formula is conditional on C.
     """
     N = int(score_dimension)
     r = int(readout_rank)
@@ -59,7 +59,7 @@ def haar_rank_law_variance_bound(
 
 
 def low_weight_readout_rank(n: int, k: int) -> int:
-    """Rank of nonconstant diagonal Z strings of weight at most k."""
+    """Nominal full-support rank of nonconstant diagonal Z strings <= k."""
     from math import comb
 
     n = int(n)
@@ -72,7 +72,7 @@ def low_weight_readout_rank(n: int, k: int) -> int:
 def add_population_bridge_columns(frame: pd.DataFrame) -> pd.DataFrame:
     """Add population-purity orientation-null diagnostics to circuit rows.
 
-    The pairwise U-statistic is used as an estimator of Tr(C^2).  Rows whose
+    The pairwise U-statistic is used as an estimator of Tr(C^2). Rows whose
     estimator lies outside the population PSD interval [1/N, 1] are retained
     but their population-null sigma/z diagnostics are marked NaN rather than
     clipped into an apparently valid scientific result.
@@ -260,12 +260,21 @@ def build_bridge(
     summary = summarize_bridge(bridge, master_seed=master_seed)
     summary.to_csv(out / "summary.csv", index=False)
 
-    expected_rank = per_circuit.apply(
-        lambda row: low_weight_readout_rank(int(row["n"]), int(row["k"])), axis=1
+    full_support = per_circuit["score_dimension"].to_numpy(int) == np.array(
+        [(1 << int(n)) - 1 for n in per_circuit["n"]], dtype=int
     )
-    rank_consistent = bool(
-        np.all(expected_rank.to_numpy(int) == per_circuit["readout_rank"].to_numpy(int))
-    )
+    if np.any(full_support):
+        full = per_circuit.loc[full_support]
+        expected_rank = full.apply(
+            lambda row: low_weight_readout_rank(int(row["n"]), int(row["k"])),
+            axis=1,
+        )
+        full_support_rank_consistent = bool(
+            np.all(expected_rank.to_numpy(int) == full["readout_rank"].to_numpy(int))
+        )
+    else:
+        full_support_rank_consistent = True
+
     invalid_purity_rows = int((~per_circuit["population_purity_estimate_valid"]).sum())
     manifest = {
         "analysis_status": ANALYSIS_STATUS,
@@ -276,7 +285,9 @@ def build_bridge(
         "independent_unit": "fixed circuit instance",
         "purity_estimator": "pairwise U-statistic already stored as pairwise_purity",
         "population_null": "real Haar/Grassmann rank-matched projector conditional on C",
-        "rank_columns_consistent_with_fixed_weight_formula": rank_consistent,
+        "full_support_rank_columns_consistent_with_fixed_weight_formula": full_support_rank_consistent,
+        "symmetry_reduced_score_space_rows": int((~full_support).sum()),
+        "rank_formula_scope": "sum_{j=1}^k binom(n,j) is checked only for full computational-basis support (N=2^n-1); symmetry-reduced sectors use the archived actual score_dimension and readout_rank",
         "invalid_population_purity_estimator_rows": invalid_purity_rows,
         "formulae": {
             "rho": "Tr(P C)/(r/N)",
