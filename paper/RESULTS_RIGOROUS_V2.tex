@@ -1,0 +1,149 @@
+% Paper-ready replacement Results section for the outcome-blind rigorous-v2 campaign.
+% Source run: GitHub Actions 31313459321, artifact rigorous-v2_primary-analysis.
+% Frozen code/profile commit: 60064d92739ccff423e085fc8a5f8c6489e764e6.
+% This section uses only rigorous-v2 results; legacy numerical values are not inputs.
+
+\section{Results of the outcome-blind primary campaign}
+\label{sec:results-v2}
+
+The prespecified primary campaign was executed at depth $d=6n$ for
+$n=6,8,10,12$.  It contained five nonconserving ansatz families, with
+16 independently drawn circuits per family and size, and a half-filled
+$U(1)$-conserving family with 20 independent circuits per size.  Each
+fixed circuit was probed with $M=128$ normalized Gaussian parameter-space
+directions.  Thus the primary data set contains 400 independent circuit
+instances and 51,200 analytic tangent directions.  The fixed circuit,
+not the tangent direction, is the independent statistical unit.
+
+All prespecified technical-validity checks passed.  Every scheduled job
+and readout row was present.  The maximum state-normalization error was
+$2.52\times10^{-14}$, the maximum horizontal overlap was
+$4.51\times10^{-15}$, the maximum probability-normalization error was
+$2.51\times10^{-14}$, and the largest absolute probability-tangent sum
+was $1.80\times10^{-16}$.  The classical Fisher information remained
+below the QFI in every tested direction, and the empirical covariance--
+projector deviation bound was satisfied with minimum slack $0.1608$.
+No circuit was excluded on the basis of a scientific outcome.
+
+\begin{table*}[t]
+\caption{Outcome-blind primary results at $d=6n$.  Generic entries are
+equal-weight averages of the five nonconserving ansatz-family means;
+circuit instances are resampled within family.  The $U(1)$ entries use
+20 independent circuits per size.  Brackets denote 95\% circuit-bootstrap
+confidence intervals.  The quantity $d_{\rm eff}=1/\widehat{\mathrm{Tr}(C^2)}$
+is reported as a reciprocal diagnostic, not as an unbiased estimator.}
+\label{tab:v2-primary}
+\centering
+\begin{tabular}{c c c c c c}
+\hline\hline
+$n$ & group & $\rho_1$ & $\rho_2$ & $d_{\rm eff}$ & $F_{\rm full}/F_Q$ \\
+\hline
+6  & generic & $0.960\,[0.947,0.973]$ & $0.978\,[0.972,0.984]$ & $46.98\,[46.68,47.29]$ & $0.4880\,[0.4865,0.4895]$ \\
+6  & $U(1)$  & $2.058\,[2.023,2.095]$ & $1.192\,[1.172,1.211]$ & $9.42\,[9.15,9.68]$ & $0.4663\,[0.4590,0.4739]$ \\
+8  & generic & $0.947\,[0.936,0.959]$ & $0.974\,[0.970,0.979]$ & $145.00\,[144.20,145.81]$ & $0.4901\,[0.4893,0.4910]$ \\
+8  & $U(1)$  & $4.219\,[4.116,4.318]$ & $1.898\,[1.869,1.927]$ & $17.05\,[16.66,17.42]$ & $0.4761\,[0.4687,0.4839]$ \\
+10 & generic & $0.944\,[0.934,0.954]$ & $0.967\,[0.964,0.971]$ & $367.50\,[365.45,369.47]$ & $0.4921\,[0.4917,0.4925]$ \\
+10 & $U(1)$  & $9.886\,[9.714,10.061]$ & $3.606\,[3.566,3.647]$ & $27.27\,[26.87,27.71]$ & $0.4691\,[0.4648,0.4733]$ \\
+12 & generic & $0.943\,[0.934,0.951]$ & $0.963\,[0.960,0.966]$ & $723.72\,[720.27,727.03]$ & $0.4936\,[0.4934,0.4938]$ \\
+12 & $U(1)$  & $25.486\,[24.996,25.984]$ & $7.882\,[7.809,7.957]$ & $38.55\,[37.91,39.18]$ & $0.4748\,[0.4723,0.4772]$ \\
+\hline\hline
+\end{tabular}
+\end{table*}
+
+\subsection{Generic low-weight readouts satisfy the prespecified rank-law equivalence criterion}
+
+The rank law was tested as an equivalence statement rather than by a
+failure-to-reject argument.  Before observing rigorous-v2 outcomes, the
+practical equivalence band was fixed to
+$0.90\leq\rho_k\leq1.10$.  For the equal-weight generic-family aggregate,
+the full 95\% confidence interval lies inside this band for both one- and
+two-body readouts at every tested size.  Specifically,
+$\rho_1=0.960,0.947,0.944,0.943$ and
+$\rho_2=0.978,0.974,0.967,0.963$ for $n=6,8,10,12$, respectively.
+The corresponding leave-one-family-out point estimates shift by at most
+$0.0143$, so the family-balanced aggregate is not controlled by a single
+ansatz family.
+
+The family-resolved results nevertheless rule out a stronger statement
+that every nonconserving architecture is individually equivalent at the
+same precision.  The one-body $R_Y$--$R_Z$--CZ-line family fails the
+prespecified equivalence criterion at $n=8,10,12$; its means are
+$0.900$, $0.891$, and $0.886$, respectively, with the latter two clearly
+below the lower equivalence boundary.  The Haar-$U(4)$ brickwork family
+is also inconclusive at $n=8$ because its 95\% interval extends slightly
+below $0.90$.  These exceptions are retained rather than absorbed into
+the pooled statement.  Thus the supported conclusion is a
+family-balanced generic rank-typicality statement, not architecture-
+universal exact rank control.
+
+\subsection{The symmetry-constrained family exhibits a rapidly growing low-weight excess}
+
+The $U(1)$ family lies far outside the rank-law band and its enhancement
+grows strongly over the tested finite-size range.  The one-body
+quantity increases from $\rho_1=2.058$ at $n=6$ to
+$\rho_1=25.486$ at $n=12$, while the two-body quantity increases from
+$\rho_2=1.192$ to $\rho_2=7.882$.  The corresponding physical retention
+fractions at $n=12$ are $0.3037\,[0.2980,0.3097]$ and
+$0.5551\,[0.5498,0.5603]$ for one- and two-body readouts, compared with
+$0.002762\,[0.002738,0.002787]$ and
+$0.018344\,[0.018289,0.018400]$ for the family-balanced generic ensemble.
+
+The prespecified $U(1)$-minus-generic contrasts are therefore large and
+well resolved.  At $n=12$, the one-body retention difference is
+$0.30097\,[0.29517,0.30700]$ and the two-body difference is
+$0.53671\,[0.53165,0.54186]$.  The corresponding enhancement differences
+are $24.543\,[24.058,25.038]$ and $6.919\,[6.847,6.992]$.
+All of these confidence intervals exclude zero without any post-hoc
+metric selection.
+
+\subsection{Rank typicality does not imply global isotropy}
+
+The second spectral moment shows that the generic visible-score
+covariance becomes increasingly nonflat even while its low-weight
+readouts satisfy the rank-law equivalence criterion.  For the
+family-balanced generic ensemble,
+$N\,\widehat{\mathrm{Tr}(C^2)}$ increases from
+$1.350\,[1.340,1.359]$ at $n=6$ to
+$6.165\,[6.116,6.216]$ at $n=12$, whereas
+$d_{\rm eff}/N$ falls from $0.746\,[0.741,0.751]$ to
+$0.1767\,[0.1759,0.1776]$.  Hence the covariance is not approaching the
+flat isotropic reference in this finite-size window.
+
+The $U(1)$ covariance is substantially more concentrated.  Its normalized
+second moment grows from
+$N\,\widehat{\mathrm{Tr}(C^2)}=2.026\,[1.968,2.085]$ at $n=6$ to
+$23.975\,[23.587,24.380]$ at $n=12$, while
+$d_{\rm eff}/N$ decreases from $0.496\,[0.481,0.510]$ to
+$0.0418\,[0.0411,0.0425]$.  These results directly separate low-weight
+rank typicality from global covariance isotropy: the generic ensemble
+can satisfy the prescribed low-rank overlap law even when its score
+covariance is strongly anisotropic, whereas the symmetry-constrained
+family is both more anisotropic and far more visible to low-weight
+readouts.
+
+\subsection{The separation is primarily a readout-orientation effect}
+
+The complete computational-basis record retains an order-one fraction of
+the QFI in both ensembles.  Across $n=6,8,10,12$,
+$F_{\rm full}/F_Q$ ranges from $0.4880$ to $0.4936$ in the generic
+ensemble and from $0.4663$ to $0.4761$ in the $U(1)$ ensemble.  The
+$U(1)$ values are statistically lower by approximately $0.014$--$0.023$
+in the prespecified contrasts, but this modest full-record difference is
+far too small to account for the much larger separation after projection
+onto one- and two-body readouts.  The dominant effect is therefore the
+relative geometry between the visible tangent covariance and the
+physical low-weight feature subspace.
+
+\subsection{Inference status}
+
+Every primary family/size/readout cell passes the prespecified independent-
+circuit count and precision flags for the principal quantities in
+Table~\ref{tab:v2-primary}.  These results are therefore the primary
+outcome-blind finite-size estimates from the frozen campaign.  The
+protocol nevertheless requires an independent tangent-sample convergence
+study before $M=128$ endpoints are promoted to the strongest final
+claims.  Consequently, the numerical statements above are reportable as
+primary results, while the final wording of convergence-sensitive claims
+must remain conditional until the separately frozen $M=32,64,128,256$
+campaign is completed.  No result in the present size range is interpreted
+as an asymptotic proof.
