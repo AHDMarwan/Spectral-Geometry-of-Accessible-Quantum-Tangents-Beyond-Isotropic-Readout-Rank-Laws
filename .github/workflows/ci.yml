@@ -8,6 +8,13 @@ on:
 permissions:
   contents: read
 
+env:
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+
 jobs:
   tests:
     runs-on: ubuntu-24.04
@@ -19,12 +26,23 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install --upgrade pip
-      - run: pip install -e '.[dev]'
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
       - run: pytest
       - name: Smoke experiment
         run: aqt run --profile profiles/smoke.json --output results/smoke
       - name: Isotropic control smoke
         run: aqt controls --output results/controls --samples 5000
+      - name: Record environment
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p results/ci
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            python --version
+            python -m pip freeze
+          } > results/ci/environment.txt
       - uses: actions/upload-artifact@v7
         if: always()
         with:
