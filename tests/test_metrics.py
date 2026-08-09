@@ -64,3 +64,18 @@ def test_bitflip_channel_preserves_normalization_and_zero_sum_tangent():
     q, dq = apply_independent_bitflip_channel(p, dp, n, 0.03)
     np.testing.assert_allclose(q.sum(), 1.0, atol=1e-13)
     np.testing.assert_allclose(dq.sum(axis=1), 0.0, atol=1e-12)
+
+
+def test_sample_covariance_deviation_bound_for_projector():
+    rng = np.random.default_rng(123)
+    m, nscore, rank = 80, 19, 5
+    U = rng.normal(size=(m, nscore))
+    U /= np.linalg.norm(U, axis=1, keepdims=True)
+    C = (U.T @ U) / m
+    Q, _ = np.linalg.qr(rng.normal(size=(nscore, rank)), mode="reduced")
+    P = Q @ Q.T
+    retention = float(np.trace(P @ C))
+    baseline = rank / nscore
+    purity = float(np.trace(C @ C))
+    rhs = np.sqrt(rank * (1 - rank / nscore) * max(0.0, purity - 1 / nscore))
+    assert abs(retention - baseline) <= rhs + 1e-12
