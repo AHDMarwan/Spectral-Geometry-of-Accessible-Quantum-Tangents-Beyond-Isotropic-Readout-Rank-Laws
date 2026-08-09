@@ -1,0 +1,17 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,metric,mean,ci95_low,ci95_high,isotropic_reference
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,1,generic_family_balanced,N_times_pairwise_purity,1.477662873219451,1.448014238192142,1.508401207002879,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,1,generic_family_balanced,deff_over_N,0.6898797037004771,0.6764314213779709,0.7041777510792847,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,1,U1,N_times_pairwise_purity,3.84588353670526,3.7505213351664364,3.948911914071673,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,1,U1,deff_over_N,0.26056874297640603,0.25378082501444843,0.26698787772585125,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,2,generic_family_balanced,N_times_pairwise_purity,1.477662873219451,1.4477891970627912,1.5076863997828405,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,2,generic_family_balanced,deff_over_N,0.6898797037004771,0.6763664782745779,0.704392619846069,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,2,U1,N_times_pairwise_purity,3.84588353670526,3.750537487771,3.9536788756116295,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,2,U1,deff_over_N,0.26056874297640603,0.25376437391058415,0.2669372744364737,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,1,generic_family_balanced,N_times_pairwise_purity,3.999149420616686,3.742460364298737,4.24448118044212,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,1,generic_family_balanced,deff_over_N,0.28662147507606645,0.263854888849187,0.31056742237324064,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,1,U1,N_times_pairwise_purity,21.903382848868556,21.366604181135983,22.36924719361305,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,1,U1,deff_over_N,0.04573476636046217,0.04470449741566325,0.046887397961811385,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,2,generic_family_balanced,N_times_pairwise_purity,3.999149420616686,3.7423996207023564,4.236087101597585,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,2,generic_family_balanced,deff_over_N,0.28662147507606645,0.26419472453768156,0.3106568651204366,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,2,U1,N_times_pairwise_purity,21.903382848868556,21.371034482893528,22.37195387883284,1.0
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,2,U1,deff_over_N,0.04573476636046217,0.044722084460151114,0.046908622073553716,1.0

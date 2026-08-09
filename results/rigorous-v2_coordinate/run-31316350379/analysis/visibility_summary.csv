@@ -1,0 +1,5 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,group,mean_regular_fraction,ci95_low,ci95_high,families,circuits
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,generic_family_balanced,0.9945312500000001,0.9917968749999999,0.997265625,2,20
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,8,6.0,coordinate,Z,0.0,128,U1,0.9811197916666666,0.9765625,0.9856770833333334,1,12
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,generic_family_balanced,0.998046875,0.996875,0.99921875,2,20
+v2_coordinate,coordinate-direction visibility and conditional visible-score robustness,12,6.0,coordinate,Z,0.0,128,U1,0.9895833333333334,0.9869791666666666,0.9921875,1,12
