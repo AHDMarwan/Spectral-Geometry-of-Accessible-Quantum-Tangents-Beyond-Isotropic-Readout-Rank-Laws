@@ -1,0 +1,25 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,group,mean_regular_fraction,ci95_low,ci95_high,families,circuits
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,32,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,32,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,64,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,64,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,128,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,128,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,256,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,8,6.0,gaussian,Z,0.0,256,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,32,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,32,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,64,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,64,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,128,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,128,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,256,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,12,6.0,gaussian,Z,0.0,256,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,32,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,32,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,64,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,64,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,128,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,128,U1,1.0,1.0,1.0,1,10
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,256,generic_family_balanced,1.0,1.0,1.0,2,16
+v2_convergence,tangent-sample convergence and estimator stability,16,6.0,gaussian,Z,0.0,256,U1,1.0,1.0,1.0,1,10
