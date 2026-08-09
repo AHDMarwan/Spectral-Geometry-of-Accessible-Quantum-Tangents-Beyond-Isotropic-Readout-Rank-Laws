@@ -1,0 +1,97 @@
+name: Research experiment suite
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Prespecified experiment profile"
+        required: true
+        type: choice
+        default: reproduce_paper
+        options:
+          - reproduce_paper
+          - pra_core
+          - pra_depth
+          - pra_spectrum
+          - pra_orientation
+          - pra_basis
+          - pra_noise
+          - pra_directions
+          - pra_large_n
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e '.[dev]'
+      - run: pytest
+
+  run:
+    needs: tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e .
+      - name: Run deterministic shard
+        run: >-
+          aqt run
+          --profile profiles/${{ inputs.profile }}.json
+          --output results/shard-${{ matrix.shard }}
+          --shard-index ${{ matrix.shard }}
+          --num-shards 16
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ${{ inputs.profile }}-shard-${{ matrix.shard }}
+          path: results/shard-${{ matrix.shard }}/
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate:
+    needs: run
+    if: ${{ always() && needs.run.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e .
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: ${{ inputs.profile }}-shard-*
+          path: downloaded
+      - name: Circuit-level analysis
+        run: >-
+          aqt analyze
+          --input 'downloaded/**/raw.csv'
+          --output results/analysis
+      - name: Exact isotropic controls
+        run: aqt controls --output results/controls --samples 30000
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ inputs.profile }}-analysis
+          path: results/
+          if-no-files-found: error
+          retention-days: 90
