@@ -1,0 +1,12 @@
+{
+  "analysis_status": "exploratory_post_hoc",
+  "source": "results/exploratory_asymptotic_bridge/per_circuit.csv",
+  "bootstrap_resamples": 10000,
+  "independent_unit": "fixed circuit instance, resampled within each n cell",
+  "fit_diagnostics": {
+    "loglog": "OLS of log(mean orientation_growth_ratio) on log(n); bootstrap resamples circuits independently within each n cell",
+    "plateau": "OLS of mean orientation_growth_ratio on [1, 1/n]; intercept is an exploratory finite-size diagnostic, not a proof of a nonzero limit"
+  },
+  "classification": "descriptive screen only; g_last>1 identifies a deviation larger than one Haar population-null scale after normalization, otherwise the frozen rho equivalence band [0.90,1.10] is used",
+  "new_quantum_simulations": false
+}
