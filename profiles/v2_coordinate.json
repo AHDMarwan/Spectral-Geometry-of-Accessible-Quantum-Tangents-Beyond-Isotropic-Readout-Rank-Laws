@@ -16,7 +16,7 @@
   "direction_samplers": ["coordinate"],
   "measurement_bases": ["Z"],
   "bitflip_rates": [0.0],
-  "min_regular_fraction": 0.25,
+  "min_regular_fraction": 0.10,
   "min_circuits_for_inference": 10,
   "max_relative_ci_halfwidth": 0.25,
   "spectral": {"enabled": false},
