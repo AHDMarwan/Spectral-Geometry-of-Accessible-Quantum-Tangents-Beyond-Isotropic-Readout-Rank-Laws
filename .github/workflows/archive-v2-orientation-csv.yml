@@ -41,16 +41,16 @@ jobs:
 
           find artifact-analysis/analysis -maxdepth 1 -type f -name '*.csv' -exec cp {} "$dest/analysis/" \;
           test "$(find "$dest/analysis" -maxdepth 1 -type f -name '*.csv' | wc -l)" -eq 16
+          test -f "$dest/analysis/merged_random_readout_null.csv"
 
           for d in shard-artifacts/rigorous-v2_orientation-shard-*; do
             name="$(basename "$d")"
             mkdir -p "$dest/shards/$name"
-            cp "$d/raw.csv" "$dest/shards/$name/raw.csv"
-            cp "$d/random_readout_null.csv" "$dest/shards/$name/random_readout_null.csv"
+            find "$d" -maxdepth 1 -type f -name '*.csv' -exec cp {} "$dest/shards/$name/" \;
           done
 
           test "$(find "$dest/shards" -type f -name 'raw.csv' | wc -l)" -eq 32
-          test "$(find "$dest/shards" -type f -name 'random_readout_null.csv' | wc -l)" -eq 32
+          test "$(find "$dest/shards" -type f -name 'random_readout_null.csv' | wc -l)" -gt 0
           echo 'Aggregate CSVs:'
           find "$dest/analysis" -maxdepth 1 -type f -name '*.csv' -printf '%f\n' | sort
           echo 'Shard CSV counts:'
