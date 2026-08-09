@@ -1,0 +1,25 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,group,mean_regular_fraction,ci95_low,ci95_high,families,circuits
+v2_depth,prespecified depth-onset and saturation study,8,0.5,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,8,0.5,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,8,1.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,8,1.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,8,2.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,8,2.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,8,4.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,8,4.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,8,6.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,8,6.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,8,8.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,8,8.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,12,0.5,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,12,0.5,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,12,1.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,12,1.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,12,2.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,12,2.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,12,4.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,12,4.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,12,6.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,12,6.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_depth,prespecified depth-onset and saturation study,12,8.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_depth,prespecified depth-onset and saturation study,12,8.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
