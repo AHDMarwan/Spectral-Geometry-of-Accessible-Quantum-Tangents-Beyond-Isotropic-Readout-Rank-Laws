@@ -1,0 +1,3 @@
+profile,job_id,circuit_id,family,n,depth_factor,k,tangent_count_used,physical_retention,rank_baseline,null_mean,null_std,null_q025,null_q975,empirical_upper_p,null_draws
+v2_orientation,SU2-HaarU4-brickwork|n10|d60|i3|dir=gaussian|basis=Z|eta=0,SU2-HaarU4-brickwork|n10|d60|i3,SU2-HaarU4-brickwork,10,6.0,1,160,0.008924240005439663,0.009775171065493646,0.009788633058189063,0.00039201380662473606,0.008955257280708024,0.010509043135787741,0.9820359281437125,500
+v2_orientation,SU2-HaarU4-brickwork|n10|d60|i3|dir=gaussian|basis=Z|eta=0,SU2-HaarU4-brickwork|n10|d60|i3,SU2-HaarU4-brickwork,10,6.0,2,160,0.05175061047625566,0.053763440860215055,0.05381777296579364,0.0009268162144400184,0.052104130249022274,0.055671145984444115,0.9940119760479041,500
