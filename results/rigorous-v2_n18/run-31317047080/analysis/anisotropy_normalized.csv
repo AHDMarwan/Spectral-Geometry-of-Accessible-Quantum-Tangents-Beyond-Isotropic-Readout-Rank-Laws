@@ -1,0 +1,9 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,metric,mean,ci95_low,ci95_high,isotropic_reference
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,1,generic_family_balanced,N_times_pairwise_purity,146.76105574641682,143.32821737773483,150.70650663499808,1.0
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,1,generic_family_balanced,deff_over_N,0.006827038645307802,0.006648623246247701,0.006986682309221861,1.0
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,1,U1,N_times_pairwise_purity,570.91190669936,556.5979206837834,586.6128270103227,1.0
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,1,U1,deff_over_N,0.0017564937924601652,0.0017109444615177097,0.0018009850837293648,1.0
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,2,generic_family_balanced,N_times_pairwise_purity,146.76105574641682,143.34141330668297,150.6699674755619,1.0
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,2,generic_family_balanced,deff_over_N,0.006827038645307802,0.006650164691304285,0.006985891618451588,1.0
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,2,U1,N_times_pairwise_purity,570.91190669936,556.1845311148851,586.4382096201126,1.0
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,2,U1,deff_over_N,0.0017564937924601652,0.0017108209227824401,0.001800752939782441,1.0

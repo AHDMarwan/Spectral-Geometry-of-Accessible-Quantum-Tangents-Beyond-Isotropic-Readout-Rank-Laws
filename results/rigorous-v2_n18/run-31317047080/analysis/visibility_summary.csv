@@ -1,0 +1,3 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,group,mean_regular_fraction,ci95_low,ci95_high,families,circuits
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,generic_family_balanced,1.0,1.0,1.0,1,12
+v2_n18,targeted n=18 stress test; infer only if precision flags pass,18,6.0,gaussian,Z,0.0,64,U1,1.0,1.0,1.0,1,16
