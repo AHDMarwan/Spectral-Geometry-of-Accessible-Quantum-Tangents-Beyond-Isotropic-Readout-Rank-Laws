@@ -4,9 +4,11 @@
   "bootstrap_resamples": 10000,
   "independent_unit": "fixed circuit instance, resampled within each n cell",
   "fit_diagnostics": {
-    "loglog": "OLS of log(mean orientation_growth_ratio) on log(n); bootstrap resamples circuits independently within each n cell",
-    "plateau": "OLS of mean orientation_growth_ratio on [1, 1/n]; intercept is an exploratory finite-size diagnostic, not a proof of a nonzero limit"
+    "loglog_g": "OLS of log(mean orientation_growth_ratio) on log(n); bootstrap resamples circuits independently within each n cell",
+    "plateau_g": "OLS of mean orientation_growth_ratio on [1, 1/n]; intercept is exploratory and not a proof of a nonzero limit",
+    "plateau_rho": "OLS of mean enhancement rho on [1, 1/n]; intercept is exploratory and not a proof of the physical asymptotic limit"
   },
-  "classification": "descriptive screen only; g_last>1 identifies a deviation larger than one Haar population-null scale after normalization, otherwise the frozen rho equivalence band [0.90,1.10] is used",
+  "diagnostic_dependence": "orientation_growth_ratio is not independent of rho: g=|rho-1|/[sigma_rho sqrt(r d_eff)], and sigma_rho sqrt(r d_eff) approaches an O(1) factor (often near sqrt(2)) in the high-dimensional regime. Treat g as a normalized restatement of the physical rank-law bias, not as separate evidence for the same claim.",
+  "classification": "descriptive screen only; g_last>1 identifies a supercritical bridge ratio, otherwise the frozen rho equivalence band [0.90,1.10] is used",
   "new_quantum_simulations": false
 }
