@@ -1,0 +1,165 @@
+name: Rigorous v2 outcome-blind experiments
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Prespecified rigorous-v2 campaign"
+        required: true
+        type: choice
+        default: v2_primary
+        options:
+          - v2_primary
+          - v2_depth
+          - v2_convergence
+          - v2_spectrum
+          - v2_orientation
+          - v2_basis
+          - v2_directions
+          - v2_large_n
+          - v2_n18
+          - v2_n20_optional
+
+permissions:
+  contents: read
+
+env:
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+
+concurrency:
+  group: rigorous-v2-${{ inputs.profile }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  technical-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - run: pytest
+      - name: Rigorous-v2 smoke simulation
+        run: >-
+          python -m aqt.rigorous run
+          --profile profiles/v2_smoke.json
+          --output smoke
+      - name: Smoke technical validation
+        run: >-
+          python -m aqt.rigorous validate
+          --profile profiles/v2_smoke.json
+          --raw 'smoke/raw.csv'
+          --output smoke/validation.json
+
+  run-shards:
+    needs: technical-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Run deterministic outcome-blind shard
+        run: >-
+          python -m aqt.rigorous run
+          --profile profiles/${{ inputs.profile }}.json
+          --output results/shard-${{ matrix.shard }}
+          --shard-index ${{ matrix.shard }}
+          --num-shards 32
+      - name: Record numerical environment and provenance
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p results/shard-${{ matrix.shard }}
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "git_ref=${GITHUB_REF}"
+            echo "profile=${{ inputs.profile }}"
+            echo "shard=${{ matrix.shard }}/32"
+            echo "runner=${RUNNER_OS}"
+            python --version
+            uname -a
+            echo "--- pip freeze ---"
+            python -m pip freeze
+            echo "--- numpy configuration ---"
+            python - <<'PY'
+          import numpy as np
+          np.show_config()
+          PY
+          } > results/shard-${{ matrix.shard }}/environment.txt 2>&1
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: rigorous-${{ inputs.profile }}-shard-${{ matrix.shard }}
+          path: results/shard-${{ matrix.shard }}/
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate-and-audit:
+    needs: run-shards
+    if: ${{ always() && needs.run-shards.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: rigorous-${{ inputs.profile }}-shard-*
+          path: downloaded
+      - name: Technical validity gate
+        run: >-
+          python -m aqt.rigorous validate
+          --profile profiles/${{ inputs.profile }}.json
+          --raw 'downloaded/**/raw.csv'
+          --output results/analysis/technical_validation.json
+      - name: Circuit-level and family-balanced analysis
+        run: >-
+          python -m aqt.rigorous analyze
+          --raw 'downloaded/**/raw.csv'
+          --spectrum 'downloaded/**/spectrum.csv'
+          --null 'downloaded/**/random_readout_null.csv'
+          --output results/analysis
+          --master-seed 77124000
+      - name: Record aggregate provenance
+        shell: bash
+        run: |
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "git_ref=${GITHUB_REF}"
+            echo "profile=${{ inputs.profile }}"
+            python --version
+            echo "--- pip freeze ---"
+            python -m pip freeze
+          } > results/analysis/environment.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: rigorous-${{ inputs.profile }}-analysis
+          path: results/
+          if-no-files-found: error
+          retention-days: 90
