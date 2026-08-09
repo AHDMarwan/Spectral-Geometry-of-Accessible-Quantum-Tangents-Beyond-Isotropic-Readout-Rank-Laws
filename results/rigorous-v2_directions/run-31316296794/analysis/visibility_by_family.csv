@@ -1,0 +1,13 @@
+profile,analysis_role,family,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,mean_regular_fraction,ci95_low,ci95_high,median_regular_fraction,minimum_regular_fraction,circuits
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-CNOT-line,8,6.0,gaussian,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-CNOT-line,8,6.0,rademacher,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-CNOT-line,12,6.0,gaussian,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-CNOT-line,12,6.0,rademacher,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-HaarU4-brickwork,8,6.0,gaussian,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-HaarU4-brickwork,8,6.0,rademacher,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-HaarU4-brickwork,12,6.0,gaussian,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,SU2-HaarU4-brickwork,12,6.0,rademacher,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,U1-RZ-XY-line,8,6.0,gaussian,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,12
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,U1-RZ-XY-line,8,6.0,rademacher,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,12
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,U1-RZ-XY-line,12,6.0,gaussian,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,12
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,U1-RZ-XY-line,12,6.0,rademacher,Z,0.0,128,1.0,1.0,1.0,1.0,1.0,12

@@ -1,0 +1,9 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,group,mean_regular_fraction,ci95_low,ci95_high,families,circuits
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,generic_family_balanced,1.0,1.0,1.0,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,U1,1.0,1.0,1.0,1,12
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,generic_family_balanced,1.0,1.0,1.0,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,U1,1.0,1.0,1.0,1,12
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,generic_family_balanced,1.0,1.0,1.0,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,U1,1.0,1.0,1.0,1,12
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,generic_family_balanced,1.0,1.0,1.0,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,U1,1.0,1.0,1.0,1,12

@@ -1,0 +1,25 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,mean_enhancement,ci95_low,ci95_high,equivalence_margin,equivalence_low,equivalence_high,ci_entirely_inside_equivalence_band,families,circuits
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,1,generic_family_balanced,0.9616776565323965,0.9409200908498312,0.9826103171923742,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,1,SU2-CNOT-line,0.9821693460567715,0.9567930193126508,1.0099585737475412,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,1,SU2-HaarU4-brickwork,0.9411859670080214,0.9105265346668716,0.9730090597298477,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,2,generic_family_balanced,0.9855342919847554,0.9777410016658892,0.992817514795207,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,2,SU2-CNOT-line,0.9917456279550322,0.9803470753224528,1.002154107878315,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,gaussian,Z,0.0,128,2,SU2-HaarU4-brickwork,0.9793229560144787,0.9682372821299128,0.9893092634311904,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,1,generic_family_balanced,0.957613583824356,0.9340512692935112,0.9812144862438117,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,1,SU2-CNOT-line,0.9610848597926933,0.9396962980120517,0.9881320557131072,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,1,SU2-HaarU4-brickwork,0.9541423078560186,0.9128975828744819,0.9944424923160023,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,2,generic_family_balanced,0.9761690003434159,0.9666585926758641,0.985920848471889,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,2,SU2-CNOT-line,0.9784203190374855,0.9684847233148008,0.9895395195417453,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,8,6.0,rademacher,Z,0.0,128,2,SU2-HaarU4-brickwork,0.9739176816493463,0.9569437584374026,0.9901133007395447,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,1,generic_family_balanced,0.946565319231359,0.9338717081903569,0.9601967586711502,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,1,SU2-CNOT-line,0.9644202654144557,0.948186065473941,0.9806600772362345,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,1,SU2-HaarU4-brickwork,0.9287103730482622,0.9091002490008866,0.950629357542268,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,2,generic_family_balanced,0.9691059221123293,0.9641619670557656,0.9743568274225121,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,2,SU2-CNOT-line,0.9776228567312677,0.9707991354536635,0.9851236123367355,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,gaussian,Z,0.0,128,2,SU2-HaarU4-brickwork,0.9605889874933909,0.9539049261629015,0.9677094451019257,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,1,generic_family_balanced,0.9420233471903989,0.9306186246142718,0.95344492876376,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,1,SU2-CNOT-line,0.9566893005802062,0.945760077207936,0.9705349027559498,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,1,SU2-HaarU4-brickwork,0.9273573938005916,0.9079532864022899,0.9463777642274894,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,2,generic_family_balanced,0.9745635488717918,0.968891935362208,0.9804857390389068,0.1,0.9,1.1,True,2,20
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,2,SU2-CNOT-line,0.9836384810763809,0.9746847254161977,0.9926532273678748,0.1,0.9,1.1,True,1,10
+v2_directions,dense tangent-ensemble robustness: Gaussian versus Rademacher,12,6.0,rademacher,Z,0.0,128,2,SU2-HaarU4-brickwork,0.9654886166672026,0.9589644478461763,0.9729459993798847,0.1,0.9,1.1,True,1,10
