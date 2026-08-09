@@ -23,12 +23,13 @@ def _synthetic_frame():
                         "orientation_growth_ratio": g * (1.0 + 0.01 * (instance - 2.5)),
                         "population_orientation_z": 1.0,
                         "r_times_deff": 100.0 * n,
+                        "haar_population_sd_rho": np.sqrt(2.0 / (100.0 * n)),
                     }
                 )
     return pd.DataFrame(rows)
 
 
-def test_cell_summary_preserves_circuit_unit():
+def test_cell_summary_preserves_circuit_unit_and_null_factor():
     out = summarize_cells(_synthetic_frame(), master_seed=1)
     row = out[
         (out.family == "SU2-HaarU4-brickwork")
@@ -36,8 +37,15 @@ def test_cell_summary_preserves_circuit_unit():
         & (out.k == 1)
         & (out.metric == "orientation_growth_ratio")
     ].iloc[0]
+    factor = out[
+        (out.family == "SU2-HaarU4-brickwork")
+        & (out.n == 14)
+        & (out.k == 1)
+        & (out.metric == "null_scale_factor")
+    ].iloc[0]
     assert row.circuits == 6
     assert row.ci95_low <= row["mean"] <= row.ci95_high
+    assert abs(factor["mean"] - np.sqrt(2.0)) < 1e-12
 
 
 def test_scaling_screen_separates_three_patterns():
@@ -45,9 +53,10 @@ def test_scaling_screen_separates_three_patterns():
     haar = fits[fits.family == "SU2-HaarU4-brickwork"].iloc[0]
     ry = fits[fits.family == "RY-RZ-CZ-line"].iloc[0]
     u1 = fits[fits.family == "U1-RZ-XY-line"].iloc[0]
-    assert haar.finite_size_trend == "decreasing"
+    assert haar.finite_size_trend_g == "decreasing"
     assert haar.screening_label == "rank_typical_at_largest_n"
     assert ry.screening_label == "structured_rank_law_deviation_at_largest_n"
-    assert u1.finite_size_trend == "increasing"
-    assert u1.screening_label == "symmetry_aligned_outside_random_orientation_scale"
-    assert np.isfinite(haar.plateau_intercept_c)
+    assert u1.finite_size_trend_g == "increasing"
+    assert u1.screening_label == "symmetry_aligned_outside_subcritical_bridge_scale"
+    assert np.isfinite(haar.g_plateau_intercept)
+    assert np.isfinite(haar.rho_plateau_intercept)
