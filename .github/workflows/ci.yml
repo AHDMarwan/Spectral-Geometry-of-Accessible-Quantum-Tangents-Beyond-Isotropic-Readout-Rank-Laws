@@ -31,6 +31,8 @@ jobs:
       - run: pytest
       - name: Smoke experiment
         run: aqt run --profile profiles/smoke.json --output results/smoke
+      - name: Trainability bridge smoke
+        run: python -m aqt.trainability_bridge --profile profiles/trainability_bridge_smoke.json --output results/trainability_bridge_smoke
       - name: Isotropic control smoke
         run: aqt controls --output results/controls --samples 5000
       - name: Record environment
