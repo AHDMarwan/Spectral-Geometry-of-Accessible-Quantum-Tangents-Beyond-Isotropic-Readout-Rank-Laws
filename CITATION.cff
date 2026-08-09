@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software or its numerical results, please cite the associated manuscript and archived release."
+title: "Spectral Geometry of Accessible Quantum Tangents: Reproducibility Suite"
+type: software
+authors:
+  - family-names: "Ait Haddou"
+    given-names: "Marwan"
+version: 0.1.0
+date-released: 2026-08-09
+repository-code: "https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws"
