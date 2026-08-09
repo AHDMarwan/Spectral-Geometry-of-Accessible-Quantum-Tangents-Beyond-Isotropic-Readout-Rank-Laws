@@ -1,0 +1,15 @@
+{
+  "name": "smoke",
+  "master_seed": 20260809,
+  "families": ["RY-RZ-CZ-line", "SU2-CNOT-line", "SU2-HaarU4-brickwork", "U1-RZ-XY-line"],
+  "n_values": [4],
+  "depth_factors": [1.0],
+  "instances": 1,
+  "tangents": 8,
+  "readout_orders": [1, 2],
+  "direction_samplers": ["gaussian"],
+  "measurement_bases": ["Z"],
+  "bitflip_rates": [0.0],
+  "spectral": {"enabled": true, "top_eigenvalues": 8, "crossfit_repeats": 4},
+  "random_readout_null": {"draws": 8}
+}
