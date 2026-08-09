@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import glob
 import json
+import math
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +25,13 @@ from .metrics import (
     repeated_crossfit_kyfan,
     third_spectral_moment,
 )
-from .stats import bootstrap_mean_ci, bootstrap_ratio_ci, stratified_bootstrap_mean_ci
+from .stats import (
+    bootstrap_mean_ci,
+    bootstrap_ratio_ci,
+    stratified_bootstrap_mean_ci,
+)
+
+GENERIC_FAMILIES = [x for x in FAMILIES if x != "U1-RZ-XY-line"]
 
 
 def load_profile(path: str | Path) -> dict:
@@ -108,15 +115,29 @@ def run_profile(
             f"{circuit_id}|dir={job['direction_sampler']}|basis={job['measurement_basis']}"
             f"|eta={job['bitflip_rate']:.6g}"
         )
-        rng_theta = np.random.default_rng(stable_seed(circuit_id + "|theta", cfg["master_seed"]))
         _, pcount = parameter_layers(n, depth, family)
-        theta = rng_theta.uniform(-np.pi, np.pi, size=pcount)
-        rng_dir = np.random.default_rng(
-            stable_seed(circuit_id + "|dir|" + job["direction_sampler"], cfg["master_seed"])
-        )
-        directions = sample_parameter_directions(
-            rng_dir, job["tangents"], pcount, job["direction_sampler"]
-        )
+        rng_scheme = cfg.get("rng_scheme", "independent_streams")
+        if rng_scheme == "legacy_joint":
+            # Exact RNG convention used by the supplied confirmatory notebook:
+            # one job-seeded generator draws theta first and tangent directions second.
+            rng_job = np.random.default_rng(stable_seed(circuit_id, cfg["master_seed"]))
+            theta = rng_job.uniform(-np.pi, np.pi, size=pcount)
+            directions = sample_parameter_directions(
+                rng_job, job["tangents"], pcount, job["direction_sampler"]
+            )
+        elif rng_scheme == "independent_streams":
+            rng_theta = np.random.default_rng(
+                stable_seed(circuit_id + "|theta", cfg["master_seed"])
+            )
+            theta = rng_theta.uniform(-np.pi, np.pi, size=pcount)
+            rng_dir = np.random.default_rng(
+                stable_seed(circuit_id + "|dir|" + job["direction_sampler"], cfg["master_seed"])
+            )
+            directions = sample_parameter_directions(
+                rng_dir, job["tangents"], pcount, job["direction_sampler"]
+            )
+        else:
+            raise ValueError(f"unknown rng_scheme {rng_scheme!r}")
         psi, phis, _ = simulate_vqc_tangent_batch(
             n,
             depth,
@@ -168,34 +189,35 @@ def run_profile(
 
         rows = []
         for k, (ret, rank, baseline) in diag.items():
-            rows.append(
-                {
-                    "profile": cfg["name"],
-                    "job_id": job_id,
-                    "circuit_id": circuit_id,
-                    **job,
-                    "parameter_count": pcount,
-                    "regular_tangents": len(U),
-                    "support_size": len(support_idx),
-                    "score_dimension": len(support_idx) - 1,
-                    "FQ_mean": float(np.mean(fq)),
-                    "Ffull_mean": float(np.mean(ffull)),
-                    "Ffull_over_FQ_mean": float(np.mean(ffull / fq)),
-                    "pairwise_purity": purity,
-                    "deff_pairwise": deff,
-                    "trC3_u_stat": trc3,
-                    "renyi3_dimension_diag": float(trc3 ** -0.5) if trc3 > 0 else np.nan,
-                    "k": k,
-                    "readout_rank": rank,
-                    "actual_retention": ret,
-                    "rank_baseline": baseline,
-                    "enhancement": ret / baseline if baseline > 0 else np.nan,
-                    "crossfit_kyfan": cv.get(rank, np.nan),
-                    "sample_lambda_max": float(eig[0]) if len(eig) else np.nan,
-                    "sample_spectrum_rank": len(eig) if do_spectrum else 0,
-                }
-            )
-        pd.DataFrame(rows).to_csv(raw_path, mode="a", header=not raw_path.exists(), index=False)
+            row = {
+                "profile": cfg["name"],
+                "job_id": job_id,
+                "circuit_id": circuit_id,
+                **job,
+                "parameter_count": pcount,
+                "regular_tangents": len(U),
+                "support_size": len(support_idx),
+                "score_dimension": len(support_idx) - 1,
+                "FQ_mean": float(np.mean(fq)),
+                "Ffull_mean": float(np.mean(ffull)),
+                "Ffull_over_FQ_mean": float(np.mean(ffull / fq)),
+                "pairwise_purity": purity,
+                "deff_pairwise": deff,
+                "trC3_u_stat": trc3,
+                "renyi3_dimension_diag": float(trc3 ** -0.5) if trc3 > 0 else np.nan,
+                "k": k,
+                "readout_rank": rank,
+                "actual_retention": ret,
+                "rank_baseline": baseline,
+                "enhancement": ret / baseline if baseline > 0 else np.nan,
+                "crossfit_kyfan": cv.get(rank, np.nan),
+                "sample_lambda_max": float(eig[0]) if len(eig) else np.nan,
+                "sample_spectrum_rank": len(eig) if do_spectrum else 0,
+            }
+            rows.append(row)
+        pd.DataFrame(rows).to_csv(
+            raw_path, mode="a", header=not raw_path.exists(), index=False
+        )
 
         if do_spectrum:
             pd.DataFrame(
@@ -240,7 +262,9 @@ def run_profile(
                         "null_draws": len(draws),
                     }
                 )
-            pd.DataFrame(null_rows).to_csv(null_path, mode="a", header=not null_path.exists(), index=False)
+            pd.DataFrame(null_rows).to_csv(
+                null_path, mode="a", header=not null_path.exists(), index=False
+            )
     if not raw_path.exists():
         pd.DataFrame().to_csv(raw_path, index=False)
     return raw_path
@@ -306,7 +330,8 @@ def analyze(patterns: list[str], output_dir: str | Path, master_seed: int = 2026
                     "circuits": g["circuit_id"].nunique(),
                 }
             )
-    pd.DataFrame(rows).to_csv(out / "family_summary.csv", index=False)
+    summary = pd.DataFrame(rows)
+    summary.to_csv(out / "family_summary.csv", index=False)
 
     pooled_rows = []
     cond_keys = [
@@ -330,7 +355,8 @@ def analyze(patterns: list[str], output_dir: str | Path, master_seed: int = 2026
                 if metric not in g:
                     continue
                 seed = stable_seed("pool|" + label + "|" + "|".join(map(str, ckey)) + "|" + metric, master_seed)
-                if label == "generic_pooled" and g.family.nunique() > 1:
+                reproduce_mode = str(meta.get("profile")) == "reproduce_paper"
+                if label == "generic_pooled" and g.family.nunique() > 1 and not reproduce_mode:
                     mean, lo, hi = stratified_bootstrap_mean_ci(g, metric, "family", seed)
                     method = "family-stratified circuit bootstrap"
                 else:
@@ -348,7 +374,8 @@ def analyze(patterns: list[str], output_dir: str | Path, master_seed: int = 2026
                         "bootstrap_method": method,
                     }
                 )
-    pd.DataFrame(pooled_rows).to_csv(out / "pooled_summary.csv", index=False)
+    pooled = pd.DataFrame(pooled_rows)
+    pooled.to_csv(out / "pooled_summary.csv", index=False)
 
     ratio_rows = []
     for ckey, g0 in df.groupby(cond_keys, dropna=False):
