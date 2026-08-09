@@ -154,6 +154,12 @@ jobs:
           --profile profiles/${{ inputs.profile }}.json
           --output results/analysis
           --master-seed 77124000
+      - name: Within-circuit paired robustness tables
+        run: >-
+          python -m aqt.rigorous_paired
+          --raw 'downloaded/**/raw.csv'
+          --output results/analysis
+          --master-seed 77124000
       - name: Record aggregate provenance
         shell: bash
         run: |
