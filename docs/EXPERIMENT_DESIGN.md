@@ -27,7 +27,7 @@ The suite also estimates \(\mathrm{Tr}(C^3)\) with the distinct-triple U-statist
 
 where \(G_{ij}=u_i\cdot u_j\). This addresses the limitation of diagnosing anisotropy from a second moment alone.
 
-Sample covariance eigenvalues are reported only as finite-sample spectra. Rank-r optimal recovery is additionally estimated out of sample with repeated train/test splits (`crossfit_kyfan`) to reduce the optimistic bias of an in-sample Ky Fan sum.
+Sample covariance eigenvalues are reported only as finite-sample spectra. The in-sample Ky Fan sum is retained as an exact diagnostic of the empirical covariance and is checked against the physical readout and the spectral deviation bound. `crossfit_kyfan` instead trains the leading subspace on one set of tangent directions and evaluates recovery on held-out directions. It is therefore a conservative out-of-sample recovery diagnostic, not an unbiased estimator of the population Ky Fan optimum.
 
 ## Prespecified experiment families
 
