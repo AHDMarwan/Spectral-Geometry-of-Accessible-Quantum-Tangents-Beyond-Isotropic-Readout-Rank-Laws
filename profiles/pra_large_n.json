@@ -1,0 +1,15 @@
+{
+  "name": "pra_large_n",
+  "master_seed": 20260828,
+  "families": ["SU2-HaarU4-brickwork", "U1-RZ-XY-line"],
+  "n_values": [12, 14],
+  "depth_factors": [6.0],
+  "instances": {"default": 4, "U1-RZ-XY-line": 6},
+  "tangents": 64,
+  "readout_orders": [1, 2],
+  "direction_samplers": ["gaussian"],
+  "measurement_bases": ["Z"],
+  "bitflip_rates": [0.0],
+  "spectral": {"enabled": false},
+  "random_readout_null": {"draws": 0}
+}
