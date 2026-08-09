@@ -1,0 +1,52 @@
+name: Publish rigorous-v2 primary CSV results
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-v2-primary-csv.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Download consolidated analysis artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifact
+          gh run download 31313459321 \
+            --repo AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws \
+            --name rigorous-v2_primary-analysis \
+            --dir artifact
+      - name: Copy CSV outputs into repository
+        shell: bash
+        run: |
+          dest='results/rigorous-v2_primary/run-31313459321/analysis'
+          mkdir -p "$dest"
+          find artifact/analysis -maxdepth 1 -type f -name '*.csv' -print0 | while IFS= read -r -d '' f; do
+            cp "$f" "$dest/$(basename "$f")"
+          done
+          echo "CSV files copied:"
+          find "$dest" -maxdepth 1 -type f -name '*.csv' -printf '%f\n' | sort
+          test "$(find "$dest" -maxdepth 1 -type f -name '*.csv' | wc -l)" -eq 15
+      - name: Commit CSV results
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add results/rigorous-v2_primary/run-31313459321/analysis/*.csv
+          if git diff --cached --quiet; then
+            echo 'No CSV changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Archive rigorous-v2 primary CSV results from run 31313459321'
+          git push origin HEAD:main
