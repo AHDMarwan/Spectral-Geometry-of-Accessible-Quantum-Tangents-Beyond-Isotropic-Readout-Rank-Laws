@@ -18,6 +18,12 @@ on:
           - pra_noise
           - pra_directions
           - pra_large_n
+  push:
+    paths:
+      - RUN_REPRODUCTION
+
+env:
+  EXPERIMENT_PROFILE: ${{ github.event_name == 'workflow_dispatch' && inputs.profile || 'reproduce_paper' }}
 
 permissions:
   contents: read
@@ -54,14 +60,14 @@ jobs:
       - name: Run deterministic shard
         run: >-
           aqt run
-          --profile profiles/${{ inputs.profile }}.json
+          --profile profiles/${{ env.EXPERIMENT_PROFILE }}.json
           --output results/shard-${{ matrix.shard }}
           --shard-index ${{ matrix.shard }}
           --num-shards 16
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: ${{ inputs.profile }}-shard-${{ matrix.shard }}
+          name: ${{ env.EXPERIMENT_PROFILE }}-shard-${{ matrix.shard }}
           path: results/shard-${{ matrix.shard }}/
           if-no-files-found: error
           retention-days: 30
@@ -80,7 +86,7 @@ jobs:
       - run: pip install -e .
       - uses: actions/download-artifact@v8
         with:
-          pattern: ${{ inputs.profile }}-shard-*
+          pattern: ${{ env.EXPERIMENT_PROFILE }}-shard-*
           path: downloaded
       - name: Circuit-level analysis
         run: >-
@@ -91,7 +97,7 @@ jobs:
         run: aqt controls --output results/controls --samples 30000
       - uses: actions/upload-artifact@v7
         with:
-          name: ${{ inputs.profile }}-analysis
+          name: ${{ env.EXPERIMENT_PROFILE }}-analysis
           path: results/
           if-no-files-found: error
           retention-days: 90
