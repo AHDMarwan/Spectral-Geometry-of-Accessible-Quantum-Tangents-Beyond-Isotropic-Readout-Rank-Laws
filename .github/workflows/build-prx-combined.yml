@@ -33,13 +33,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
 
-      - name: Reconstruct manuscript sources
-        run: |
-          cd paper/prx
-          cat _build_parts/pack_*.part | base64 -d > sources.tar.gz
-          tar -xzf sources.tar.gz
-          rm sources.tar.gz
-
       - name: Generate vector figures
         run: |
           cd paper/prx
@@ -57,17 +50,18 @@ jobs:
             exit 1
           fi
 
-      - name: Build source package
+      - name: Build manuscript packages
         run: |
           cd paper/prx
-          rm -f spectral_geometry_prx_source.zip
+          rm -f spectral_geometry_prx_source.zip spectral_geometry_prx_submission_package.zip
           zip -qr spectral_geometry_prx_source.zip spectral_geometry_prx.tex README_BUILD.txt popular_summary.txt make_prx_figures.py figures
+          zip -qr spectral_geometry_prx_submission_package.zip spectral_geometry_prx.pdf spectral_geometry_prx.tex README_BUILD.txt popular_summary.txt make_prx_figures.py figures
 
       - name: Commit generated manuscript artifacts
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add paper/prx/spectral_geometry_prx.tex paper/prx/make_prx_figures.py paper/prx/README_BUILD.txt paper/prx/popular_summary.txt paper/prx/figures paper/prx/spectral_geometry_prx.pdf paper/prx/spectral_geometry_prx_source.zip
+          git add paper/prx/spectral_geometry_prx.tex paper/prx/make_prx_figures.py paper/prx/README_BUILD.txt paper/prx/popular_summary.txt paper/prx/figures paper/prx/spectral_geometry_prx.pdf paper/prx/spectral_geometry_prx_source.zip paper/prx/spectral_geometry_prx_submission_package.zip
           if ! git diff --cached --quiet; then
             git commit -m 'Build combined PRX manuscript [skip ci]'
             git push origin HEAD:${{ github.head_ref }}
