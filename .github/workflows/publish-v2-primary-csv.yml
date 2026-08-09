@@ -1,5 +1,6 @@
 name: Publish rigorous-v2 primary CSV results
 
+# One-time archival workflow for run 31313459321.
 on:
   push:
     branches: [main]
