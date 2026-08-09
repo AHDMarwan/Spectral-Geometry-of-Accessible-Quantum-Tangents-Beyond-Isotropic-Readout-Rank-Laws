@@ -1,0 +1,17 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,metric,mean,ci95_low,ci95_high,isotropic_reference
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,generic_family_balanced,N_times_pairwise_purity,17.523513260714367,17.32049769897426,17.739062869918282,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,generic_family_balanced,deff_over_N,0.06619327349933969,0.06568840323808611,0.06669026066861147,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,U1,N_times_pairwise_purity,65.61404970903386,64.59793121590667,66.85260908326495,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,U1,deff_over_N,0.015258485291838046,0.01498840560129162,0.015488298732886447,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,generic_family_balanced,N_times_pairwise_purity,17.523513260714367,17.32055514689066,17.73379118656364,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,generic_family_balanced,deff_over_N,0.06619327349933969,0.06567965930519765,0.06670108222917437,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,U1,N_times_pairwise_purity,65.61404970903386,64.58604646610016,66.87360627375215,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,U1,deff_over_N,0.015258485291838046,0.014990752479444338,0.015483024803783005,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,generic_family_balanced,N_times_pairwise_purity,49.84002695968092,49.15628251845985,50.53654682092603,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,generic_family_balanced,deff_over_N,0.02330894050674882,0.02309770153778578,0.02351711636661311,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,U1,N_times_pairwise_purity,189.24717917188775,185.50842109459433,192.95491657166218,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,U1,deff_over_N,0.005292554634907118,0.005188530615530226,0.005397914938510171,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,generic_family_balanced,N_times_pairwise_purity,49.84002695968092,49.15104891783195,50.530825416276556,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,generic_family_balanced,deff_over_N,0.02330894050674882,0.023104071423747197,0.023524938374018273,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,U1,N_times_pairwise_purity,189.24717917188775,185.53220093061924,193.0411502047227,1.0
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,U1,deff_over_N,0.005292554634907118,0.005189716268264701,0.005398128538744573,1.0

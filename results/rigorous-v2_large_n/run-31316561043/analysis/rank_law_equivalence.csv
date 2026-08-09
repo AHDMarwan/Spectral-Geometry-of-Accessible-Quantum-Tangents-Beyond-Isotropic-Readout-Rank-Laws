@@ -1,0 +1,17 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,mean_enhancement,ci95_low,ci95_high,equivalence_margin,equivalence_low,equivalence_high,ci_entirely_inside_equivalence_band,families,circuits
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,generic_family_balanced,0.9217211574449119,0.9096933581934221,0.9334584921064397,0.1,0.9,1.1,True,3,36
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,RY-RZ-CZ-line,0.8741854790008513,0.8540593790364175,0.8951814174446532,0.1,0.9,1.1,False,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,SU2-CNOT-line,0.9609656321740406,0.9392429730860997,0.9806906605393411,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,1,SU2-HaarU4-brickwork,0.9300123611598438,0.9093279634520723,0.9516238372643571,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,generic_family_balanced,0.9545896718947188,0.9501748889105789,0.958941081622358,0.1,0.9,1.1,True,3,36
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,RY-RZ-CZ-line,0.9273865432436516,0.919131041532279,0.9355243903669652,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,SU2-CNOT-line,0.978882707934209,0.9727670805900156,0.9854833150577118,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,2,SU2-HaarU4-brickwork,0.9574997645062958,0.9490021294744824,0.9651124443309402,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,generic_family_balanced,0.9185562026132058,0.9095784502096689,0.9273645060424899,0.1,0.9,1.1,True,3,36
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,RY-RZ-CZ-line,0.8766269483847471,0.8652478319227461,0.8922606040607116,0.1,0.9,1.1,False,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,SU2-CNOT-line,0.9523307476215028,0.9411980865093724,0.9635793776793452,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,1,SU2-HaarU4-brickwork,0.9267109118333674,0.9053453123711641,0.9457509115346618,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,generic_family_balanced,0.9521610252888157,0.9483081296345859,0.9559933112264001,0.1,0.9,1.1,True,3,36
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,RY-RZ-CZ-line,0.9197440393976893,0.9135106727926151,0.9261627048207809,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,SU2-CNOT-line,0.9855648089589675,0.9792293784867777,0.9923908044309574,0.1,0.9,1.1,True,1,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,2,SU2-HaarU4-brickwork,0.9511742275097904,0.9438274037206528,0.958418040785936,0.1,0.9,1.1,True,1,12

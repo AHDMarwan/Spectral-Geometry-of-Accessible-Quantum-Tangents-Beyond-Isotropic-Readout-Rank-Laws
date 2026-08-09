@@ -1,0 +1,5 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,group,mean_regular_fraction,ci95_low,ci95_high,families,circuits
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_large_n,large-n finite-size extension; not an asymptotic proof,14,6.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,generic_family_balanced,1.0,1.0,1.0,3,36
+v2_large_n,large-n finite-size extension; not an asymptotic proof,16,6.0,gaussian,Z,0.0,96,U1,1.0,1.0,1.0,1,16

@@ -1,0 +1,9 @@
+profile,analysis_role,family,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,mean_regular_fraction,ci95_low,ci95_high,median_regular_fraction,minimum_regular_fraction,circuits
+v2_large_n,large-n finite-size extension; not an asymptotic proof,RY-RZ-CZ-line,14,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,RY-RZ-CZ-line,16,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,SU2-CNOT-line,14,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,SU2-CNOT-line,16,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,SU2-HaarU4-brickwork,14,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,SU2-HaarU4-brickwork,16,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,12
+v2_large_n,large-n finite-size extension; not an asymptotic proof,U1-RZ-XY-line,14,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,16
+v2_large_n,large-n finite-size extension; not an asymptotic proof,U1-RZ-XY-line,16,6.0,gaussian,Z,0.0,96,1.0,1.0,1.0,1.0,1.0,16
