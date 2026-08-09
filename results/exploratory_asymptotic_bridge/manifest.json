@@ -1,0 +1,22 @@
+{
+  "analysis_status": "exploratory_post_hoc",
+  "scientific_role": "post-hoc bridge between the prespecified finite-size campaign and the random-orientation asymptotic theorem; not primary confirmatory inference",
+  "new_quantum_simulations": false,
+  "source_tables": [
+    "results/rigorous-v2_primary/run-31313459321/analysis/merged_raw.csv",
+    "results/rigorous-v2_large_n/run-31316561043/analysis/merged_raw.csv",
+    "results/rigorous-v2_n18/run-31317047080/analysis/merged_raw.csv"
+  ],
+  "bootstrap_resamples": 10000,
+  "independent_unit": "fixed circuit instance",
+  "purity_estimator": "pairwise U-statistic already stored as pairwise_purity",
+  "population_null": "real Haar/Grassmann rank-matched projector conditional on C",
+  "rank_columns_consistent_with_fixed_weight_formula": false,
+  "invalid_population_purity_estimator_rows": 0,
+  "formulae": {
+    "rho": "Tr(P C)/(r/N)",
+    "variance": "2(N-r)(N Tr(C^2)-1)/(r(N-1)(N+2))",
+    "variance_bound": "Var(rho) <= 2 Tr(C^2)/r = 2/(r d_eff)",
+    "orientation_z": "(rho_physical-1)/sqrt(Var_Haar(rho)|C)"
+  }
+}
