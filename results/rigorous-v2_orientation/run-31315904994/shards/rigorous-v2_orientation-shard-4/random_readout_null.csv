@@ -1,0 +1,3 @@
+profile,job_id,circuit_id,family,n,depth_factor,k,tangent_count_used,physical_retention,rank_baseline,null_mean,null_std,null_q025,null_q975,empirical_upper_p,null_draws
+v2_orientation,SU2-CNOT-line|n10|d60|i0|dir=gaussian|basis=Z|eta=0,SU2-CNOT-line|n10|d60|i0,SU2-CNOT-line,10,6.0,1,160,0.009455993882807916,0.009775171065493646,0.00978177749840586,0.00036608942032097654,0.009117248187918358,0.010499659180266884,0.8003992015968064,500
+v2_orientation,SU2-CNOT-line|n10|d60|i0|dir=gaussian|basis=Z|eta=0,SU2-CNOT-line|n10|d60|i0,SU2-CNOT-line,10,6.0,2,160,0.05302883183441383,0.053763440860215055,0.05371771083413212,0.0008358687908392115,0.052019353302667555,0.05526552316500829,0.8023952095808383,500

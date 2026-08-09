@@ -1,0 +1,17 @@
+profile,analysis_role,n,depth_factor,direction_sampler,measurement_basis,bitflip_rate,tangent_count_used,k,group,metric,mean,ci95_low,ci95_high,isotropic_reference
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,1,generic_family_balanced,N_times_pairwise_purity,1.7119664508092547,1.688448834615216,1.7354622562588213,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,1,generic_family_balanced,deff_over_N,0.5939638133269242,0.5869394783181336,0.6015188639489317,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,1,U1,N_times_pairwise_purity,4.07068777227846,3.9214524387758662,4.204275620844984,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,1,U1,deff_over_N,0.24616041982541856,0.23787694280684837,0.2555709587032337,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,2,generic_family_balanced,N_times_pairwise_purity,1.7119664508092547,1.688470645359688,1.7356030208190245,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,2,generic_family_balanced,deff_over_N,0.5939638133269242,0.5869570837705889,0.6015775418057708,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,2,U1,N_times_pairwise_purity,4.07068777227846,3.9214524387758662,4.202013876436064,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,8,6.0,gaussian,Z,0.0,160,2,U1,deff_over_N,0.24616041982541856,0.23818247530470674,0.2559234673946034,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,1,generic_family_balanced,N_times_pairwise_purity,2.6558943211571235,2.63197056803403,2.681543551496701,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,1,generic_family_balanced,deff_over_N,0.38740811855556534,0.382994914517686,0.3913238322386071,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,1,U1,N_times_pairwise_purity,9.365011412500078,9.057938745113345,9.672084079886808,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,1,U1,deff_over_N,0.10696793629891867,0.10343304225850676,0.11071003734858527,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,2,generic_family_balanced,N_times_pairwise_purity,2.6558943211571235,2.6315258249412623,2.6803009611817217,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,2,generic_family_balanced,deff_over_N,0.38740811855556534,0.3829715859302998,0.3913200692599913,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,2,U1,N_times_pairwise_purity,9.365011412500078,9.057938745113347,9.668287918387328,1.0
+v2_orientation,Monte Carlo calibration of the analytic rank-matched Haar orientation null,10,6.0,gaussian,Z,0.0,160,2,U1,deff_over_N,0.10696793629891867,0.10343617125310732,0.11050283033933056,1.0
