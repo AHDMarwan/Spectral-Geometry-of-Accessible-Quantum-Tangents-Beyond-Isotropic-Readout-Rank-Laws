@@ -16,6 +16,7 @@ on:
           - v2_orientation
           - v2_basis
           - v2_directions
+          - v2_coordinate
           - v2_large_n
           - v2_n18
           - v2_n20_optional
