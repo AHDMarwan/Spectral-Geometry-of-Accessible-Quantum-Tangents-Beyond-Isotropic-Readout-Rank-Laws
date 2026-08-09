@@ -10,6 +10,6 @@
   "direction_samplers": ["gaussian"],
   "measurement_bases": ["Z"],
   "bitflip_rates": [0.0],
-  "spectral": {"enabled": true, "top_eigenvalues": 64, "crossfit_repeats": 30},
+  "spectral": {"enabled": true, "top_eigenvalues": 160, "crossfit_repeats": 30},
   "random_readout_null": {"draws": 500}
 }
