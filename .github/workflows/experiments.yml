@@ -93,6 +93,12 @@ jobs:
           aqt analyze
           --input 'downloaded/**/raw.csv'
           --output results/analysis
+      - name: Reproduction and spectral theorem diagnostics
+        run: >-
+          python -m aqt.postprocess
+          --raw 'downloaded/**/raw.csv'
+          --spectrum 'downloaded/**/spectrum.csv'
+          --output results/analysis
       - name: Exact isotropic controls
         run: aqt controls --output results/controls --samples 30000
       - uses: actions/upload-artifact@v7
