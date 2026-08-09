@@ -1,0 +1,32 @@
+{
+  "name": "v2_spectrum",
+  "analysis_role": "dedicated spectrum and optimal-compression study",
+  "master_seed": 77124104,
+  "rng_scheme": "independent_streams",
+  "probability_floor": 1e-13,
+  "svd_tolerance": 1e-10,
+  "families": ["SU2-CNOT-line", "SU2-HaarU4-brickwork", "U1-RZ-XY-line"],
+  "n_values": [8, 10, 12],
+  "depth_factors": [6.0],
+  "instances": {"default": 8, "U1-RZ-XY-line": 10},
+  "tangents": 512,
+  "tangent_prefixes": [512],
+  "simulation_batch_size": 16,
+  "readout_orders": [1, 2],
+  "direction_samplers": ["gaussian"],
+  "measurement_bases": ["Z"],
+  "bitflip_rates": [0.0],
+  "min_regular_fraction": 0.99,
+  "min_circuits_for_inference": 8,
+  "max_relative_ci_halfwidth": 0.20,
+  "spectral": {"enabled": true, "top_eigenvalues": 512, "crossfit_repeats": 50},
+  "random_readout_null": {"draws": 0},
+  "numerical_tolerances": {
+    "state_norm_error": 5e-12,
+    "horizontal_overlap_max": 5e-10,
+    "probability_sum_error": 5e-12,
+    "probability_tangent_sum_max": 1e-9,
+    "fisher_violation_max": 1e-9,
+    "projector_bound_slack": 2e-9
+  }
+}
