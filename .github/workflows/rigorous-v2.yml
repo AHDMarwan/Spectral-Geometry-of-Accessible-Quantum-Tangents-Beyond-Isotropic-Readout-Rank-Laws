@@ -146,6 +146,13 @@ jobs:
           --null 'downloaded/**/random_readout_null.csv'
           --output results/analysis
           --master-seed 77124000
+      - name: Prespecified inference tables
+        run: >-
+          python -m aqt.rigorous_inference
+          --raw 'downloaded/**/raw.csv'
+          --profile profiles/${{ inputs.profile }}.json
+          --output results/analysis
+          --master-seed 77124000
       - name: Record aggregate provenance
         shell: bash
         run: |
