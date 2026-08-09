@@ -110,9 +110,13 @@ These are second-moment diagnostics only. A statement about the full spectrum re
 
 ## 12. Measurement and tangent-ensemble scope
 
-`v2_basis` repeats the same fixed-circuit logic in Z, X, Y, and independently seeded random-local measurement bases. A basis-dependent phenomenon must be stated as basis-dependent.
+`v2_basis` repeats the same fixed circuits in Z, X, Y, and independently seeded random-local measurement bases. The analysis uses within-circuit paired differences relative to Z in addition to the ordinary circuit-level summaries. A basis-dependent phenomenon must be stated as basis-dependent.
 
-`v2_directions` compares Gaussian, Rademacher, and coordinate parameter-direction ensembles. A qualitative reversal across direction ensembles prevents an ensemble-independent claim.
+`v2_directions` compares the two dense normalized direction ensembles, Gaussian and Rademacher, on the same fixed circuits and reports within-circuit paired differences relative to Gaussian.
+
+`v2_coordinate` is separate because coordinate directions can be exactly or numerically measurement-null for structural reasons. For this campaign the visible/regular tangent fraction is itself a scientific endpoint and is reported in `visibility_by_circuit.csv`, `visibility_by_family.csv`, and `visibility_summary.csv`. Conditional visible-score quantities are interpreted only among regular coordinate directions. The technical minimum is deliberately only 10% (at least 13 of 128 requested directions after the absolute minimum of eight is enforced); low visibility above that floor is evidence, not a software failure.
+
+A qualitative reversal across dense direction ensembles prevents an ensemble-independent claim. Coordinate-direction results are reported separately rather than pooled with dense ensembles.
 
 ## 13. Large-n extension
 
@@ -129,7 +133,7 @@ No result up to `n=20` is described as an asymptotic proof.
 The GitHub Actions workflow fails only for technical invalidity, never because a scientific effect has the wrong sign or magnitude. The validation step checks:
 
 - every prescheduled job, tangent prefix, and readout order is present;
-- at least 99% of requested tangents are regular in every reported cell;
+- the profile-specific minimum regular-tangent fraction (99% for the dense primary campaigns; 10% for the separate coordinate visibility campaign);
 - state normalization;
 - horizontal tangent orthogonality;
 - probability normalization;
@@ -150,6 +154,8 @@ Unit tests compare batched and unbatched propagation directly on small systems.
 
 All paper tables should report circuit-level point estimates, 95% confidence intervals, number of independent circuits, number of tangent directions, and the relevant quality flags. Family-specific results appear alongside any family-balanced generic aggregate.
 
+Basis and dense-direction robustness are reported with within-circuit paired contrast tables. Coordinate-direction visibility is reported explicitly rather than conditioning it away. Rank-law equivalence uses the frozen ±10% band. U(1)-versus-generic contrasts and normalized anisotropy diagnostics are emitted regardless of whether their intervals favor the theory.
+
 All scheduled cells are retained in the raw artifacts. No cell is dropped because it weakens a narrative. Any analysis invented after inspecting rigorous-v2 outcomes is labeled exploratory and is not merged into the prespecified primary analysis.
 
-A release used for a manuscript should archive the exact Git commit, profile JSON files, raw shard outputs, merged tables, numerical-validation report, inference-policy file, environment manifests, and figures under a persistent DOI.
+A release used for a manuscript should archive the exact Git commit, profile JSON files, raw shard outputs, merged tables, numerical-validation report, inference-policy file, paired robustness tables, visibility tables, environment manifests, and figures under a persistent DOI.
