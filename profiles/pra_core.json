@@ -1,0 +1,17 @@
+{
+  "name": "pra_core",
+  "master_seed": 20260821,
+  "probability_floor": 1e-13,
+  "svd_tolerance": 1e-10,
+  "families": ["RY-RZ-CZ-line", "SU2-CNOT-line", "SU2-CZ-ring", "SU2-CZ-random-matching", "SU2-HaarU4-brickwork", "U1-RZ-XY-line"],
+  "n_values": [6, 8, 10, 12],
+  "depth_factors": [6.0],
+  "instances": {"default": 8, "U1-RZ-XY-line": 12},
+  "tangents": 96,
+  "readout_orders": [1, 2],
+  "direction_samplers": ["gaussian"],
+  "measurement_bases": ["Z"],
+  "bitflip_rates": [0.0],
+  "spectral": {"enabled": true, "top_eigenvalues": 64, "crossfit_repeats": 20},
+  "random_readout_null": {"draws": 0}
+}
