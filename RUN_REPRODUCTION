@@ -1,4 +1,5 @@
 profile=reproduce_paper
 requested=2026-08-09
-purpose=independent full n=6,8,10 manuscript reproduction after code and RNG audit
+revision=2
+purpose=independent full n=6,8,10 manuscript reproduction after code, RNG, environment, and provenance audit
 policy=report discrepancies; never tune or discard results to force agreement
