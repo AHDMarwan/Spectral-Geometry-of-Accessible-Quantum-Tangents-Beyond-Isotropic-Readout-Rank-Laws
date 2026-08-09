@@ -11,7 +11,9 @@
   "independent_unit": "fixed circuit instance",
   "purity_estimator": "pairwise U-statistic already stored as pairwise_purity",
   "population_null": "real Haar/Grassmann rank-matched projector conditional on C",
-  "rank_columns_consistent_with_fixed_weight_formula": false,
+  "full_support_rank_columns_consistent_with_fixed_weight_formula": true,
+  "symmetry_reduced_score_space_rows": 256,
+  "rank_formula_scope": "sum_{j=1}^k binom(n,j) is checked only for full computational-basis support (N=2^n-1); symmetry-reduced sectors use the archived actual score_dimension and readout_rank",
   "invalid_population_purity_estimator_rows": 0,
   "formulae": {
     "rho": "Tr(P C)/(r/N)",
