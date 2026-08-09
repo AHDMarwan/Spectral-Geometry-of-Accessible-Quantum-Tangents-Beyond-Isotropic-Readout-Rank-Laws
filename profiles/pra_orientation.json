@@ -1,0 +1,15 @@
+{
+  "name": "pra_orientation",
+  "master_seed": 20260824,
+  "families": ["RY-RZ-CZ-line", "SU2-CNOT-line", "SU2-HaarU4-brickwork", "U1-RZ-XY-line"],
+  "n_values": [8, 10],
+  "depth_factors": [6.0],
+  "instances": {"default": 5, "U1-RZ-XY-line": 8},
+  "tangents": 160,
+  "readout_orders": [1, 2],
+  "direction_samplers": ["gaussian"],
+  "measurement_bases": ["Z"],
+  "bitflip_rates": [0.0],
+  "spectral": {"enabled": true, "top_eigenvalues": 64, "crossfit_repeats": 30},
+  "random_readout_null": {"draws": 500}
+}
