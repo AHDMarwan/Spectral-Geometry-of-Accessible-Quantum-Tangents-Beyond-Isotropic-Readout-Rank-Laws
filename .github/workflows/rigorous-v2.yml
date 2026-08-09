@@ -160,6 +160,12 @@ jobs:
           --raw 'downloaded/**/raw.csv'
           --output results/analysis
           --master-seed 77124000
+      - name: Visible-tangent fraction analysis
+        run: >-
+          python -m aqt.rigorous_visibility
+          --raw 'downloaded/**/raw.csv'
+          --output results/analysis
+          --master-seed 77124000
       - name: Record aggregate provenance
         shell: bash
         run: |
