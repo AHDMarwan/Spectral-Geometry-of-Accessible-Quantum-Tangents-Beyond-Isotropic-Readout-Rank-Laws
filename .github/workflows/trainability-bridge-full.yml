@@ -1,0 +1,232 @@
+name: Full trainability bridge experiment
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/trainability-bridge-full.yml'
+
+permissions:
+  contents: write
+
+env:
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+
+concurrency:
+  group: trainability-bridge-full-${{ github.head_ref }}
+  cancel-in-progress: false
+
+jobs:
+  technical-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - run: pytest
+      - name: Trainability bridge smoke
+        run: >-
+          python -m aqt.trainability_bridge
+          --profile profiles/trainability_bridge_smoke.json
+          --output results/trainability_bridge_smoke
+
+  run-shards:
+    needs: technical-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - tag: haar-n8
+            family: SU2-HaarU4-brickwork
+            n: 8
+            instances: 16
+          - tag: haar-n10
+            family: SU2-HaarU4-brickwork
+            n: 10
+            instances: 16
+          - tag: haar-n12
+            family: SU2-HaarU4-brickwork
+            n: 12
+            instances: 16
+          - tag: u1-n8
+            family: U1-RZ-XY-line
+            n: 8
+            instances: 20
+          - tag: u1-n10
+            family: U1-RZ-XY-line
+            n: 10
+            instances: 20
+          - tag: u1-n12
+            family: U1-RZ-XY-line
+            n: 12
+            instances: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Build deterministic shard profile
+        shell: bash
+        env:
+          SHARD_FAMILY: ${{ matrix.family }}
+          SHARD_N: ${{ matrix.n }}
+          SHARD_INSTANCES: ${{ matrix.instances }}
+          SHARD_TAG: ${{ matrix.tag }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          cfg = json.loads(Path('profiles/trainability_bridge_v1.json').read_text())
+          cfg['name'] = f"{cfg['name']}-{os.environ['SHARD_TAG']}"
+          cfg['families'] = [os.environ['SHARD_FAMILY']]
+          cfg['n_values'] = [int(os.environ['SHARD_N'])]
+          cfg['instances'] = int(os.environ['SHARD_INSTANCES'])
+          Path('shard_profile.json').write_text(json.dumps(cfg, indent=2))
+          PY
+      - name: Run full deterministic shard
+        run: >-
+          python -m aqt.trainability_bridge
+          --profile shard_profile.json
+          --output shard-results
+      - name: Record shard provenance
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "git_ref=${GITHUB_REF}"
+            echo "tag=${{ matrix.tag }}"
+            echo "family=${{ matrix.family }}"
+            echo "n=${{ matrix.n }}"
+            echo "instances=${{ matrix.instances }}"
+            python --version
+            echo "--- pip freeze ---"
+            python -m pip freeze
+          } > shard-results/environment.txt 2>&1
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: trainability-bridge-shard-${{ matrix.tag }}
+          path: shard-results/
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate-and-save:
+    needs: run-shards
+    if: ${{ always() && needs.run-shards.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: trainability-bridge-shard-*
+          path: downloaded
+      - name: Aggregate, validate, bootstrap, and save
+        shell: bash
+        run: |
+          rm -rf results/trainability_bridge_v1
+          mkdir -p results/trainability_bridge_v1
+          python - <<'PY'
+          import glob
+          import json
+          import os
+          from pathlib import Path
+          import pandas as pd
+          from aqt.trainability_bridge import load_profile, paired_gains, summarize
+
+          cfg = load_profile('profiles/trainability_bridge_v1.json')
+          paths = sorted(glob.glob('downloaded/**/raw.csv', recursive=True))
+          if len(paths) != 6:
+              raise RuntimeError(f'expected 6 shard raw files, found {len(paths)}: {paths}')
+
+          raw = pd.concat([pd.read_csv(p) for p in paths], ignore_index=True)
+          if raw.duplicated(['circuit_id', 'method']).any():
+              raise RuntimeError('duplicate circuit/method rows found across shards')
+
+          expected_circuits = 16 * 3 + 20 * 3
+          if raw['circuit_id'].nunique() != expected_circuits:
+              raise RuntimeError(
+                  f"expected {expected_circuits} circuits, got {raw['circuit_id'].nunique()}"
+              )
+          if len(raw) != expected_circuits * 3:
+              raise RuntimeError(f'expected {expected_circuits * 3} rows, got {len(raw)}')
+
+          expected_methods = {'physical', 'aligned_crossfit', 'random_rank'}
+          for circuit_id, frame in raw.groupby('circuit_id'):
+              if set(frame['method']) != expected_methods or len(frame) != 3:
+                  raise RuntimeError(f'method coverage failure for {circuit_id}')
+
+          raw = raw.sort_values(['family', 'n', 'instance', 'method'], kind='stable')
+          out = Path('results/trainability_bridge_v1')
+          raw.to_csv(out / 'raw.csv', index=False)
+          summarize(raw, cfg).to_csv(out / 'summary.csv', index=False)
+          paired_gains(raw, cfg).to_csv(out / 'paired_gains.csv', index=False)
+
+          manifest = {
+              'profile': cfg,
+              'source_commit': os.environ.get('GITHUB_SHA'),
+              'source_event': os.environ.get('GITHUB_EVENT_NAME'),
+              'shards': paths,
+              'circuits': int(raw['circuit_id'].nunique()),
+              'rows': int(len(raw)),
+              'methods': sorted(expected_methods),
+              'primary_bridge_metric': 'expected_scalar_directional_grad2',
+              'primary_operational_metric': 'finite_difference_snr_mean',
+              'primary_contrast': 'aligned_crossfit_over_physical',
+              'scope': 'controlled local linear-readout bridge; not a supervised barren-plateau claim',
+          }
+          (out / 'manifest.json').write_text(json.dumps(manifest, indent=2))
+          PY
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "git_ref=${GITHUB_REF}"
+            python --version
+            echo "--- pip freeze ---"
+            python -m pip freeze
+          } > results/trainability_bridge_v1/environment.txt 2>&1
+      - name: Upload aggregate artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: trainability-bridge-v1-full-results
+          path: results/trainability_bridge_v1/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Commit results to results directory
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/trainability_bridge_v1
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+          else
+            git commit -m "Save full trainability bridge results"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
