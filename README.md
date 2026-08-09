@@ -1,101 +1,208 @@
-# Spectral Geometry of Accessible Quantum Tangents
+# Measurement-Accessible Quantum Tangent Geometry
 
-Reproducibility, falsification, and outcome-blind numerical experiments for **“Spectral Geometry of Accessible Quantum Tangents: Beyond Isotropic Readout-Rank Laws.”**
+**Rank Typicality Without Isotropy**
 
-## Current scientific protocol: rigorous-v2
+This repository contains the theory, frozen numerical protocols, data products, figures, and manuscript for:
 
-The current experiment suite is `rigorous-v2`. It is a fresh outcome-blind campaign: previous numerical values, confidence intervals, plots, and trends are not used to tune seeds, sample sizes, ansatz inclusion, success thresholds, or analysis choices.
+**Marwan Ait Haddou, _Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy_ (2026).**
 
-The full protocol is frozen in `docs/RIGOROUS_PROTOCOL_V2.md`.
+- [Manuscript PDF](paper/prx/spectral_geometry_prx.pdf)
+- [LaTeX source](paper/prx/spectral_geometry_prx.tex)
+- [Rigorous-v2 protocol](docs/RIGOROUS_PROTOCOL_V2.md)
+- [Author ORCID](https://orcid.org/0009-0008-1734-1721)
 
-A scientific result is never made to “pass” CI. GitHub Actions fails only for technical invalidity such as missing scheduled jobs, insufficient regular directions for a profile, normalization failures, broken horizontality, `F_full > F_Q` beyond tolerance, nonfinite endpoints, or violation of an exact empirical covariance/projector bound. Results that contradict the theoretical narrative are retained and reported normally.
+## The question
 
-Legacy reproduction and earlier PRA-oriented profiles remain only for provenance. They are not inputs to rigorous-v2 inference.
+Variational quantum circuits are trained through measurements. A circuit may have a large and highly structured tangent space, but an optimizer only sees the part of that geometry that is visible through the chosen readout.
 
-## Local checks
+For a trace-one tangent-score covariance `C` in an `N`-dimensional centered score space and a rank-`r` readout projector `P`, the retained tangent information is
+
+```text
+Tr(P C).
+```
+
+The rank-only reference is `r/N`. We therefore study
+
+```text
+rho = Tr(P C) / (r/N).
+```
+
+The project asks:
+
+1. When is a physical low-weight readout close to the rank-only reference?
+2. Does `rho ≈ 1` require an isotropic tangent covariance?
+3. How do architecture and symmetry change the overlap between tangent information and the readout?
+4. If a physical readout captures little information, is that information absent, or merely oriented outside the measured subspace?
+
+## What we did
+
+The work combines an analytic random-orientation result with frozen finite-size numerical tests.
+
+### Random-orientation theory
+
+For a fixed covariance `C` and an independent Haar/Grassmann rank-`r` real projector `P`, the rank-normalized overlap obeys
+
+```text
+E[rho] = 1,
+
+Var(rho)
+= 2 (N-r) (N Tr(C^2)-1)
+  / [r (N-1)(N+2)]
+<= 2 / (r d_eff),
+```
+
+with
+
+```text
+d_eff = 1 / Tr(C^2).
+```
+
+The concentration scale is therefore controlled by `r d_eff`. It does not require `C` to approach the isotropic covariance `I/N`.
+
+For full computational-basis score space and a fixed-weight `k` readout,
+
+```text
+r_k(n) = sum_{j=1}^k binom(n,j),
+```
+
+so the random-orientation model gives rank-normalized overlap approaching one while the retained fraction itself is only of order `n^k / 2^n` for fixed `k`.
+
+### Frozen numerical campaign
+
+The main experiment suite is `rigorous-v2`. Seeds, inference rules, the independent statistical unit, convergence checks, and the positive equivalence criterion were fixed before the corresponding outcomes were inspected.
+
+The campaign includes:
+
+- several nonconserving variational-circuit families;
+- a half-filled `U(1)`-symmetric family;
+- one- and two-body diagonal readouts;
+- circuit-level bootstrap confidence intervals with equal weighting across generic ansatz families;
+- nested tangent counts `M = 32, 64, 128, 256`;
+- explicit Haar/Grassmann orientation calibration;
+- measurement-basis and tangent-direction robustness tests;
+- dedicated spectral runs with empirical eigenvalue profiles, Ky-Fan bounds, and cross-fitted rank-matched subspaces;
+- family-balanced finite-size tests through `n = 16` and a targeted Haar-`U(4)` stress test at `n = 18`.
+
+The finite-size simulations are not used as an asymptotic proof for the physical circuit ensembles.
+
+## What we found
+
+### Generic circuits are practically rank-typical without becoming isotropic
+
+For the family-balanced generic ensemble, one- and two-body readouts remain within the prespecified practical rank-equivalence band through the tested family-balanced sizes. The targeted Haar-`U(4)` stress test at `n = 18` also remains in that band, with approximately
+
+```text
+rho_1 = 0.929
+rho_2 = 0.958.
+```
+
+At the same time, the tangent covariance becomes increasingly anisotropic: `N Tr(C^2)` grows while `d_eff/N` decreases.
+
+So practical rank typicality and global isotropy are different statements.
+
+### Architecture produces systematic departures from the rank reference
+
+The `RY-RZ-CZ` family develops a persistent one-body deficit. At the larger tested sizes, `rho_1` remains below the prespecified `0.90` equivalence boundary.
+
+The data establish an architecture-dependent orientation bias. They do not, by themselves, identify a unique microscopic gate-level cause.
+
+### Symmetry can strongly align tangent information with simple observables
+
+The half-filled `U(1)` family occupies a different regime. Its low-weight readouts retain far more tangent information than the corresponding rank-only reference. At `n = 18`, the measured retained fractions are approximately
+
+```text
+one-body: 0.215
+two-body: 0.401.
+```
+
+For the symmetry-reduced `U(1)` rows, the analysis uses the actual archived score dimension and readout rank. The full-support binomial rank formula is not applied to those rows.
+
+### The spectral calculation shows where inaccessible information can reside
+
+For generic circuits, the physical low-weight readout can retain much less tangent mass than a rank-matched leading spectral subspace. Cross-fitted spectral subspaces also outperform the physical low-weight observables.
+
+This means that a small accessible fraction does not necessarily imply that tangent information disappeared. It can still be present in the state-space geometry but oriented away from the chosen measurement span.
+
+For the `U(1)` family, the gap between the physical readout and the leading rank-matched spectral directions is much smaller, consistent with symmetry-induced alignment.
+
+## Main conclusion
+
+A compact summary of the results is:
+
+```text
+readout rank sets the baseline;
+tangent spectrum and relative orientation set the deviation from that baseline.
+```
+
+For QML, the practical implication is that state-space geometry and measurement-accessible geometry should be treated separately. A measurement interface can be an information bottleneck even when substantial tangent structure remains in the quantum state. This motivates ansatz-readout co-design rather than evaluating an ansatz independently of the observables used to train or read it out.
+
+This work does **not** claim a barren-plateau theorem for a supervised loss. In particular, no asymptotic scaling law for `Var(partial_theta L)` is inferred from the tangent-score calculations.
+
+## Repository map
+
+```text
+paper/prx/                         manuscript, appendices, vector figures, source package
+src/aqt/                           experiment and analysis code
+profiles/                          frozen experiment profiles
+docs/RIGOROUS_PROTOCOL_V2.md       confirmatory protocol and inference rules
+results/rigorous-v2_primary/       primary family-balanced campaign
+results/rigorous-v2_large_n/       n=14,16 finite-size extension
+results/rigorous-v2_n18/           targeted n=18 stress test
+results/exploratory_asymptotic_bridge/
+                                   post-hoc population-orientation bridge diagnostics
+.github/workflows/                 reproducible CI and experiment workflows
+```
+
+## Reproducing the local checks
 
 ```bash
 python -m pip install -e '.[dev]'
 pytest
+
 python -m aqt.rigorous run \
   --profile profiles/v2_smoke.json \
   --output results/v2-smoke
+
 python -m aqt.rigorous validate \
   --profile profiles/v2_smoke.json \
   --raw 'results/v2-smoke/raw.csv' \
   --output results/v2-smoke/validation.json
 ```
 
-## GitHub Actions
+The GitHub Actions workflows reproduce the manuscript build and the frozen numerical pipelines. Scientific outcomes do not cause CI failure; CI gates technical validity, provenance, normalization, and other prespecified invariants.
 
-Open **Actions -> Rigorous v2 outcome-blind experiments -> Run workflow** and choose one frozen campaign. The workflow executes 32 deterministic shards, records the environment for every shard, applies a technical-validity gate, performs circuit-level/family-balanced and paired analyses, and uploads raw plus processed artifacts.
+## Statistical and reporting policy
 
-Recommended order:
+The fixed circuit instance is the independent statistical unit. Confidence intervals are bootstrapped over circuits. Generic aggregates weight ansatz families equally rather than weighting by circuit count.
 
-1. `v2_convergence` — establish how many tangent directions are needed.
-2. `v2_primary` — main family-robust finite-size inference.
-3. `v2_depth` — depth onset/saturation.
-4. `v2_spectrum` — dedicated spectral/Ky-Fan study with 512 tangents.
-5. `v2_orientation` — explicit rank-matched Haar orientation calibration.
-6. `v2_basis` — paired measurement-basis scope.
-7. `v2_directions` — paired dense Gaussian/Rademacher tangent-ensemble scope.
-8. `v2_coordinate` — coordinate-direction visibility and conditional visible-score study.
-9. `v2_large_n` — selected `n=14,16` extension.
-10. `v2_n18` — targeted stress test, used only if precision gates pass.
-11. `v2_n20_optional` — optional stress test; never promoted to a primary claim merely because it finishes.
+Positive rank-law claims use the prespecified equivalence band
 
-Do not edit a frozen profile after inspecting its output and still call the rerun confirmatory. Any post-outcome modification must receive a new profile name/seed and be labeled exploratory.
+```text
+rho in [0.90, 1.10]
+```
 
-## What rigorous-v2 changes
+and require the full 95% confidence interval to lie inside the band.
 
-- new independent master seeds, separated from all previous experiment outcomes;
-- a separate `src/aqt/rigorous.py` experiment engine;
-- fixed circuit instance as the independent statistical unit;
-- 10,000-resample circuit-level confidence intervals;
-- equal weighting of generic ansatz families rather than circuit-count-weighted pooling;
-- leave-one-family-out sensitivity analysis for every generic aggregate;
-- a prespecified `rho_k in [0.90, 1.10]` equivalence criterion for positive rank-law claims, rather than interpreting failure to reject `rho_k=1` as evidence of equivalence;
-- nested `M=32,64,128,256` tangent convergence using prefixes of one fixed direction draw;
-- memory-bounded exact tangent batching, with batched/unbatched equivalence tests;
-- explicit numerical checks for state norm, horizontality, probability normalization, zero-sum probability tangents, and Fisher contraction;
-- exact first two Haar-Grassmann moments for rank-matched random-orientation retention at fixed empirical covariance;
-- direct Monte Carlo calibration of that orientation null at moderate sizes;
-- empirical projector/covariance bound checks as a technical invariant;
-- a dedicated 512-direction spectral campaign with `Tr(C^2)`, `Tr(C^3)`, empirical spectra, Ky-Fan recovery, and repeated train/test cross-fitting;
-- within-circuit paired robustness analyses for measurement basis and dense tangent ensemble;
-- a separate coordinate-direction visibility experiment so invisible coordinate tangents are not silently conditioned away;
-- large-n results accepted for inference only when circuit-count, numerical-validity, convergence, and precision diagnostics pass.
+No scheduled cell is removed because it weakens a claim. Post-outcome analyses are labeled exploratory, and the tested finite sizes are not presented as proofs of physical asymptotic behavior.
 
-## Main outputs
+## Citation
 
-Each shard writes `raw.csv`; spectral and explicit random-orientation campaigns additionally write `spectrum.csv` and `random_readout_null.csv` when applicable.
+If you use the manuscript, theory, figures, numerical data, or code from this repository, please cite the work below. Until a journal DOI or archival preprint identifier is assigned, use the repository URL.
 
-The aggregate analysis writes, as applicable:
+```bibtex
+@misc{AitHaddou2026MeasurementAccessible,
+  author       = {Marwan Ait Haddou},
+  title        = {Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy},
+  year         = {2026},
+  howpublished = {Manuscript and reproducibility repository},
+  url          = {https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws},
+  note         = {ORCID: 0009-0008-1734-1721}
+}
+```
 
-- `family_summary.csv` — family-specific circuit bootstrap estimates and precision flags;
-- `pooled_summary.csv` — equal-weight-per-family generic estimates and U(1) estimates;
-- `leave_one_family_out.csv` — architecture sensitivity;
-- `rank_law_equivalence.csv` — prespecified ±10% rank-law equivalence decisions;
-- `u1_vs_generic_contrasts.csv` — prespecified U(1)-minus-family-balanced-generic contrasts;
-- `anisotropy_normalized.csv` — `N Tr(C^2)` and `d_eff/N` with isotropic reference 1;
-- `tangent_convergence_by_circuit.csv` and `tangent_convergence_summary.csv` when nested M prefixes exist;
-- `paired_measurement_basis_contrasts.csv` and `paired_direction_sampler_contrasts.csv`;
-- `visibility_by_circuit.csv`, `visibility_by_family.csv`, and `visibility_summary.csv`;
-- `orientation_summary.csv` — physical-minus-rank-baseline and standardized Haar-orientation diagnostics;
-- `spectral_diagnostics.csv` for spectral profiles;
-- `numerical_audit.csv`;
-- `technical_validation.json` and `inference_policy.json`.
+GitHub also reads [`CITATION.cff`](CITATION.cff), so the repository's **Cite this repository** interface provides the same preferred citation.
 
-`pairwise_purity` is the distinct-pair U-statistic estimate of `Tr(C^2)`; `deff_pairwise=1/pairwise_purity` remains a reciprocal diagnostic rather than an unbiased estimator of effective dimension. Full spectral-shape claims are reserved for the dedicated spectral campaign.
+## Author
 
-## Reporting policy
-
-Every manuscript table based on rigorous-v2 should state the number of independent circuits, tangent count, confidence interval, ansatz family, system size, depth, measurement basis, and relevant quality flag. Family-specific results appear alongside any generic aggregate. No scheduled cell is removed because it weakens a claim.
-
-Coordinate-direction visibility is reported explicitly. Conditional visible-score statistics do not replace the visibility result itself. A scientific contrast is reported whether or not its confidence interval favors the proposed theory.
-
-No simulation through `n=20` is described as an asymptotic proof. Large-n runs are finite-size evidence only.
-
-## Data availability
-
-A manuscript release should archive the exact Git commit, frozen profile JSON files, raw shard artifacts, merged analysis tables, technical validation, inference policy, paired and visibility tables, environment manifests, and generated figures under a persistent DOI. See `docs/DATA_AVAILABILITY.md`.
+**Marwan Ait Haddou** — Independent Researcher  
+ORCID: [0009-0008-1734-1721](https://orcid.org/0009-0008-1734-1721)
