@@ -1,0 +1,51 @@
+name: Build exploratory orientation scaling audit
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: ${{ github.head_ref == 'orientation-scaling-audit' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Test scaling analysis
+        run: pytest -q tests/test_orientation_scaling.py tests/test_asymptotic_bridge.py tests/test_rigorous_inference.py
+      - name: Build exploratory scaling tables and figures
+        run: |
+          rm -rf results/exploratory_orientation_scaling
+          python -m aqt.orientation_scaling \
+            --per-circuit results/exploratory_asymptotic_bridge/per_circuit.csv \
+            --output results/exploratory_orientation_scaling
+          test -s results/exploratory_orientation_scaling/cell_summary.csv
+          test -s results/exploratory_orientation_scaling/scaling_fits.csv
+          test -s results/exploratory_orientation_scaling/manifest.json
+          test -s results/exploratory_orientation_scaling/orientation_growth_scaling.pdf
+          test -s results/exploratory_orientation_scaling/rank_enhancement_scaling.pdf
+          mkdir -p paper/figures
+          cp results/exploratory_orientation_scaling/orientation_growth_scaling.pdf paper/figures/orientation_growth_scaling.pdf
+          cp results/exploratory_orientation_scaling/rank_enhancement_scaling.pdf paper/figures/rank_enhancement_scaling.pdf
+      - name: Commit deterministic audit outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f results/exploratory_orientation_scaling paper/figures/orientation_growth_scaling.pdf paper/figures/rank_enhancement_scaling.pdf
+          if git diff --cached --quiet; then
+            echo 'Scaling outputs already up to date.'
+            exit 0
+          fi
+          git commit -m 'Add exploratory orientation scaling tables and figures'
+          git push origin HEAD:${{ github.head_ref }}
