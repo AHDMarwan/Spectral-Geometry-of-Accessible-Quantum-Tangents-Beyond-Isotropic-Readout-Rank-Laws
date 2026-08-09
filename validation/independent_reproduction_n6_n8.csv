@@ -1,0 +1,17 @@
+n,group,metric,reported,rerun,difference
+6,generic_pooled,enhancement_k1,0.958,0.9584423948,0.0004423948
+6,generic_pooled,enhancement_k2,0.993,0.9933500000,0.0003500000
+6,generic_pooled,deff,46.1,46.130128,0.030128
+6,generic_pooled,Ffull_over_FQ,0.4885,0.488544,0.000044
+6,U1,enhancement_k1,2.077,2.076641,-0.000359
+6,U1,enhancement_k2,1.186,1.186344,0.000344
+6,U1,deff,9.52,9.524004,0.004004
+6,U1,Ffull_over_FQ,0.4744,0.474446,0.000046
+8,generic_pooled,enhancement_k1,0.931,0.931258,0.000258
+8,generic_pooled,enhancement_k2,0.973,0.972936,-0.000064
+8,generic_pooled,deff,136.1,136.070177,-0.029823
+8,generic_pooled,Ffull_over_FQ,0.4897,0.489653,-0.000047
+8,U1,enhancement_k1,4.224,4.224422,0.000422
+8,U1,enhancement_k2,1.895,1.895219,0.000219
+8,U1,deff,16.97,16.969454,-0.000546
+8,U1,Ffull_over_FQ,0.4785,0.478514,0.000014
