@@ -2,10 +2,8 @@ name: Publish rigorous-v2 primary CSV results
 
 # One-time archival workflow for run 31313459321.
 on:
-  push:
+  pull_request:
     branches: [main]
-    paths:
-      - '.github/workflows/publish-v2-primary-csv.yml'
   workflow_dispatch:
 
 permissions:
@@ -14,11 +12,13 @@ permissions:
 
 jobs:
   publish:
+    if: ${{ github.event_name != 'pull_request' || github.head_ref == 'archive-v2-primary-csv' }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
       - name: Download consolidated analysis artifact
         env:
           GH_TOKEN: ${{ github.token }}
@@ -50,4 +50,8 @@ jobs:
             exit 0
           fi
           git commit -m 'Archive rigorous-v2 primary CSV results from run 31313459321'
-          git push origin HEAD:main
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            git push origin HEAD:${{ github.head_ref }}
+          else
+            git push origin HEAD:main
+          fi
