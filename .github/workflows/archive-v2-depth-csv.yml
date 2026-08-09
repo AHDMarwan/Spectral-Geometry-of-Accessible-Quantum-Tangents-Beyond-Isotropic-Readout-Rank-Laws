@@ -1,0 +1,112 @@
+name: Archive rigorous-v2 depth CSV results
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+
+jobs:
+  archive:
+    if: ${{ github.event_name != 'pull_request' || startsWith(github.head_ref, 'archive-v2-depth-csv') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Download immutable depth shard artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf downloaded
+          mkdir -p downloaded
+          gh run download 31314886659 \
+            --repo AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws \
+            --pattern 'rigorous-v2_depth-shard-*' \
+            --dir downloaded
+          test "$(find downloaded -type f -name raw.csv | wc -l)" -eq 32
+      - name: Reproduce prespecified aggregate analysis from shard CSVs
+        run: |
+          rm -rf generated
+          mkdir -p generated
+          python -m aqt.rigorous validate \
+            --profile profiles/v2_depth.json \
+            --raw 'downloaded/**/raw.csv' \
+            --output generated/technical_validation.json
+          python -m aqt.rigorous analyze \
+            --raw 'downloaded/**/raw.csv' \
+            --spectrum 'downloaded/**/spectrum.csv' \
+            --null 'downloaded/**/random_readout_null.csv' \
+            --output generated \
+            --master-seed 77124000
+          python -m aqt.rigorous_inference \
+            --raw 'downloaded/**/raw.csv' \
+            --profile profiles/v2_depth.json \
+            --output generated \
+            --master-seed 77124000
+          python -m aqt.rigorous_paired \
+            --raw 'downloaded/**/raw.csv' \
+            --output generated \
+            --master-seed 77124000
+          python -m aqt.rigorous_visibility \
+            --raw 'downloaded/**/raw.csv' \
+            --output generated \
+            --master-seed 77124000
+      - name: Stage raw and aggregate CSV files
+        shell: bash
+        run: |
+          root='results/rigorous-v2_depth/run-31314886659'
+          rm -rf "$root"
+          mkdir -p "$root/shards" "$root/analysis"
+          while IFS= read -r f; do
+            artifact="$(basename "$(dirname "$f")")"
+            mkdir -p "$root/shards/$artifact"
+            cp "$f" "$root/shards/$artifact/raw.csv"
+          done < <(find downloaded -type f -name raw.csv | sort)
+          find generated -maxdepth 1 -type f -name '*.csv' -exec cp {} "$root/analysis/" \;
+          test "$(find "$root/shards" -type f -name raw.csv | wc -l)" -eq 32
+          test "$(find "$root/analysis" -maxdepth 1 -type f -name '*.csv' | wc -l)" -eq 15
+          python - <<'PY'
+          import glob, pandas as pd
+          paths=glob.glob('results/rigorous-v2_depth/run-31314886659/shards/*/raw.csv')
+          df=pd.concat([pd.read_csv(p) for p in paths], ignore_index=True)
+          assert len(paths)==32
+          assert len(df)==1248, len(df)
+          assert df['circuit_id'].nunique()==624, df['circuit_id'].nunique()
+          print('verified shard CSVs:', len(paths), 'rows:', len(df), 'circuits:', df['circuit_id'].nunique())
+          PY
+      - name: Commit CSV archive to PR branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f results/rigorous-v2_depth/run-31314886659/
+          if git diff --cached --quiet; then
+            echo 'No CSV changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Archive rigorous-v2 depth CSV results from run 31314886659'
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            git push origin HEAD:${{ github.head_ref }}
+          else
+            git push origin HEAD:main
+          fi
