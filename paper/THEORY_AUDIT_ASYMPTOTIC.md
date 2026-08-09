@@ -149,7 +149,41 @@ shows that
 
 is a sufficient condition for the fixed physical readout to become rank-typical. It is not a necessary condition, and finite-size fitting of this ratio is diagnostic rather than a proof of its limiting behavior.
 
-## 5. Literature positioning
+## 5. Dependence caveat for the normalized bridge ratio
+
+Define
+
+\[
+g_n=\frac{|z_n^{\rm(pop)}|}{\sqrt{r_nd_{\rm eff,n}}}.
+\]
+
+This quantity is not independent evidence for rank typicality. By definition,
+
+\[
+g_n=\frac{|\rho_n^{\rm(phys)}-1|}
+{\sigma_{\rho,n}\sqrt{r_nd_{\rm eff,n}}}.
+\]
+
+Moreover,
+
+\[
+\sigma_{\rho,n}^2 r_nd_{\rm eff,n}
+=\frac{2(N_n-r_n)(N_nq_n-1)}
+{q_n(N_n-1)(N_n+2)},
+\qquad q_n=\operatorname{Tr}(C_n^2).
+\]
+
+In the common high-dimensional regime `r_n/N_n -> 0` with `N_n q_n` not approaching one too quickly, the denominator factor tends to an order-one constant and typically approaches `2`. Thus
+
+\[
+g_n\approx \frac{|\rho_n^{\rm(phys)}-1|}{\sqrt{2}}.
+\]
+
+Consequently, a plot of `g_n` versus `n` is best viewed as a normalized restatement of the physical rank-law bias, not as a statistically independent confirmation of the mechanism. The genuinely distinct diagnostic is `z_n^(pop)`: it measures how many shrinking Haar-null standard deviations separate the fixed physical readout from random relative orientation. A fixed small bias in `rho` can therefore coexist with a `|z_n|` that grows strongly with `n`.
+
+This distinction changes the physical interpretation. The random-orientation theorem is exact and asymptotic, but current physical-circuit data need not satisfy `rho_phys -> 1`; they may instead remain within the practical rank-equivalence band with a small architecture-dependent limiting bias. That possibility must be tested rather than assumed.
+
+## 6. Literature positioning
 
 The projector-moment machinery itself should be treated as standard, not as the novelty claim. Orthogonal/Grassmann Haar moments are consequences of invariant integration / Weingarten calculus. Useful primary references include:
 
@@ -157,6 +191,6 @@ The projector-moment machinery itself should be treated as standard, not as the 
 - Thomas Bendokat, Ralf Zimmermann, and P.-A. Absil, *A Grassmann Manifold Handbook: Basic Geometry and Computational Aspects*, arXiv:2011.13699.
 - Karel Devriendt, Hannah Friedman, Bernhard Reinke, and Bernd Sturmfels, *The Two Lives of the Grassmannian*, arXiv:2401.03684 (projector representation of the real Grassmannian).
 
-The defensible contribution to emphasize is the operational application: accessible quantum tangent covariance can be strongly anisotropic while random-relative-orientation low-weight accessibility concentrates at its rank baseline; the physical-circuit data then diagnose when actual readouts follow that regime and when symmetry creates a growing orientation anomaly.
+The defensible contribution to emphasize is the operational application: accessible quantum tangent covariance can be strongly anisotropic while random-relative-orientation low-weight accessibility concentrates at its rank baseline; the physical-circuit data then diagnose when actual readouts remain practically rank-typical, when an architecture carries a persistent bias, and when symmetry produces a macroscopic orientation anomaly.
 
 A full priority/novelty search against the quantum-trainability literature is separate from this algebraic validity audit.
