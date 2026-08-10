@@ -38,6 +38,8 @@ jobs:
           sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
       - name: Apply production manuscript pass
         run: python paper/prx/production_finalize.py
+      - name: Apply code and results repository citation
+        run: python paper/prx/repository_citation_finalize.py
       - name: Generate legacy vector figures used by the rewrite
         run: |
           cd paper/prx
@@ -67,7 +69,7 @@ jobs:
           rm -f spectral_geometry_prx_submission_package.zip
           zip -qr spectral_geometry_prx_submission_package.zip \
             spectral_geometry_prx.pdf spectral_geometry_prx.tex \
-            CITATION_EQUATION_AUDIT.md data figure_scripts figures
+            CITATION_EQUATION_AUDIT.md FIGURE_VISUAL_QA_CHECKLIST.md data figure_scripts figures
       - name: Sanity-check production files
         run: |
           test -s paper/prx/spectral_geometry_prx.pdf
@@ -83,6 +85,7 @@ jobs:
           grep -q 'Rank Baselines and Spectral Orientation' paper/prx/spectral_geometry_prx.tex
           grep -q '\\label{fig:circuits}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{Fernandez2025}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/prx/spectral_geometry_prx.tex
           grep -q 'A_1(18)=0.283586' paper/prx/spectral_geometry_prx.tex
       - name: Commit canonical rewritten PDF and assets
         if: github.event_name != 'pull_request'
@@ -99,8 +102,8 @@ jobs:
             echo "No production changes to commit."
           else
             git commit -m "Promote production rewrite to canonical manuscript [skip ci]"
-            # make_prx_figures.py may leave deterministic tracked legacy figures
-            # modified but intentionally outside the production commit.  Clean those
+            # Figure generation may leave deterministic tracked legacy figures
+            # modified but intentionally outside the production commit. Clean those
             # worktree-only changes before rebasing onto any concurrent main update.
             git reset --hard HEAD
             git pull --rebase origin "${GITHUB_REF_NAME}"
