@@ -4,13 +4,16 @@ PAPER = Path(__file__).resolve().parent
 TARGET = PAPER / "spectral_geometry_prx_rewrite.tex"
 KEY = "AitHaddou2026MeasurementAccessible"
 REPO_URL = "https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws"
+DOI = "10.5281/zenodo.21877379"
+DOI_URL = f"https://doi.org/{DOI}"
 
 BIB = rf"""
 
 \bibitem{{{KEY}}}
 M. Ait Haddou,
-Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy,
-Manuscript and reproducibility repository (2026),
+Spectral Geometry of Accessible Quantum Tangents: Reproducibility Suite,
+Zenodo (2026),
+\href{{{DOI_URL}}}{{doi:{DOI}}};
 \href{{{REPO_URL}}}{{GitHub reproducibility repository}}.
 ORCID: 0009-0008-1734-1721.
 """
@@ -38,7 +41,7 @@ def main() -> None:
     new = old + (
         " The source code, frozen experiment profiles, aggregate tables, shard-level outputs, and "
         "paper-facing result summaries used for the numerical claims are archived in the public "
-        "reproducibility repository \\cite{" + KEY + "}."
+        "reproducibility release \\cite{" + KEY + "}."
     )
     if new not in text and old in text:
         text = text.replace(old, new, 1)
@@ -80,13 +83,12 @@ def main() -> None:
     new = (
         "The frozen protocols, source code, aggregate tables, shard-level outputs, analysis scripts, "
         "and the numerical results reported in this manuscript are available in the public project "
-        "repository \\cite{" + KEY + "}. The repository records the frozen numerical provenance "
-        "separately from editorial manuscript changes."
+        "repository and archived reproducibility release \\cite{" + KEY + "}. The repository records "
+        "the frozen numerical provenance separately from editorial manuscript changes."
     )
     if new not in text and old in text:
         text = text.replace(old, new, 1)
 
-    # Upgrade an already-present long visible URL from older production builds.
     old_bib = rf"""\bibitem{{{KEY}}}
 M. Ait Haddou,
 Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy,
