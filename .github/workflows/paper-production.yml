@@ -44,6 +44,8 @@ jobs:
         run: python paper/prx/production_finalize.py
       - name: Apply code and results repository citation
         run: python paper/prx/repository_citation_finalize.py
+      - name: Cite submitted isotropic rank-law manuscript
+        run: python paper/prx/prior_paper_temporary_citation.py
       - name: Compact bibliography links and remove numeric ORCID prose
         run: python paper/prx/bibliography_visual_finalize.py
       - name: Apply legacy figure visual cleanup
@@ -94,6 +96,8 @@ jobs:
           grep -q '\\label{fig:circuits}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{Fernandez2025}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\bibitem{AitHaddou2026IsotropicRankLaws}' paper/prx/spectral_geometry_prx.tex
+          grep -q 'arXiv identifier pending' paper/prx/spectral_geometry_prx.tex
           grep -q 'A_1(18)=0.283586' paper/prx/spectral_geometry_prx.tex
           grep -q '\\usepackage{orcidlink}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\orcidlink{0009-0008-1734-1721}' paper/prx/spectral_geometry_prx.tex
