@@ -6,5 +6,9 @@ __pycache__/
 results/*
 !results/trainability_bridge_v1/
 !results/trainability_bridge_v1/**
+!results/trainability_bridge_robustness_v1/
+!results/trainability_bridge_robustness_v1/**
+!results/u1_alignment_mechanism_v1/
+!results/u1_alignment_mechanism_v1/**
 downloaded/
 .DS_Store
