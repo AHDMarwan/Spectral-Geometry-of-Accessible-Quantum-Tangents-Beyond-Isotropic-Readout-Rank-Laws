@@ -14,7 +14,7 @@
   "align_tangents": 128,
   "eval_tangents": 128,
   "readout_order": 1,
-  "max_walsh_order": 4,
+  "max_walsh_order": 2,
   "direction_sampler": "gaussian",
   "measurement_basis": "Z",
   "bitflip_rate": 0.0,
