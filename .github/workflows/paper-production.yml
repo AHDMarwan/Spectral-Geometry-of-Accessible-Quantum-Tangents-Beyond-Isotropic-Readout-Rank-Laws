@@ -40,6 +40,8 @@ jobs:
         run: python paper/prx/production_finalize.py
       - name: Apply code and results repository citation
         run: python paper/prx/repository_citation_finalize.py
+      - name: Apply legacy figure visual cleanup
+        run: python paper/prx/figure_scripts/legacy_visual_cleanup.py
       - name: Generate legacy vector figures used by the rewrite
         run: |
           cd paper/prx
