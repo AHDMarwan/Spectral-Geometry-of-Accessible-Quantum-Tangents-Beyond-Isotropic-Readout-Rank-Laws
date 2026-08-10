@@ -1,0 +1,68 @@
+{
+  "profile": {
+    "name": "u1-alignment-scaling-v1",
+    "master_seed": 20260810,
+    "families": [
+      "U1-RZ-XY-line"
+    ],
+    "n_values": [
+      14,
+      16,
+      18
+    ],
+    "depth_factor": 6.0,
+    "instances": 20,
+    "align_tangents": 128,
+    "eval_tangents": 128,
+    "readout_order": 1,
+    "max_walsh_order": 2,
+    "direction_sampler": "gaussian",
+    "measurement_basis": "Z",
+    "bitflip_rate": 0.0,
+    "simulation_batch_size": 32,
+    "probability_floor": 1e-13,
+    "svd_tolerance": 1e-10,
+    "min_regular_fraction": 0.95,
+    "shots": 10000,
+    "fd_epsilon": 0.01,
+    "fd_directions": 0,
+    "bootstrap_resamples": 5000
+  },
+  "high_n_cell_files": [
+    "downloaded/u1-scaling-n14-i00-i05/raw.csv",
+    "downloaded/u1-scaling-n14-i05-i10/raw.csv",
+    "downloaded/u1-scaling-n14-i10-i15/raw.csv",
+    "downloaded/u1-scaling-n14-i15-i20/raw.csv",
+    "downloaded/u1-scaling-n16-i00-i05/raw.csv",
+    "downloaded/u1-scaling-n16-i05-i10/raw.csv",
+    "downloaded/u1-scaling-n16-i10-i15/raw.csv",
+    "downloaded/u1-scaling-n16-i15-i20/raw.csv",
+    "downloaded/u1-scaling-n18-i00-i04/raw.csv",
+    "downloaded/u1-scaling-n18-i04-i08/raw.csv",
+    "downloaded/u1-scaling-n18-i08-i12/raw.csv",
+    "downloaded/u1-scaling-n18-i12-i16/raw.csv",
+    "downloaded/u1-scaling-n18-i16-i20/raw.csv"
+  ],
+  "archived_low_n_raw": "results/u1_alignment_mechanism_v1/raw.csv",
+  "new_n_values": [
+    14,
+    16,
+    18
+  ],
+  "combined_n_values": [
+    8,
+    10,
+    12,
+    14,
+    16,
+    18
+  ],
+  "new_circuits": 60,
+  "combined_circuits": 120,
+  "primary_metric": "cumulative_aligned_subspace_overlap",
+  "fit_models": [
+    "a*n^(-alpha)",
+    "a*exp(-b*n)"
+  ],
+  "fit_scope": "finite-size model discrimination; not an asymptotic proof"
+}
