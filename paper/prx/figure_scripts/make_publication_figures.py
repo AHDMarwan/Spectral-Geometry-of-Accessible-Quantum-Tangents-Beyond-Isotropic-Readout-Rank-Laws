@@ -88,7 +88,6 @@ def u1_scaling() -> None:
         ax.set_xticks([8, 10, 12, 14, 16, 18])
         ax.set_xlim(7.5, 18.5)
         ax.grid(axis="y", alpha=0.18, lw=0.6)
-        # Plain text only: no annotation box.
         ax.text(
             0.04,
             0.07,
@@ -102,7 +101,6 @@ def u1_scaling() -> None:
 
     axes[0].set_ylabel(r"aligned-subspace fraction $A_k$")
     axes[0].set_ylim(0.20, 0.87)
-
     fig.legend(
         legend_handles,
         legend_labels,
@@ -122,7 +120,7 @@ def symmetry_breaking() -> None:
     df = pd.read_csv(DATA / "symmetry_breaking_pilot_verified.csv")
     d = df[(df.n == 8) & (df.metric == "A1")].copy()
 
-    fig, ax = plt.subplots(figsize=(4.7, 3.55))
+    fig, ax = plt.subplots(figsize=(4.7, 3.75))
     configs = [
         ("preserve_Z", BLUE, "o", r"preserve $U(1)$: $R_Z$"),
         ("break_X", ORANGE, "s", r"break $U(1)$: $R_X$"),
@@ -157,14 +155,14 @@ def symmetry_breaking() -> None:
         handles,
         labels,
         frameon=False,
-        loc="upper center",
-        bbox_to_anchor=(0.5, 0.995),
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.01),
         ncol=3,
         handlelength=1.8,
         columnspacing=1.0,
         fontsize=8.4,
     )
-    fig.subplots_adjust(left=0.17, right=0.98, bottom=0.17, top=0.82)
+    fig.subplots_adjust(left=0.17, right=0.98, bottom=0.30, top=0.96)
     _save(fig, "fig_symmetry_breaking_control")
 
 
