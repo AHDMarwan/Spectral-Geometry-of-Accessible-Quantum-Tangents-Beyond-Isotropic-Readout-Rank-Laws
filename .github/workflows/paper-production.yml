@@ -1,0 +1,54 @@
+name: Paper production figures and citation pass
+
+on:
+  push:
+    branches:
+      - paper-rewrite-rank-orientation
+    paths:
+      - "paper/prx/**"
+      - ".github/workflows/paper-production.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-paper-assets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: paper-rewrite-rank-orientation
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install figure dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy pandas matplotlib pennylane
+      - name: Apply production manuscript pass
+        run: python paper/prx/production_finalize.py
+      - name: Generate data figures
+        run: python paper/prx/figure_scripts/make_publication_figures.py
+      - name: Generate PennyLane circuit figures
+        run: python paper/prx/figure_scripts/draw_circuits_pennylane.py
+      - name: Sanity-check generated files
+        run: |
+          test -s paper/prx/figures/production/fig_u1_alignment_scaling.pdf
+          test -s paper/prx/figures/production/fig_symmetry_breaking_control.pdf
+          test -s paper/prx/figures/production/fig_fixed_weight_rank_fraction.pdf
+          test -s paper/prx/figures/generated_circuits/circuit_ry_rz_cz.pdf
+          test -s paper/prx/figures/generated_circuits/circuit_su2_haar_u4.pdf
+          test -s paper/prx/figures/generated_circuits/circuit_u1_rz_xy.pdf
+      - name: Commit generated production assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add paper/prx/spectral_geometry_prx_rewrite.tex paper/prx/figures/production paper/prx/figures/generated_circuits
+          if git diff --cached --quiet; then
+            echo "No production changes to commit."
+          else
+            git commit -m "Build production paper figures and citation pass"
+            git push origin HEAD:paper-rewrite-rank-orientation
+          fi
