@@ -3,14 +3,15 @@ from pathlib import Path
 PAPER = Path(__file__).resolve().parent
 TARGET = PAPER / "spectral_geometry_prx_rewrite.tex"
 KEY = "AitHaddou2026MeasurementAccessible"
+REPO_URL = "https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws"
 
-BIB = r"""
+BIB = rf"""
 
-\bibitem{AitHaddou2026MeasurementAccessible}
+\bibitem{{{KEY}}}
 M. Ait Haddou,
 Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy,
 Manuscript and reproducibility repository (2026),
-\url{https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws}.
+\href{{{REPO_URL}}}{{GitHub reproducibility repository}}.
 ORCID: 0009-0008-1734-1721.
 """
 
@@ -54,8 +55,6 @@ def main() -> None:
     if new not in text and old in text:
         text = text.replace(old, new, 1)
 
-    # Result-level provenance. Literature citations explain external theory; this repository
-    # citation points to the frozen code/data behind the manuscript's own numerical values.
     result_sentences = [
         "The $n=18$ point is a single-architecture stress test rather than the family-balanced estimator used through $n=16$.",
         "Thus the physical low-weight readout can remain close to the rank reference while the covariance becomes highly concentrated spectrally.",
@@ -87,7 +86,17 @@ def main() -> None:
     if new not in text and old in text:
         text = text.replace(old, new, 1)
 
-    if f"\\bibitem{{{KEY}}}" not in text:
+    # Upgrade an already-present long visible URL from older production builds.
+    old_bib = rf"""\bibitem{{{KEY}}}
+M. Ait Haddou,
+Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy,
+Manuscript and reproducibility repository (2026),
+\url{{{REPO_URL}}}.
+ORCID: 0009-0008-1734-1721."""
+    new_bib = BIB.strip()
+    if old_bib in text:
+        text = text.replace(old_bib, new_bib, 1)
+    elif f"\\bibitem{{{KEY}}}" not in text:
         text = text.replace("\\end{thebibliography}", BIB + "\n\\end{thebibliography}", 1)
 
     TARGET.write_text(text, encoding="utf-8")
