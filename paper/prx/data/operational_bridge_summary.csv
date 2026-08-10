@@ -1,0 +1,13 @@
+family,n,metric,gain
+SU2-HaarU4-brickwork,8,gradient_signal,2.963
+SU2-HaarU4-brickwork,10,gradient_signal,4.6385
+SU2-HaarU4-brickwork,12,gradient_signal,9.5843
+SU2-HaarU4-brickwork,8,finite_shot_snr,1.734
+SU2-HaarU4-brickwork,10,finite_shot_snr,2.125
+SU2-HaarU4-brickwork,12,finite_shot_snr,3.111
+U1-RZ-XY-line,8,gradient_signal,1.148
+U1-RZ-XY-line,10,gradient_signal,1.189
+U1-RZ-XY-line,12,gradient_signal,1.210
+U1-RZ-XY-line,8,finite_shot_snr,1.068
+U1-RZ-XY-line,10,finite_shot_snr,1.097
+U1-RZ-XY-line,12,finite_shot_snr,1.112
