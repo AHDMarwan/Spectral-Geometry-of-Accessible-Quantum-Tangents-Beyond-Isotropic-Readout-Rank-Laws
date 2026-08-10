@@ -11,7 +11,7 @@ plus new production references.
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PAPER = ROOT / "paper" / "prx"
+PAPER = ROOT / "paper" / "manuscript"
 TARGET = PAPER / "spectral_geometry_rewrite.tex"
 ORIGINAL = PAPER / "spectral_geometry.tex"
 
