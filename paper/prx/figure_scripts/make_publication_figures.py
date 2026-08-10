@@ -2,13 +2,12 @@ from __future__ import annotations
 
 """Generate publication-grade figures used by the production rewrite.
 
-The script intentionally reads small, paper-facing CSV tables committed under
-``paper/prx/data`` so that figure generation is deterministic and does not
-require rerunning the quantum simulations.
+The script reads small, paper-facing CSV tables committed under ``paper/prx/data``
+so that figure generation is deterministic and does not require rerunning the
+quantum simulations.
 """
 
 from pathlib import Path
-import math
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,8 +18,8 @@ DATA = ROOT / "paper" / "prx" / "data"
 OUT = ROOT / "paper" / "prx" / "figures" / "production"
 OUT.mkdir(parents=True, exist_ok=True)
 
-# Journal-friendly, color-blind-safe palette. Figures are also distinguishable
-# by markers and line styles in grayscale.
+# Journal-friendly, color-blind-safe palette; marker/line-style differences
+# keep the figures readable in grayscale as well.
 BLUE = "#0072B2"
 ORANGE = "#D55E00"
 GREEN = "#009E73"
@@ -112,8 +111,6 @@ def symmetry_breaking() -> None:
             g["eps"], g["mean"], yerr=yerr, marker=marker, ms=4.5,
             capsize=2.5, lw=1.5, color=color, label=label,
         )
-    # Full-score-space random-orientation benchmark after charge breaking:
-    # r/N = 8/(2^8-1). This is shown only as a visual reference, not as a fit.
     baseline = 8 / (2**8 - 1)
     ax.axhline(baseline, color=GREY, ls=":", lw=1.2,
                label=r"full-space rank baseline $8/255$")
@@ -150,11 +147,73 @@ def fixed_weight_rank_fraction() -> None:
     _save(fig, "fig_fixed_weight_rank_fraction")
 
 
+def operational_bridge() -> None:
+    df = pd.read_csv(DATA / "operational_bridge_summary.csv")
+    fig, axes = plt.subplots(1, 2, figsize=(7.15, 3.05), sharex=True)
+    families = [
+        ("SU2-HaarU4-brickwork", BLUE, "o", "Haar-$U(4)$"),
+        ("U1-RZ-XY-line", ORANGE, "s", "$U(1)$"),
+    ]
+    for ax, metric, title in [
+        (axes[0], "gradient_signal", r"directional gradient-energy gain"),
+        (axes[1], "finite_shot_snr", r"finite-shot SNR gain"),
+    ]:
+        for family, color, marker, label in families:
+            g = df[(df.family == family) & (df.metric == metric)].sort_values("n")
+            ax.plot(g.n, g.gain, marker=marker, color=color, lw=1.6, ms=4.5, label=label)
+        ax.axhline(1.0, color=GREY, ls=":", lw=1.0)
+        ax.set_title(title)
+        ax.set_xlabel("qubits $n$")
+        ax.set_xticks([8, 10, 12])
+        ax.grid(axis="y", alpha=0.18, lw=0.6)
+    axes[0].set_ylabel("aligned / physical")
+    axes[0].set_yscale("log")
+    axes[0].set_yticks([1, 2, 4, 8])
+    axes[0].get_yaxis().set_major_formatter(plt.ScalarFormatter())
+    axes[1].legend(frameon=False, loc="upper left")
+    fig.suptitle("Orientation changes usable signal at fixed rank and shot budget", y=1.03)
+    fig.tight_layout()
+    _save(fig, "fig_operational_bridge")
+
+
+def noise_robustness() -> None:
+    df = pd.read_csv(DATA / "noise_robustness_summary.csv")
+    fig, axes = plt.subplots(1, 2, figsize=(7.15, 3.05), sharex=True)
+    for ax, family, color, title in [
+        (axes[0], "SU2-HaarU4-brickwork", BLUE, r"Haar-$U(4)$"),
+        (axes[1], "U1-RZ-XY-line", ORANGE, r"$U(1)$"),
+    ]:
+        d = df[df.family == family]
+        for n, marker in [(8, "o"), (10, "s"), (12, "^")]:
+            g = d[d.n == n].sort_values("bitflip_rate")
+            yerr = np.vstack([g.gradient_signal_gain - g.ci_low, g.ci_high - g.gradient_signal_gain])
+            ax.errorbar(
+                100 * g.bitflip_rate, g.gradient_signal_gain, yerr=yerr,
+                marker=marker, ms=4.2, lw=1.4, capsize=2.2, color=color,
+                alpha=0.55 + 0.2 * ((n - 8) / 2), label=rf"$n={n}$",
+            )
+        ax.axhline(1.0, color=GREY, ls=":", lw=1.0)
+        ax.set_title(title)
+        ax.set_xlabel("bit-flip readout noise (%)")
+        ax.set_xticks([0, 1, 3, 5])
+        ax.grid(axis="y", alpha=0.18, lw=0.6)
+        ax.legend(frameon=False)
+    axes[0].set_ylabel("aligned / physical gradient signal")
+    axes[0].set_yscale("log")
+    axes[0].set_yticks([1, 2, 4, 8])
+    axes[0].get_yaxis().set_major_formatter(plt.ScalarFormatter())
+    fig.suptitle("Noise-aware orientation advantage", y=1.03)
+    fig.tight_layout()
+    _save(fig, "fig_noise_robustness")
+
+
 def main() -> None:
     _style()
     u1_scaling()
     symmetry_breaking()
     fixed_weight_rank_fraction()
+    operational_bridge()
+    noise_robustness()
 
 
 if __name__ == "__main__":
