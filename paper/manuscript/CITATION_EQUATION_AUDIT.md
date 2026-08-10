@@ -2,7 +2,7 @@
 
 Date: 2026-08-10
 
-Scope: `paper/prx/spectral_geometry_prx_rewrite.tex` on branch `paper-rewrite-rank-orientation`.
+Scope: `paper/manuscript/spectral_geometry_rewrite.tex` on branch `paper-rewrite-rank-orientation`.
 
 Principle used in this audit:
 

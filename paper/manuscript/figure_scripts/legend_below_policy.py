@@ -1,6 +1,6 @@
 from pathlib import Path
 
-TARGET = Path(__file__).resolve().parents[1] / "make_prx_figures.py"
+TARGET = Path(__file__).resolve().parents[1] / "make_paper_figures.py"
 
 
 def rep(text: str, old: str, new: str) -> str:

@@ -7,7 +7,7 @@ Idempotent: safe to run on every paper-production CI pass.
 
 from pathlib import Path
 
-TARGET = Path("paper/prx/spectral_geometry_prx_rewrite.tex")
+TARGET = Path("paper/manuscript/spectral_geometry_rewrite.tex")
 
 FIGURE = r"""
 

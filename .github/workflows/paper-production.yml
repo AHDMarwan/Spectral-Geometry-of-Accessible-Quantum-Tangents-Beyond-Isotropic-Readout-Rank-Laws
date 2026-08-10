@@ -6,13 +6,13 @@ on:
       - main
       - paper-rewrite-rank-orientation
     paths:
-      - "paper/prx/**"
+      - "paper/manuscript/**"
       - ".github/workflows/paper-production.yml"
   pull_request:
     branches:
       - main
     paths:
-      - "paper/prx/**"
+      - "paper/manuscript/**"
       - ".github/workflows/paper-production.yml"
   workflow_dispatch:
 
@@ -37,119 +37,119 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
       - name: Restore complete rewrite and apply author metadata
-        run: python paper/prx/author_metadata_finalize.py
+        run: python paper/manuscript/author_metadata_finalize.py
       - name: Make production pass rerun-safe
-        run: python paper/prx/production_idempotency_hotfix.py
+        run: python paper/manuscript/production_idempotency_hotfix.py
       - name: Apply production manuscript pass
-        run: python paper/prx/production_finalize.py
+        run: python paper/manuscript/production_finalize.py
       - name: Apply code and results repository citation
-        run: python paper/prx/repository_citation_finalize.py
+        run: python paper/manuscript/repository_citation_finalize.py
       - name: Cite submitted isotropic rank-law manuscript
-        run: python paper/prx/prior_paper_temporary_citation.py
+        run: python paper/manuscript/prior_paper_temporary_citation.py
       - name: Compact bibliography links and remove numeric ORCID prose
-        run: python paper/prx/bibliography_visual_finalize.py
+        run: python paper/manuscript/bibliography_visual_finalize.py
       - name: Apply final manuscript polish
-        run: python paper/prx/final_submission_polish.py
+        run: python paper/manuscript/final_submission_polish.py
       - name: Enforce final visual and ORCID policy
-        run: python paper/prx/final_visual_policy.py
+        run: python paper/manuscript/final_visual_policy.py
       - name: Add comprehensive appendices
-        run: python paper/prx/appendices_finalize.py
+        run: python paper/manuscript/appendices_finalize.py
       - name: Move all legacy figure legends below plots
-        run: python paper/prx/figure_scripts/legacy_visual_cleanup.py
+        run: python paper/manuscript/figure_scripts/legacy_visual_cleanup.py
       - name: Move publication figure legends below plots
-        run: python paper/prx/figure_scripts/publication_visual_cleanup.py
+        run: python paper/manuscript/figure_scripts/publication_visual_cleanup.py
       - name: Verify legend generator policy
         run: |
-          if grep -q 'ax.legend' paper/prx/make_prx_figures.py; then
+          if grep -q 'ax.legend' paper/manuscript/make_paper_figures.py; then
             echo 'In-panel legend remains in legacy generator'
             exit 1
           fi
-          grep -q 'def legend_below' paper/prx/make_prx_figures.py
-          grep -q 'fig.legend(' paper/prx/make_prx_figures.py
-          grep -q 'legend_below(fig)' paper/prx/make_prx_figures.py
-          grep -q 'bbox_to_anchor=(0.5, 0.018)' paper/prx/make_prx_figures.py
+          grep -q 'def legend_below' paper/manuscript/make_paper_figures.py
+          grep -q 'fig.legend(' paper/manuscript/make_paper_figures.py
+          grep -q 'legend_below(fig)' paper/manuscript/make_paper_figures.py
+          grep -q 'bbox_to_anchor=(0.5, 0.018)' paper/manuscript/make_paper_figures.py
       - name: Generate legacy vector figures used by the rewrite
         run: |
-          cd paper/prx
-          python make_prx_figures.py
+          cd paper/manuscript
+          python make_paper_figures.py
       - name: Generate publication data figures
-        run: python paper/prx/figure_scripts/make_publication_figures.py
+        run: python paper/manuscript/figure_scripts/make_publication_figures.py
       - name: Generate appendix diagnostic figures
-        run: python paper/prx/figure_scripts/make_appendix_figures.py
+        run: python paper/manuscript/figure_scripts/make_appendix_figures.py
       - name: Generate PennyLane circuit figures
-        run: python paper/prx/figure_scripts/draw_circuits_pennylane.py
+        run: python paper/manuscript/figure_scripts/draw_circuits_pennylane.py
       - name: Insert circuit figure and PennyLane citation
-        run: python paper/prx/insert_circuit_figure.py
+        run: python paper/manuscript/insert_circuit_figure.py
       - name: Compile rewritten manuscript
         run: |
-          cd paper/prx
-          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_prx_rewrite.tex
-          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_prx_rewrite.tex
-          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_prx_rewrite.tex
-          test -s spectral_geometry_prx_rewrite.pdf
-          if grep -q 'undefined citations' spectral_geometry_prx_rewrite.log; then
+          cd paper/manuscript
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
+          test -s spectral_geometry_rewrite.pdf
+          if grep -q 'undefined citations' spectral_geometry_rewrite.log; then
             echo 'Undefined citation detected'
             exit 1
           fi
-          if grep -q 'undefined references' spectral_geometry_prx_rewrite.log; then
+          if grep -q 'undefined references' spectral_geometry_rewrite.log; then
             echo 'Undefined cross-reference detected'
             exit 1
           fi
       - name: Promote rewrite to canonical manuscript
         run: |
-          cd paper/prx
-          cp spectral_geometry_prx_rewrite.tex spectral_geometry_prx.tex
-          cp spectral_geometry_prx_rewrite.pdf spectral_geometry_prx.pdf
-          rm -f spectral_geometry_prx_submission_package.zip
-          zip -qr spectral_geometry_prx_submission_package.zip \
-            spectral_geometry_prx.pdf spectral_geometry_prx.tex \
+          cd paper/manuscript
+          cp spectral_geometry_rewrite.tex spectral_geometry.tex
+          cp spectral_geometry_rewrite.pdf spectral_geometry.pdf
+          rm -f spectral_geometry_submission_package.zip
+          zip -qr spectral_geometry_submission_package.zip \
+            spectral_geometry.pdf spectral_geometry.tex \
             CITATION_EQUATION_AUDIT.md FIGURE_VISUAL_QA_CHECKLIST.md data figure_scripts figures
       - name: Sanity-check production files
         run: |
-          test -s paper/prx/spectral_geometry_prx.pdf
-          test -s paper/prx/figures/production/fig_u1_alignment_scaling.pdf
-          test -s paper/prx/figures/production/fig_symmetry_breaking_control.pdf
-          test -s paper/prx/figures/production/fig_fixed_weight_rank_fraction.pdf
-          test -s paper/prx/figures/appendix_operational_gains.pdf
-          test -s paper/prx/figures/appendix_noise_robustness.pdf
-          test -s paper/prx/figures/appendix_u1_fit_diagnostics.pdf
-          test -s paper/prx/figures/generated_circuits/circuit_ry_rz_cz.pdf
-          test -s paper/prx/figures/generated_circuits/circuit_su2_cnot.pdf
-          test -s paper/prx/figures/generated_circuits/circuit_su2_cz_ring.pdf
-          test -s paper/prx/figures/generated_circuits/circuit_su2_cz_random_matching.pdf
-          test -s paper/prx/figures/generated_circuits/circuit_su2_haar_u4.pdf
-          test -s paper/prx/figures/generated_circuits/circuit_u1_rz_xy.pdf
-          grep -q 'Rank Baselines and Spectral Orientation' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\label{fig:circuits}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\appendix' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\label{app:score_geometry}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\label{app:grassmann}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\label{app:walsh_rank}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\label{app:crossfit}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\label{app:operational}' paper/prx/spectral_geometry_prx.tex
-          grep -q 'Appendix~\\ref{app:grassmann}' paper/prx/spectral_geometry_prx.tex
-          grep -q 'Appendix~\\ref{app:walsh_rank}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\bibitem{Fernandez2025}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\bibitem{AitHaddou2026IsotropicRankLaws}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\cite{AitHaddou2026IsotropicRankLaws}' paper/prx/spectral_geometry_prx.tex
-          grep -q 'arXiv identifier pending' paper/prx/spectral_geometry_prx.tex
-          grep -q 'A_1(18)=0.283586' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\usepackage{orcidlink}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\orcidlink{0009-0008-1734-1721}' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\email{aithaddou.marwan@outlook.com}' paper/prx/spectral_geometry_prx.tex
-          grep -q 'Mohamed Bennai\\,\\orcidlink{0000-0002-7364-5171}' paper/prx/spectral_geometry_prx.tex
-          grep -q 'GitHub reproducibility repository' paper/prx/spectral_geometry_prx.tex
-          grep -q '\\begin{center}' paper/prx/spectral_geometry_prx.tex
-          if grep -q '\\boxed{\\text{rank fixes a baseline' paper/prx/spectral_geometry_prx.tex; then
+          test -s paper/manuscript/spectral_geometry.pdf
+          test -s paper/manuscript/figures/production/fig_u1_alignment_scaling.pdf
+          test -s paper/manuscript/figures/production/fig_symmetry_breaking_control.pdf
+          test -s paper/manuscript/figures/production/fig_fixed_weight_rank_fraction.pdf
+          test -s paper/manuscript/figures/appendix_operational_gains.pdf
+          test -s paper/manuscript/figures/appendix_noise_robustness.pdf
+          test -s paper/manuscript/figures/appendix_u1_fit_diagnostics.pdf
+          test -s paper/manuscript/figures/generated_circuits/circuit_ry_rz_cz.pdf
+          test -s paper/manuscript/figures/generated_circuits/circuit_su2_cnot.pdf
+          test -s paper/manuscript/figures/generated_circuits/circuit_su2_cz_ring.pdf
+          test -s paper/manuscript/figures/generated_circuits/circuit_su2_cz_random_matching.pdf
+          test -s paper/manuscript/figures/generated_circuits/circuit_su2_haar_u4.pdf
+          test -s paper/manuscript/figures/generated_circuits/circuit_u1_rz_xy.pdf
+          grep -q 'Rank Baselines and Spectral Orientation' paper/manuscript/spectral_geometry.tex
+          grep -q '\\label{fig:circuits}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\appendix' paper/manuscript/spectral_geometry.tex
+          grep -q '\\label{app:score_geometry}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\label{app:grassmann}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\label{app:walsh_rank}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\label{app:crossfit}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\label{app:operational}' paper/manuscript/spectral_geometry.tex
+          grep -q 'Appendix~\\ref{app:grassmann}' paper/manuscript/spectral_geometry.tex
+          grep -q 'Appendix~\\ref{app:walsh_rank}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\bibitem{Fernandez2025}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\bibitem{AitHaddou2026IsotropicRankLaws}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\cite{AitHaddou2026IsotropicRankLaws}' paper/manuscript/spectral_geometry.tex
+          grep -q 'arXiv identifier pending' paper/manuscript/spectral_geometry.tex
+          grep -q 'A_1(18)=0.283586' paper/manuscript/spectral_geometry.tex
+          grep -q '\\usepackage{orcidlink}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\orcidlink{0009-0008-1734-1721}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\email{aithaddou.marwan@outlook.com}' paper/manuscript/spectral_geometry.tex
+          grep -q 'Mohamed Bennai\\,\\orcidlink{0000-0002-7364-5171}' paper/manuscript/spectral_geometry.tex
+          grep -q 'GitHub reproducibility repository' paper/manuscript/spectral_geometry.tex
+          grep -q '\\begin{center}' paper/manuscript/spectral_geometry.tex
+          if grep -q '\\boxed{\\text{rank fixes a baseline' paper/manuscript/spectral_geometry.tex; then
             echo 'Core prose message must not be boxed'
             exit 1
           fi
-          if grep -q 'ORCID: 0009-0008-1734-1721' paper/prx/spectral_geometry_prx.tex; then
+          if grep -q 'ORCID: 0009-0008-1734-1721' paper/manuscript/spectral_geometry.tex; then
             echo 'Author numeric ORCID prose should not be visible'
             exit 1
           fi
-          if grep -q 'ORCID: 0000-0002-7364-5171' paper/prx/spectral_geometry_prx.tex; then
+          if grep -q 'ORCID: 0000-0002-7364-5171' paper/manuscript/spectral_geometry.tex; then
             echo 'Acknowledgment numeric ORCID prose should not be visible'
             exit 1
           fi
@@ -158,14 +158,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add paper/prx/spectral_geometry_prx.tex \
-                  paper/prx/spectral_geometry_prx.pdf \
-                  paper/prx/spectral_geometry_prx_submission_package.zip \
-                  paper/prx/spectral_geometry_prx_rewrite.tex \
-                  paper/prx/figures/production \
-                  paper/prx/figures/generated_circuits \
-                  paper/prx/figures/appendix_*.pdf \
-                  paper/prx/figures/appendix_*.png
+          git add paper/manuscript/spectral_geometry.tex \
+                  paper/manuscript/spectral_geometry.pdf \
+                  paper/manuscript/spectral_geometry_submission_package.zip \
+                  paper/manuscript/spectral_geometry_rewrite.tex \
+                  paper/manuscript/figures/production \
+                  paper/manuscript/figures/generated_circuits \
+                  paper/manuscript/figures/appendix_*.pdf \
+                  paper/manuscript/figures/appendix_*.png
           if git diff --cached --quiet; then
             echo "No production changes to commit."
           else

@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pennylane as qml
 
-OUT = Path("paper/prx/figures/generated_circuits")
+OUT = Path("paper/manuscript/figures/generated_circuits")
 OUT.mkdir(parents=True, exist_ok=True)
 
 

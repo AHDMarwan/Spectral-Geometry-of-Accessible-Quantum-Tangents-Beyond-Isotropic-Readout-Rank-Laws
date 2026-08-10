@@ -1,0 +1,57 @@
+name: Build paper manuscript
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'paper/manuscript/**'
+      - '.github/workflows/build-paper.yml'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  build:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip numpy pandas matplotlib
+
+      - name: Install TeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
+
+      - name: Generate vector figures
+        run: |
+          cd paper/manuscript
+          python make_paper_figures.py
+
+      - name: Compile manuscript
+        run: |
+          cd paper/manuscript
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry.tex
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry.tex
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry.tex
+          if grep -q 'Overfull' spectral_geometry.log; then
+            echo 'Overfull box detected'
+            grep 'Overfull' spectral_geometry.log
+            exit 1
+          fi
+
+      - name: Build manuscript packages
+        run: |
+          cd paper/manuscript
+          rm -f spectral_geometry_source.zip spectral_geometry_submission_package.zip
+          zip -qr spectral_geometry_source.zip spectral_geometry.tex README_BUILD.txt popular_summary.txt make_paper_figures.py figures
+          zip -qr spectral_geometry_submission_package.zip spectral_geometry.pdf spectral_geometry.tex README_BUILD.txt popular_summary.txt make_paper_figures.py figures

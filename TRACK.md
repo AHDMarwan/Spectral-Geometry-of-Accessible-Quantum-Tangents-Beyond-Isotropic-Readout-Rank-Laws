@@ -515,7 +515,7 @@ The scientific work was not the only source of failure. The manuscript-productio
 
 ### 15.1 Compiling the wrong manuscript source
 
-An early production workflow compiled the older canonical `spectral_geometry_prx.tex` rather than the rewritten source.
+An early production workflow compiled the older canonical `spectral_geometry.tex` rather than the rewritten source.
 
 Fix: the workflow was changed to compile the rewrite and then promote it to the canonical manuscript.
 

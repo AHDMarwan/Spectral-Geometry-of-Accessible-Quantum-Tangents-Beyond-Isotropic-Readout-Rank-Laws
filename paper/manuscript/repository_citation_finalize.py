@@ -1,7 +1,7 @@
 from pathlib import Path
 
 PAPER = Path(__file__).resolve().parent
-TARGET = PAPER / "spectral_geometry_prx_rewrite.tex"
+TARGET = PAPER / "spectral_geometry_rewrite.tex"
 KEY = "AitHaddou2026MeasurementAccessible"
 REPO_URL = "https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws"
 DOI = "10.5281/zenodo.21877379"

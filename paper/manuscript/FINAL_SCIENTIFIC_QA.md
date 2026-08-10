@@ -42,7 +42,7 @@ This checklist is the last production pass before treating the manuscript as sub
 
 ## Final blockers before submission
 
-1. Inspect the newest canonical `paper/prx/spectral_geometry_prx.pdf` visually after the final bot build.
+1. Inspect the newest canonical `paper/manuscript/spectral_geometry.pdf` visually after the final bot build.
 2. Confirm there are no undefined citations, missing figure files, overfull boxes that visibly clip text, or stale figures.
 3. Confirm the title, abstract, conclusion, and cover letter use the same conservative novelty framing.
 4. Freeze the submission package only after the final PDF visual inspection passes.
