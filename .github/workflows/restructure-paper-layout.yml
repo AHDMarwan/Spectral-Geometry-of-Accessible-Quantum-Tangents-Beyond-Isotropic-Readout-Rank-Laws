@@ -1,0 +1,115 @@
+name: One-time paper layout migration
+
+on:
+  push:
+    branches:
+      - agent/simplify-paper-layout
+    paths:
+      - ".github/workflows/restructure-paper-layout.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/simplify-paper-layout
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Rename journal-specific paper layout
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -d paper/prx
+          test -f .github/workflows/build-prx-combined.yml
+
+          git mv paper/prx paper/manuscript
+          git mv .github/workflows/build-prx-combined.yml .github/workflows/build-paper.yml
+
+          git mv paper/manuscript/make_prx_figures.py paper/manuscript/make_paper_figures.py
+          git mv paper/manuscript/spectral_geometry_prx.tex paper/manuscript/spectral_geometry.tex
+          git mv paper/manuscript/spectral_geometry_prx_rewrite.tex paper/manuscript/spectral_geometry_rewrite.tex
+          git mv paper/manuscript/spectral_geometry_prx.pdf paper/manuscript/spectral_geometry.pdf
+
+          if [[ -f paper/manuscript/spectral_geometry_prx_source.zip ]]; then
+            git mv paper/manuscript/spectral_geometry_prx_source.zip paper/manuscript/spectral_geometry_source.zip
+          fi
+          if [[ -f paper/manuscript/spectral_geometry_prx_submission_package.zip ]]; then
+            git mv paper/manuscript/spectral_geometry_prx_submission_package.zip paper/manuscript/spectral_geometry_submission_package.zip
+          fi
+
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          replacements = (
+              ("paper/prx", "paper/manuscript"),
+              ("spectral_geometry_prx", "spectral_geometry"),
+              ("make_prx_figures.py", "make_paper_figures.py"),
+              ("build-prx-combined.yml", "build-paper.yml"),
+              ("Build combined PRX manuscript", "Build paper manuscript"),
+          )
+
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
+          for raw in tracked:
+              if not raw:
+                  continue
+              path = Path(raw.decode("utf-8"))
+              if not path.exists() or path.is_dir():
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              updated = text
+              for old, new in replacements:
+                  updated = updated.replace(old, new)
+              if updated != text:
+                  path.write_text(updated, encoding="utf-8")
+          PY
+
+          rm .github/workflows/restructure-paper-layout.yml
+
+          test -f paper/manuscript/spectral_geometry.tex
+          test -f paper/manuscript/spectral_geometry_rewrite.tex
+          test -f paper/manuscript/spectral_geometry.pdf
+          test -f paper/manuscript/make_paper_figures.py
+          test -f .github/workflows/build-paper.yml
+          test ! -e paper/prx
+          test ! -e .github/workflows/build-prx-combined.yml
+
+          if git grep -n 'paper/prx' -- ':!TRACK.md'; then
+            echo 'Stale paper/prx path remains'
+            exit 1
+          fi
+          if git grep -n 'spectral_geometry_prx'; then
+            echo 'Stale spectral_geometry_prx filename remains'
+            exit 1
+          fi
+          if git grep -n 'make_prx_figures.py'; then
+            echo 'Stale make_prx_figures.py reference remains'
+            exit 1
+          fi
+          if git grep -n 'build-prx-combined.yml'; then
+            echo 'Stale build-prx-combined.yml reference remains'
+            exit 1
+          fi
+
+          python -m compileall -q paper/manuscript
+          git diff --check
+
+      - name: Commit migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git status --short
+          git commit -m "Simplify paper directory layout [skip ci]"
+          git push origin HEAD:agent/simplify-paper-layout
