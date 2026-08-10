@@ -1,0 +1,195 @@
+name: PRA v2 automated revision
+
+on:
+  push:
+    branches:
+      - agent/pra-v2-automated-revision
+    paths:
+      - '.github/workflows/pra-v2-automated.yml'
+      - 'paper/manuscript/pra_v2_sector_null.py'
+      - 'paper/manuscript/pra_v2_finalize.py'
+      - 'paper/manuscript/figure_scripts/make_pra_v2_figures.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pra-v2-automated.yml'
+      - 'paper/manuscript/pra_v2_sector_null.py'
+      - 'paper/manuscript/pra_v2_finalize.py'
+      - 'paper/manuscript/figure_scripts/make_pra_v2_figures.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+env:
+  PYTHONHASHSEED: '0'
+  OMP_NUM_THREADS: '1'
+  OPENBLAS_NUM_THREADS: '1'
+  MKL_NUM_THREADS: '1'
+  NUMEXPR_NUM_THREADS: '1'
+
+concurrency:
+  group: pra-v2-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  revise-audit-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install reproducible Python environment
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/reproducible.txt
+          pip install --no-deps -e .
+
+      - name: Install TeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
+
+      - name: Repository technical tests
+        run: pytest -q
+
+      - name: Build sector-corrected U1 null audit
+        run: python paper/manuscript/pra_v2_sector_null.py
+
+      - name: Generate PRA v2 control figure
+        run: python paper/manuscript/figure_scripts/make_pra_v2_figures.py
+
+      - name: Apply idempotent PRA v2 manuscript revision
+        run: python paper/manuscript/pra_v2_finalize.py
+
+      - name: Compile PRA v2 manuscript
+        run: |
+          cd paper/manuscript
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
+          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
+          test -s spectral_geometry_rewrite.pdf
+          if grep -q 'undefined citations' spectral_geometry_rewrite.log; then
+            echo 'Undefined citation detected'
+            exit 1
+          fi
+          if grep -q 'undefined references' spectral_geometry_rewrite.log; then
+            echo 'Undefined cross-reference detected'
+            exit 1
+          fi
+
+      - name: Scientific and journal-target invariants
+        shell: bash
+        run: |
+          grep -q '\\documentclass\[aps,pra,reprint' paper/manuscript/spectral_geometry_rewrite.tex
+          grep -q 'PRA-V2-AUTOMATED-REVISION' paper/manuscript/spectral_geometry_rewrite.tex
+          grep -q 'sector-corrected random-orientation control' paper/manuscript/spectral_geometry_rewrite.tex
+          grep -q 'not an end-to-end claim that learning' paper/manuscript/spectral_geometry_rewrite.tex
+          grep -q 'fig_u1_sector_null.pdf' paper/manuscript/spectral_geometry_rewrite.tex
+          test -s paper/manuscript/figures/production/fig_u1_sector_null.pdf
+          test -s paper/manuscript/data/pra_v2_u1_sector_null.csv
+          test -s paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md
+          python - <<'PY'
+          import pandas as pd
+          d = pd.read_csv('paper/manuscript/data/pra_v2_u1_sector_null.csv')
+          assert (d.observed_ci_low > d.null_plus_5sd).all()
+          n18 = d[d.n == 18].set_index('walsh_order')
+          assert n18.loc[1, 'observed_over_null'] > 500
+          assert n18.loc[2, 'observed_over_null'] > 100
+          print(n18[['observed_mean','sector_null_mean','observed_over_null']])
+          PY
+
+      - name: Promote v2 rewrite to canonical branch artifacts
+        run: |
+          cd paper/manuscript
+          cp spectral_geometry_rewrite.tex spectral_geometry.tex
+          cp spectral_geometry_rewrite.pdf spectral_geometry.pdf
+          rm -f spectral_geometry_submission_package.zip
+          zip -qr spectral_geometry_submission_package.zip \
+            spectral_geometry.pdf spectral_geometry.tex \
+            PRA_V2_SECTOR_NULL_AUDIT.md \
+            data/pra_v2_u1_sector_null.csv \
+            figures/production/fig_u1_sector_null.pdf \
+            figures/production/fig_u1_sector_null.png \
+            CITATION_EQUATION_AUDIT.md FIGURE_VISUAL_QA_CHECKLIST.md \
+            data figure_scripts figures
+
+      - name: Write machine-readable revision report
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import pandas as pd
+
+          d = pd.read_csv('paper/manuscript/data/pra_v2_u1_sector_null.csv')
+          n18 = d[d.n == 18].set_index('walsh_order')
+          p = json.loads(Path('profiles/trainability_bridge_v1.json').read_text())
+          report = f'''# PRA v2 automation report
+
+          Status: all technical and manuscript gates passed in this job.
+
+          ## Added referee-facing controls
+
+          - Half-filled-sector random-orientation null for A_k.
+          - n=18 one-body observed/null ratio: {n18.loc[1, 'observed_over_null']:.1f}x.
+          - n=18 weight-through-two observed/null ratio: {n18.loc[2, 'observed_over_null']:.1f}x.
+          - Cross-fit resource accounting: {p['align_tangents']} fit tangents, {p['eval_tangents']} held-out evaluation tangents, {p['shots']} evaluation shots, {p['fd_directions']} finite-difference directions.
+          - REVTeX target switched from PRX to PRA.
+
+          ## Interpretation guardrails
+
+          The sector-null control is geometric and does not identify the U(1) mechanism. The fixed-shot comparison isolates evaluation-time orientation effects; calibration cost for learning the aligned projector remains separate.
+          '''
+          Path('paper/manuscript/PRA_V2_AUTOMATION_REPORT.md').write_text('\n'.join(line.strip() for line in report.splitlines()) + '\n')
+          PY
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pra-v2-revision-package
+          path: |
+            paper/manuscript/spectral_geometry.pdf
+            paper/manuscript/spectral_geometry.tex
+            paper/manuscript/spectral_geometry_submission_package.zip
+            paper/manuscript/PRA_V2_AUTOMATION_REPORT.md
+            paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md
+            paper/manuscript/data/pra_v2_u1_sector_null.csv
+            paper/manuscript/figures/production/fig_u1_sector_null.pdf
+            paper/manuscript/figures/production/fig_u1_sector_null.png
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Commit generated PRA v2 artifacts to branch
+        if: github.event_name != 'workflow_dispatch'
+        shell: bash
+        env:
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref || github.ref_name }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            paper/manuscript/spectral_geometry_rewrite.tex \
+            paper/manuscript/spectral_geometry_rewrite.pdf \
+            paper/manuscript/spectral_geometry.tex \
+            paper/manuscript/spectral_geometry.pdf \
+            paper/manuscript/spectral_geometry_submission_package.zip \
+            paper/manuscript/PRA_V2_AUTOMATION_REPORT.md \
+            paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md \
+            paper/manuscript/data/pra_v2_u1_sector_null.csv \
+            paper/manuscript/figures/production/fig_u1_sector_null.pdf \
+            paper/manuscript/figures/production/fig_u1_sector_null.png
+          if git diff --cached --quiet; then
+            echo 'No generated PRA v2 changes to commit.'
+          else
+            git commit -m 'Generate PRA v2 referee-facing revision [skip ci]'
+            git pull --rebase origin "$BRANCH_NAME"
+            git push origin HEAD:"$BRANCH_NAME"
+          fi
