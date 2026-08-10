@@ -1,0 +1,1 @@
+Trigger a clean production rebuild after the comprehensive appendix workflow was added. The canonical PDF must contain the appendices and appendix cross-references.
