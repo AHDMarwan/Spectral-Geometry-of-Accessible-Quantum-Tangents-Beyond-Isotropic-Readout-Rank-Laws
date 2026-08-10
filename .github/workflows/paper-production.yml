@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - paper-rewrite-rank-orientation
+      - paper-finalization-pass
     paths:
       - "paper/prx/**"
       - ".github/workflows/paper-production.yml"
@@ -41,11 +42,15 @@ jobs:
         run: python paper/prx/figure_scripts/draw_circuits_pennylane.py
       - name: Insert circuit figure and PennyLane citation
         run: python paper/prx/insert_circuit_figure.py
+      - name: Insert operational and noise figures
+        run: python paper/prx/insert_operational_figures.py
       - name: Sanity-check generated files
         run: |
           test -s paper/prx/figures/production/fig_u1_alignment_scaling.pdf
           test -s paper/prx/figures/production/fig_symmetry_breaking_control.pdf
           test -s paper/prx/figures/production/fig_fixed_weight_rank_fraction.pdf
+          test -s paper/prx/figures/production/fig_operational_bridge.pdf
+          test -s paper/prx/figures/production/fig_noise_robustness.pdf
           test -s paper/prx/figures/generated_circuits/circuit_ry_rz_cz.pdf
           test -s paper/prx/figures/generated_circuits/circuit_su2_cnot.pdf
           test -s paper/prx/figures/generated_circuits/circuit_su2_cz_ring.pdf
@@ -53,6 +58,8 @@ jobs:
           test -s paper/prx/figures/generated_circuits/circuit_su2_haar_u4.pdf
           test -s paper/prx/figures/generated_circuits/circuit_u1_rz_xy.pdf
           grep -q '\\label{fig:circuits}' paper/prx/spectral_geometry_prx_rewrite.tex
+          grep -q '\\label{fig:operational-bridge}' paper/prx/spectral_geometry_prx_rewrite.tex
+          grep -q '\\label{fig:noise-robustness}' paper/prx/spectral_geometry_prx_rewrite.tex
           grep -q '\\bibitem{Bergholm2018}' paper/prx/spectral_geometry_prx_rewrite.tex
       - name: Commit generated production assets
         if: github.event_name != 'pull_request'
@@ -63,6 +70,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No production changes to commit."
           else
-            git commit -m "Build production paper figures and citation pass"
-            git push origin HEAD:paper-rewrite-rank-orientation
+            git commit -m "Build final production paper figures [skip ci]"
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi
