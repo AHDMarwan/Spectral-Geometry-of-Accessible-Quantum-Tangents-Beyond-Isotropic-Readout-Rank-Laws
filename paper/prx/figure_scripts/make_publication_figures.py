@@ -88,6 +88,7 @@ def u1_scaling() -> None:
         ax.set_xticks([8, 10, 12, 14, 16, 18])
         ax.set_xlim(7.5, 18.5)
         ax.grid(axis="y", alpha=0.18, lw=0.6)
+        # Plain text only: no annotation box.
         ax.text(
             0.04,
             0.07,
@@ -95,7 +96,6 @@ def u1_scaling() -> None:
             transform=ax.transAxes,
             fontsize=8.6,
             linespacing=1.15,
-            bbox=dict(boxstyle="round,pad=0.25", fc="white", ec=LIGHT_GREY, lw=0.7),
         )
         if legend_handles is None:
             legend_handles, legend_labels = ax.get_legend_handles_labels()
@@ -103,8 +103,6 @@ def u1_scaling() -> None:
     axes[0].set_ylabel(r"aligned-subspace fraction $A_k$")
     axes[0].set_ylim(0.20, 0.87)
 
-    # Compact two-row shared legend below the panels; short labels prevent
-    # clipping in the PRX two-column layout.
     fig.legend(
         legend_handles,
         legend_labels,
@@ -154,8 +152,6 @@ def symmetry_breaking() -> None:
     ax.set_ylim(0.0, 0.60)
     ax.grid(axis="y", alpha=0.18, lw=0.6)
 
-    # No internal title: the figure caption carries the title.  A single-row
-    # figure-level legend sits cleanly above the axes without covering data.
     handles, labels = ax.get_legend_handles_labels()
     fig.legend(
         handles,
@@ -190,8 +186,6 @@ def fixed_weight_rank_fraction() -> None:
     ax.grid(which="major", axis="y", alpha=0.18, lw=0.6)
     ax.set_title("Rank-only baseline for fixed-weight diagonal readout", pad=8)
 
-    # Direct labels are clearer than a legend for two monotone curves and avoid
-    # the title/legend collision seen in the manuscript proof.
     ax.annotate(
         r"weight $\leq2$",
         xy=(19, y2[n.tolist().index(19)]),
