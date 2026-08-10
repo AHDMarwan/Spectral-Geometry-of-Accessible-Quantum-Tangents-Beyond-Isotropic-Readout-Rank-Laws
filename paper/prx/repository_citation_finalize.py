@@ -15,6 +15,15 @@ ORCID: 0009-0008-1734-1721.
 """
 
 
+def add_cite(text: str, sentence: str) -> str:
+    cited = sentence[:-1] + f" \\cite{{{KEY}}}." if sentence.endswith(".") else sentence + f" \\cite{{{KEY}}}"
+    if cited in text:
+        return text
+    if sentence in text:
+        return text.replace(sentence, cited, 1)
+    return text
+
+
 def main() -> None:
     text = TARGET.read_text(encoding="utf-8")
 
@@ -44,6 +53,25 @@ def main() -> None:
     new = old[:-1] + " \\cite{" + KEY + "}."
     if new not in text and old in text:
         text = text.replace(old, new, 1)
+
+    # Result-level provenance. Literature citations explain external theory; this repository
+    # citation points to the frozen code/data behind the manuscript's own numerical values.
+    result_sentences = [
+        "The $n=18$ point is a single-architecture stress test rather than the family-balanced estimator used through $n=16$.",
+        "Thus the physical low-weight readout can remain close to the rank reference while the covariance becomes highly concentrated spectrally.",
+        "We do not assign a microscopic gate-level cause in the present work.",
+        "The physical readout therefore misses tangent mass that is available at exactly the same rank. This is the central distinction between rank and orientation.",
+        "The physical readout is not optimal, but it is already much closer to the leading tangent subspace than the generic Haar-$U(4)$ readout.",
+        "A random rank-matched subspace remains close to the physical generic baseline, as expected from the rank-only null model.",
+        "The contrast between the two families is itself informative: equal rank leaves substantial room for readout design in generic circuits, while the structured $U(1)$ readout already captures much of the accessible leading tangent structure.",
+        "At $n=18$, for example, the one-body $U(1)$ retention is approximately $0.215$, compared with the Haar-$U(4)$ value $6.38\\times10^{-5}$; the two-body values are approximately $0.401$ and $6.25\\times10^{-4}$, respectively.",
+        "Each size uses 20 independent circuit instances.",
+        "These are finite-size model-discrimination results only; they are not asymptotic lower bounds and are not identified with a hydrodynamic exponent.",
+        "The physical one-body retention simultaneously falls from $0.430$ to $0.0325$ in the breaking control.",
+        "Across the generic data, $F_{\\rm full}/F_Q$ is approximately $0.49$, while the $U(1)$ values remain near $0.47$--$0.48$.",
+    ]
+    for sentence in result_sentences:
+        text = add_cite(text, sentence)
 
     old = (
         "The frozen protocols, source code, aggregate tables, shard-level outputs, and analysis "
