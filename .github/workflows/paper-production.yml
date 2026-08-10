@@ -63,6 +63,9 @@ jobs:
             exit 1
           fi
           grep -q 'def legend_below' paper/prx/make_prx_figures.py
+          grep -q 'fig.legend(' paper/prx/make_prx_figures.py
+          grep -q 'legend_below(fig)' paper/prx/make_prx_figures.py
+          grep -q 'bbox_to_anchor=(0.5, 0.018)' paper/prx/make_prx_figures.py
       - name: Generate legacy vector figures used by the rewrite
         run: |
           cd paper/prx
