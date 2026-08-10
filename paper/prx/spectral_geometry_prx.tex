@@ -53,7 +53,7 @@ R(P,C)=\Tr(PC),
 \end{equation}
 Here $R$ is the fraction of normalized tangent mass visible to the readout. The denominator $r/N$ is the mean overlap of a rank-$r$ subspace with a trace-one covariance under random relative orientation. It is therefore a rank-only reference, not a model of a physical circuit family.
 
-The random-subspace identity itself is standard Grassmann geometry \cite{CollinsMatsumoto2017,Bendokat2024,Fernandez2025}. We use it for a different purpose: to separate three ingredients that are otherwise easily conflated. The rank $r$ fixes the null accessibility scale $r/N$; the spectrum of $C$ controls the width of random-orientation fluctuations; and the relative orientation of $P$ and the eigenspaces of $C$ determines the actual retained mass. In particular, concentration of $\rho$ around one does not imply that $C$ is isotropic. If
+The random-subspace identity itself is standard Grassmann geometry \cite{CollinsMatsumoto2017,Bendokat2024,Fernandez2025}. Our earlier manuscript derived the corresponding exact readout-rank law under joint state--tangent isotropy, including the finite-size Beta distributions for the successive measurement and readout projections \cite{AitHaddou2026IsotropicRankLaws}. The present work starts from the failure mode identified there and removes isotropy as an assumption. We use it for a different purpose: to separate three ingredients that are otherwise easily conflated. The rank $r$ fixes the null accessibility scale $r/N$; the spectrum of $C$ controls the width of random-orientation fluctuations; and the relative orientation of $P$ and the eigenspaces of $C$ determines the actual retained mass. In particular, concentration of $\rho$ around one does not imply that $C$ is isotropic. If
 \begin{equation}
 \deff(C)=\frac{1}{\Tr(C^2)},
 \label{eq:deff-intro}
@@ -141,7 +141,7 @@ and therefore
 \mathbb{E}_P\rho(P,C)=1.
 \label{eq:rank-baseline}
 \end{equation}
-The identity is a standard random-subspace result \cite{CollinsMatsumoto2017,Bendokat2024,Fernandez2025}. Its role here is to provide a controlled null model for readout orientation inside a fixed measurement-induced score space.
+The identity is a standard random-subspace result \cite{CollinsMatsumoto2017,Bendokat2024,Fernandez2025}. In the isotropic setting, the same mean $r/N$ appears as the exact readout-rank law for a fixed measurement record \cite{AitHaddou2026IsotropicRankLaws}; here we reinterpret it as a random-relative-orientation baseline for an arbitrary trace-one tangent covariance. Its role here is to provide a controlled null model for readout orientation inside a fixed measurement-induced score space.
 
 Using standard Grassmann projector moments \cite{CollinsMatsumoto2017}, we obtain
 \begin{equation}
@@ -315,7 +315,7 @@ Over the tested window $n=8$--$18$, two-parameter log-space model comparison fav
 \label{fig:u1-scaling}
 \end{figure*}
 
-This observation should not be read as a new theorem that $U(1)$ symmetry improves trainability. Hamming-weight-preserving trainability, Lie-algebraic restrictions, low-bodyness concentration in structured quantum models, and readout-visible sector coherence in noisy equivariant circuits are established neighboring phenomena \cite{Monbroussou2025,Fontana2024,Ragone2024,Bermejo2026,UgailHoward2026}. In addition, fixed-charge slice geometry supplies a non-dynamical structural null \cite{Filmus2016}, while conserved-density hydrodynamics supplies a distinct dynamical mechanism in random circuits \cite{Khemani2018,Rakovszky2018}. The present result is narrower: in this specific half-filled variational family, the leading measurement-induced tangent subspace is unusually visible to low-weight diagonal $Z$ readout under the rank-controlled metric used throughout this paper.
+This observation should not be read as a new theorem that $U(1)$ symmetry improves trainability. Hamming-weight-preserving trainability, Lie-algebraic restrictions, low-bodyness concentration in structured quantum models, and readout-visible sector coherence in noisy equivariant circuits are established neighboring phenomena \cite{Monbroussou2025,Fontana2024,Ragone2024,Bermejo2026,UgailHoward2026}. In addition, fixed-charge slice geometry supplies a non-dynamical structural null \cite{Filmus2016}, while conserved-density hydrodynamics supplies a distinct dynamical mechanism in random circuits \cite{Khemani2018,Rakovszky2018}. The present result is narrower: in this specific half-filled variational family, the leading measurement-induced tangent subspace is unusually visible to low-weight diagonal $Z$ readout under the rank-controlled metric used throughout this paper. The same family was already identified in our isotropic-rank analysis as a strong violation of the support-corrected rank law \cite{AitHaddou2026IsotropicRankLaws}; the present analysis resolves that deviation spectrally in terms of persistent low-weight alignment.
 
 A separately archived pilot tests sensitivity to exact conservation at fixed trainable parameter count. At $n=8$, the unperturbed one-body alignment is $A_1=0.517\,[0.486,0.549]$. A symmetry-preserving $R_Z$ perturbation of strength $\epsilon=0.3$ leaves $A_1=0.481\,[0.454,0.518]$, whereas a nontrainable symmetry-breaking $R_X$ perturbation at the same strength gives $A_1=0.0295\,[0.0248,0.0338]$. The physical one-body retention simultaneously falls from $0.430$ to $0.0325$ in the breaking control \cite{AitHaddou2026MeasurementAccessible}. We use this as a sensitivity control, not as a mechanism-identification experiment: it does not separate readout--charge compatibility, fixed-charge harmonic geometry, restricted controllability, and hydrodynamic slow modes.
 
@@ -581,6 +581,13 @@ M. Ait Haddou,
 Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy,
 Manuscript and reproducibility repository (2026),
 \href{https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws}{GitHub reproducibility repository}.
+
+
+
+\bibitem{AitHaddou2026IsotropicRankLaws}
+M. Ait Haddou,
+\textit{Readout-Rank Laws for Isotropic Quantum Tangents},
+manuscript submitted to arXiv (2026), arXiv identifier pending.
 
 \end{thebibliography}
 
