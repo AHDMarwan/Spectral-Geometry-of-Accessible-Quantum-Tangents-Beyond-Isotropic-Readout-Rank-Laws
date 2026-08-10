@@ -12,6 +12,7 @@ This repository contains the theory, frozen numerical protocols, archived result
 - [Rigorous-v2 protocol](docs/RIGOROUS_PROTOCOL_V2.md)
 - [Citation/equation audit](paper/prx/CITATION_EQUATION_AUDIT.md)
 - [Figure visual-QA checklist](paper/prx/FIGURE_VISUAL_QA_CHECKLIST.md)
+- [Zenodo reproducibility archive](https://doi.org/10.5281/zenodo.21877379)
 - [Author ORCID](https://orcid.org/0009-0008-1734-1721)
 
 ## Core question
@@ -313,21 +314,24 @@ Paper II: beyond isotropy, rank is the baseline and orientation determines the d
 
 ## Citation
 
-If you use the manuscript, theory, figures, numerical data, or code from this repository, please cite:
+The archival reproducibility release for the code, data, frozen profiles, figures, and manuscript-facing results is available on Zenodo at DOI **10.5281/zenodo.21877379**.
+
+If you use the reproducibility package, please cite:
 
 ```bibtex
-@misc{AitHaddou2026MeasurementAccessible,
-  author       = {Marwan Ait Haddou},
-  title        = {Measurement-Accessible Quantum Tangent Geometry: Rank Baselines and Spectral Orientation},
-  year         = {2026},
-  howpublished = {Manuscript and reproducibility repository},
-  url          = {https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws}
+@software{ait_haddou_2026_21877379,
+  author    = {Ait Haddou, Marwan},
+  title     = {Spectral Geometry of Accessible Quantum Tangents: Reproducibility Suite},
+  month     = aug,
+  year      = {2026},
+  version   = {0.1.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.21877379},
+  url       = {https://doi.org/10.5281/zenodo.21877379}
 }
 ```
 
-Until an archival preprint identifier or journal DOI is available, the repository URL is the stable public reference.
-
-GitHub also reads [`CITATION.cff`](CITATION.cff) through the repository's **Cite this repository** interface.
+For manuscript-specific citation metadata, GitHub reads [`CITATION.cff`](CITATION.cff) through the repository's **Cite this repository** interface; its preferred citation uses the current manuscript title, _Measurement-Accessible Quantum Tangent Geometry: Rank Baselines and Spectral Orientation_.
 
 ## Author
 
