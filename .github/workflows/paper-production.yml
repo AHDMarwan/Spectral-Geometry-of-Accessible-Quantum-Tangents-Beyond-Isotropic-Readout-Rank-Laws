@@ -36,12 +36,16 @@ jobs:
           pip install numpy pandas matplotlib pennylane
           sudo apt-get update
           sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
+      - name: Restore complete rewrite and apply author metadata
+        run: python paper/prx/author_metadata_finalize.py
       - name: Make production pass rerun-safe
         run: python paper/prx/production_idempotency_hotfix.py
       - name: Apply production manuscript pass
         run: python paper/prx/production_finalize.py
       - name: Apply code and results repository citation
         run: python paper/prx/repository_citation_finalize.py
+      - name: Compact bibliography links and remove numeric ORCID prose
+        run: python paper/prx/bibliography_visual_finalize.py
       - name: Apply legacy figure visual cleanup
         run: python paper/prx/figure_scripts/legacy_visual_cleanup.py
       - name: Generate legacy vector figures used by the rewrite
@@ -91,6 +95,14 @@ jobs:
           grep -q '\\bibitem{Fernandez2025}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/prx/spectral_geometry_prx.tex
           grep -q 'A_1(18)=0.283586' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\usepackage{orcidlink}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\orcidlink{0009-0008-1734-1721}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\email{aithaddou.marwan@outlook.com}' paper/prx/spectral_geometry_prx.tex
+          grep -q 'GitHub reproducibility repository' paper/prx/spectral_geometry_prx.tex
+          if grep -q 'ORCID: 0009-0008-1734-1721' paper/prx/spectral_geometry_prx.tex; then
+            echo 'Numeric ORCID prose should not be visible in the manuscript'
+            exit 1
+          fi
       - name: Commit canonical rewritten PDF and assets
         if: github.event_name != 'pull_request'
         run: |
@@ -106,9 +118,6 @@ jobs:
             echo "No production changes to commit."
           else
             git commit -m "Promote production rewrite to canonical manuscript [skip ci]"
-            # Figure generation may leave deterministic tracked legacy figures
-            # modified but intentionally outside the production commit. Clean those
-            # worktree-only changes before rebasing onto any concurrent main update.
             git reset --hard HEAD
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin HEAD:"${GITHUB_REF_NAME}"
