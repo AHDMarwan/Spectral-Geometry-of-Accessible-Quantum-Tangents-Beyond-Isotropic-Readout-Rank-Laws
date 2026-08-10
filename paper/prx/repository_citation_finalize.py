@@ -13,7 +13,8 @@ BIB = rf"""
 M. Ait Haddou,
 Spectral Geometry of Accessible Quantum Tangents: Reproducibility Suite,
 Zenodo (2026),
-\href{{{DOI_URL}}}{{doi:{DOI}}}.
+\href{{{DOI_URL}}}{{doi:{DOI}}};
+\href{{{REPO_URL}}}{{GitHub reproducibility repository}}.
 ORCID: 0009-0008-1734-1721.
 """
 
