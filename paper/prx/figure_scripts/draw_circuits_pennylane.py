@@ -5,6 +5,11 @@ from __future__ import annotations
 The gate order mirrors ``src/aqt/core.py``. The drawings use a small number of
 wires/layers only for readability; production simulations use the protocol
 specified in the manuscript (typically depth d=6n).
+
+Publication policy: gate parameters are intentionally hidden. The circuit
+figures communicate architecture only (RX/RY/RZ, controlled gates, U/XY blocks),
+while numerical parameter values belong in the implementation/protocol rather
+than inside the schematic.
 """
 
 from pathlib import Path
@@ -98,7 +103,6 @@ def circuit_su2_haar_u4(n: int = 6, layers: int = 2) -> None:
         _rot_block(("X", "Y", "Z"), n, layer)
         for pair_id, (q1, q2) in enumerate(_brickwork_pairs(n, layer)):
             u4 = _haar_unitary(seed + 101 * layer + pair_id)
-            # PennyLane 0.45 QubitUnitary does not accept a custom label.
             qml.QubitUnitary(u4, wires=[q1, q2])
         qml.Barrier(wires=range(n), only_visual=True)
 
@@ -129,18 +133,20 @@ CIRCUITS = {
 
 
 def draw_one(name: str, fn, n: int = 6, layers: int = 2) -> None:
-    # PennyLane 0.45 uses ``layers`` internally in draw_mpl; avoid a collision
-    # by exposing the circuit repetition count as ``reps`` to the drawer.
+    # PennyLane uses ``layers`` internally in draw_mpl; expose the circuit
+    # repetition count as ``reps`` to avoid a keyword collision.
     def wrapped(n: int = 6, reps: int = 2) -> None:
         fn(n=n, layers=reps)
 
-    drawer = qml.draw_mpl(wrapped, decimals=2, style="pennylane", fontsize=10)
+    # decimals=None suppresses numerical parameter values so gate boxes show
+    # only architecture labels (e.g. RX, RY, RZ). This is intentional for the
+    # paper figure; exact parameters remain reproducible from the source code.
+    drawer = qml.draw_mpl(wrapped, decimals=None, style="pennylane", fontsize=11)
     fig, ax = drawer(n=n, reps=layers)
-    ax.set_title(name.replace("circuit_", "").replace("_", " ").upper(), pad=14, fontsize=12)
-    fig.set_size_inches(12.0, 3.8)
-    # Avoid tight_layout warnings from the PennyLane drawer; bbox_inches handles cropping.
-    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight")
-    fig.savefig(OUT / f"{name}.png", dpi=300, bbox_inches="tight")
+    ax.set_title(name.replace("circuit_", "").replace("_", " ").upper(), pad=16, fontsize=12)
+    fig.set_size_inches(12.0, 3.55)
+    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight", pad_inches=0.05)
+    fig.savefig(OUT / f"{name}.png", dpi=360, bbox_inches="tight", pad_inches=0.05)
     plt.close(fig)
 
 
