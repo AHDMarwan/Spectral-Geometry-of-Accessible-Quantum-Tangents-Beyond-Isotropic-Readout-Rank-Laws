@@ -18,337 +18,345 @@
 
 \begin{document}
 
-\title{Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy}
+\title{Measurement-Accessible Quantum Tangent Geometry: Rank Baselines and Spectral Orientation}
 
 \author{Marwan Ait Haddou}
 \thanks{ORCID: \href{https://orcid.org/0009-0008-1734-1721}{0009-0008-1734-1721}}
 \affiliation{Independent Researcher}
-
 \date{\today}
 
 \begin{abstract}
-Variational quantum circuits are trained from measurement outcomes, whereas many trainability diagnostics are defined in the geometry of the quantum state before a measurement is chosen. We study the geometry that remains after restricting a measurement record to a fixed observable subspace. For a normalized tangent-score covariance $C$ in an $N$-dimensional centered score space and a rank-$r$ readout projector $P$, the retained fraction is $\Tr(PC)$. We use $\rho=\Tr(PC)/(r/N)$ to compare a physical readout with its rank-only reference. If the relative orientation of $P$ and $C$ is Haar/Grassmann distributed, then $\mathbb{E}\rho=1$ and $\mathrm{Var}(\rho)\le 2/(r\deff)$, where $\deff=1/\Tr(C^2)$. The bound allows $\deff/N$ to vanish, so concentration around the rank reference does not require an isotropic covariance. We test this distinction in a frozen, outcome-blind numerical campaign. Family-balanced one- and two-body readouts are practically rank typical through $n=16$, and a targeted Haar-$U(4)$ stress test remains in the same equivalence band at $n=18$, while the covariance becomes strongly anisotropic. The architecture-resolved data also show stable departures from the rank reference: an $R_Y$--$R_Z$--CZ circuit has a one-body deficit, and a half-filled $U(1)$ circuit has much larger low-weight retention. A separate spectral calculation shows that generic circuits contain rank-matched leading tangent subspaces that carry considerably more mass than the physical low-weight observables. These results separate a rank baseline from the architecture-dependent orientation of tangent information relative to the readout.
+A fixed quantum measurement can expose substantially more tangent information than a restricted observable readout retains. We study this second restriction directly. For a normalized covariance $C\succeq0$, $\Tr C=1$, of measurement-induced tangent scores in an $N$-dimensional centered score space, and a rank-$r$ readout projector $P$, we quantify retained tangent mass by $R=\Tr(PC)$. The ratio $\rho=R/(r/N)$ separates the actual retained mass from a rank-only random-orientation reference. Standard Grassmann averaging gives $\mathbb{E}\rho=1$ and
+\begin{equation*}
+\mathrm{Var}(\rho)=\frac{2(N-r)[N\Tr(C^2)-1]}{r(N-1)(N+2)}
+\le \frac{2}{r\deff},
+\qquad \deff=\frac{1}{\Tr(C^2)}.
+\end{equation*}
+We use this identity as a null model rather than as a new random-projection theorem. Numerically, family-balanced one- and two-body readouts remain close to the rank reference through $n=16$ even as the tangent covariance becomes strongly anisotropic. Rank matching alone is nevertheless insufficient: in generic circuits, cross-fitted leading tangent subspaces of the same rank retain substantially more mass than the physical low-weight readout. This difference is operational. At fixed circuit, measurement record, readout rank, and shot budget, changing only the readout orientation changes directional gradient energy and finite-shot signal-to-noise ratio, while random rank-matched subspaces track the rank baseline. A half-filled $U(1)$-conserving family provides a structured counterexample to generic orientation: physical low-weight $Z$ readouts are already strongly aligned with leading tangent directions over the tested finite-size range. We treat this symmetry result as a case study, not as a claim that $U(1)$ symmetry generically prevents barren plateaus or that hydrodynamics is the established mechanism. The results isolate readout orientation as a degree of freedom that is invisible to rank alone but directly controls how much measured tangent information remains usable after readout restriction.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 
-Parameterized quantum circuits are often discussed in terms of quantities defined on the state manifold, including quantum Fisher information, the quantum geometric tensor, natural-gradient geometry, expressibility, and entangling capability \cite{BraunsteinCaves1994,Stokes2020,Haug2021,Sim2019}. The same literature has identified several mechanisms that can make variational models hard to train, among them concentration of cost gradients, excessive expressibility, circuit controllability, observable locality, and hardware noise \cite{McClean2018,Cerezo2021,HolmesSharma2022,Larocca2022,Pesah2021,Wang2021,UvarovBiamonte2021}. These are state- or loss-level statements. A laboratory experiment, by contrast, returns a probability distribution associated with a chosen measurement, and a learning model usually keeps only a subset of functions of those outcomes. Quantum Fisher information is therefore contracted first by the measurement and then by the feature map or observable span \cite{BraunsteinCaves1994,HottaOzawa2004,LuLuoOh2012}.
+Variational quantum circuits are ultimately accessed through measurement outcomes. State-space quantities such as the quantum Fisher information (QFI), quantum geometric tensor, and natural-gradient metric characterize infinitesimal distinguishability before a particular measurement and readout are fixed \cite{BraunsteinCaves1994,Stokes2020,Haug2021}. Once a measurement is chosen, the QFI contracts to a classical Fisher geometry; once only a restricted family of observables or features is retained, the experimentally available geometry contracts again \cite{BraunsteinCaves1994,HottaOzawa2004,LuLuoOh2012}. The second contraction is the focus of this work.
 
-This paper asks a narrower question than a barren-plateau analysis. Suppose a circuit has a given distribution of tangent information after a measurement has been fixed. How much of that information is visible to a prescribed low-weight readout? We study the covariance of normalized tangent scores and its overlap with the physical readout subspace. We do not fit the variance of a supervised-loss gradient as a function of $n$. A statement about a barren plateau for a particular loss would require that extra step, together with the data encoding, the classical head, and the loss function \cite{McClean2018,Cerezo2021,Thanasilp2023}.
+This question is adjacent to, but distinct from, several established trainability results. Observable locality can change gradient concentration in parametrized quantum circuits, circuit controllability and dynamical Lie-algebra structure can alter barren-plateau behavior, and symmetry-restricted ansatzes can explore much smaller invariant sectors than generic expressive circuits \cite{Cerezo2021,UvarovBiamonte2021,Larocca2022,HolmesSharma2022}. Random measurements can also approximate quantum Fisher geometry after averaging over measurement bases \cite{LuSha2025}. These results establish that measurement choice, observable structure, and circuit architecture matter. Our question is narrower: \emph{after the quantum measurement has been fixed, and after the dimension of the retained readout has been fixed, how much tangent information is accessible to that particular readout subspace?}
 
-Let $C\succeq0$ with $\Tr C=1$ be the covariance of normalized tangent-score vectors in an $N$-dimensional centered score space. Let $P$ project onto the span of the observables retained by the learner and let $r=\Tr P$. We write
+The distinction matters because readout dimension does not determine readout usefulness. Consider the centered score space generated by a fixed measurement. Let $C\succeq0$, $\Tr C=1$, denote the covariance of normalized tangent-score vectors, and let $P$ be the orthogonal projector onto a retained observable subspace of rank $r$. We define
 \begin{equation}
-R(P,C)=\Tr(PC),\qquad
+R(P,C)=\Tr(PC),
+\qquad
 \rho(P,C)=\frac{\Tr(PC)}{r/N}.
 \label{eq:def-rho}
 \end{equation}
-The denominator is the overlap obtained from an isotropic covariance. It also appears as the mean overlap when the orientation of a rank-$r$ subspace is randomized, even when $C$ itself is anisotropic.
+Here $R$ is the fraction of normalized tangent mass visible to the readout. The denominator $r/N$ is the mean overlap of a rank-$r$ subspace with a trace-one covariance under random relative orientation. It is therefore a rank-only reference, not a model of a physical circuit family.
 
-The theory below makes that statement exact. For a Haar-uniform rank-$r$ subspace, the variance of $\rho$ is bounded by $2/(r\deff)$ with
+The random-subspace identity itself is standard Grassmann geometry \cite{CollinsMatsumoto2017,Bendokat2024,Fernandez2025}. We use it for a different purpose: to separate three ingredients that are otherwise easily conflated. The rank $r$ fixes the null accessibility scale $r/N$; the spectrum of $C$ controls the width of random-orientation fluctuations; and the relative orientation of $P$ and the eigenspaces of $C$ determines the actual retained mass. In particular, concentration of $\rho$ around one does not imply that $C$ is isotropic. If
 \begin{equation}
-\deff=\frac{1}{\Tr(C^2)}.
+\deff(C)=\frac{1}{\Tr(C^2)},
 \label{eq:deff-intro}
 \end{equation}
-Thus $\rho$ can concentrate near one while $\deff/N$ is small. The numerical part of the paper tests whether this separation is visible in actual circuit families. The generic aggregate follows the preregistered rank-equivalence criterion over the available sizes, whereas specific architectures depart from it. The spectral calculations then determine whether small physical retention reflects a lack of tangent information at that rank or a mismatch between the leading tangent directions and the observable span.
+then the variance of $\rho$ is bounded by $2/(r\deff)$. Thus rank-typical overlap only requires the product $r\deff$ to be large; the ratio $\deff/N$ may still be small.
 
-Figure~\ref{fig:framework} collects the definitions used throughout the paper.
+We test this separation in several circuit families using computational-basis measurement and low-weight diagonal $Z$ readouts. The numerical results have four parts. First, family-balanced generic circuits are close to the rank-only reference for one- and two-body readouts over the tested sizes, although their tangent covariance becomes strongly anisotropic. Second, architecture-resolved deviations occur on both sides of the reference, showing that the generic result is not an isotropy statement and not a claim that physical circuits become Haar-oriented. Third, a rank-matched spectral comparison shows that generic circuits contain leading tangent subspaces that retain much more mass than the physical low-weight span. This establishes that low physical retention can be an orientation mismatch rather than an absence of tangent information at that rank. Fourth, the same-rank distinction survives an operational test: at fixed circuit, measurement record, rank, and shot budget, cross-fitted aligned readouts yield larger directional gradient energy and larger finite-shot signal-to-noise ratio than the physical readout, while random rank-matched subspaces behave near the rank baseline.
+
+A half-filled $U(1)$-conserving RZ--XY circuit family is included as a structured case study. Its low-weight diagonal readout is already strongly aligned with the leading tangent subspace, so the gain from replacing it with a learned same-rank spectral subspace is much smaller than in generic Haar-$U(4)$ circuits. This observation is consistent with several known mechanisms---symmetry-restricted controllability, fixed-charge geometry, readout compatibility with local charge, and slow operator structure under conservation laws---but the present paper does not identify which mechanism dominates. We therefore do not claim that $U(1)$ symmetry generically improves trainability, nor do we infer a hydrodynamic exponent from the finite-size data.
+
+The resulting message is deliberately limited:
+\begin{equation}
+\boxed{\text{rank fixes a baseline; spectral orientation controls actual retained tangent information.}}
+\label{eq:message}
+\end{equation}
+This is a statement about measurement-accessible tangent geometry. It is not, by itself, a barren-plateau theorem for a supervised loss. Task-level trainability additionally depends on the encoding, labels, classical postprocessing, loss function, and optimization trajectory.
 
 \begin{figure*}[t]
 \includegraphics[width=\textwidth]{fig1_framework_theory.pdf}
-\caption{Measurement-accessible tangent geometry. (a) A normalized tangent covariance $C$ is tested with a readout projector $P$; the retained mass is $\Tr(PC)$ and the rank reference is $r/N$. (b) For Haar/Grassmann relative orientation, the standard deviation of $\rho$ is bounded by $\sqrt{2/(r\deff)}$. (c) For diagonal Pauli strings of fixed weight, the readout rank grows polynomially while the full centered computational-basis score space grows exponentially.}
+\caption{Rank and orientation in measurement-accessible tangent geometry. A fixed quantum measurement induces a centered score space. A normalized tangent covariance $C$ distributes tangent mass within that space, while a rank-$r$ readout projector $P$ selects the directions retained by the learner. The accessible tangent mass is $R=\Tr(PC)$. Random relative orientation gives the rank-only reference $r/N$; the spectrum of $C$ controls the null width, while the physical orientation of $P$ controls the observed deviation from that reference.}
 \label{fig:framework}
 \end{figure*}
 
-\section{Tangent-score covariance and restricted readout}
+\section{Measurement-accessible tangent geometry}
 
-For a fixed circuit and a normalized tangent direction, the derivative of the measurement probabilities defines a score vector once the constant component is removed. The score norm is the classical Fisher information of that measurement. The Braunstein--Caves inequality bounds this classical Fisher information by the quantum Fisher information of the state family \cite{BraunsteinCaves1994}; related formulations make explicit how a restricted set of observables can limit the Fisher information available to an experimenter \cite{HottaOzawa2004,LuLuoOh2012}.
+\subsection{From a fixed measurement to normalized tangent scores}
 
-After normalizing each regular tangent-score vector to unit norm, averaging outer products over tangent directions gives $C\succeq0$ with $\Tr C=1$. We use
+Let $p_\theta(x)$ be the outcome distribution of a fixed measurement applied to a parametrized quantum state $\rho_\theta$. For a tangent direction $v$ in parameter space, the directional derivative $\partial_v p_\theta(x)$ defines a tangent to the classical probability simplex. After removing the constant direction and applying the Fisher normalization used in the numerical protocol, each regular tangent is represented by a centered score vector $u_v$ in an $N$-dimensional real score space. We normalize regular directions so that
+\begin{equation}
+\|u_v\|_2^2=1.
+\end{equation}
+Averaging over the tangent ensemble gives
+\begin{equation}
+C=\mathbb{E}_v\left[u_vu_v^{\mathsf T}\right],
+\qquad
+C\succeq0,
+\qquad
+\Tr C=1.
+\label{eq:C-def}
+\end{equation}
+The eigenvectors of $C$ identify score-space directions that repeatedly carry tangent variation, while its eigenvalues quantify how strongly that variation is concentrated.
+
+The effective spectral dimension
 \begin{equation}
 \deff(C)=\frac{1}{\Tr(C^2)}
 \label{eq:deff}
 \end{equation}
-as an effective spectral dimension. The corresponding normalized purity, $N\Tr(C^2)=N/\deff$, equals one for $C=I/N$ and increases as the spectrum concentrates.
+is maximal at $N$ for the isotropic covariance $I/N$ and decreases as tangent mass concentrates into fewer directions. We also use the normalized purity
+\begin{equation}
+N\Tr(C^2)=\frac{N}{\deff},
+\label{eq:purity}
+\end{equation}
+which equals one only in the isotropic case.
 
-A collection of retained observables spans a subspace of the centered score space. Orthogonal projection onto that span gives $P$. Equation~\eqref{eq:def-rho} keeps two quantities separate: $R$ is the physical fraction of normalized tangent mass that survives the readout, while $\rho$ compares that fraction with a rank-only reference. At large $N$, these quantities can behave very differently.
+\subsection{Restricted readout as a score-space projector}
 
-\section{Random relative orientation}
+A retained family of observables or linear score features spans a subspace of the centered score space. Let $P=P^{\mathsf T}=P^2$ project onto that span and let
+\begin{equation}
+r=\Tr P.
+\end{equation}
+For a normalized tangent $u_v$, the retained squared score norm is $\|Pu_v\|_2^2$. Averaging over tangent directions gives
+\begin{equation}
+\mathbb{E}_v\|Pu_v\|_2^2
+=\Tr\!\left(P\,\mathbb{E}_v[u_vu_v^{\mathsf T}]\right)
+=\Tr(PC)
+\equiv R(P,C).
+\label{eq:R-operational}
+\end{equation}
+Thus $R$ is not introduced as an abstract overlap alone: it is exactly the mean fraction of normalized score energy retained by the readout.
 
-The random-orientation calculation keeps the spectrum of $C$ fixed and randomizes only the orientation of a rank-$r$ projector. Moments of Haar-distributed orthogonal projectors can be derived from standard invariant-integration or Weingarten formulas \cite{CollinsMatsumoto2017,Bendokat2024}.
+This formulation separates the measurement from the readout restriction. The full measurement record determines the score geometry from which $C$ is constructed. The projector $P$ then describes which linear combinations of that already-measured record are retained. Changing $P$ at fixed measurement therefore changes the accessible tangent geometry without changing the underlying quantum state or POVM.
 
-\begin{theorem}[Exact random-orientation moments]
-Let $P$ be a Haar-uniform rank-$r$ orthogonal projector in $\mathbb{R}^N$, independent of $C\succeq0$ with $\Tr C=1$. Then
-\begin{align}
-\mathbb{E}_P[\rho\mid C]&=1,\\
+\section{Rank baseline and spectral orientation}
+
+\subsection{Random relative orientation}
+
+To define a rank-only reference, keep $C$ fixed and randomize only the orientation of a rank-$r$ projector $P$. For a Haar-uniform point on the real Grassmann manifold $\mathrm{Gr}(r,N)$, rotational invariance gives
+\begin{equation}
+\mathbb{E}_P P=\frac{r}{N}I,
+\end{equation}
+and therefore
+\begin{equation}
+\mathbb{E}_P R(P,C)=\frac{r}{N},
+\qquad
+\mathbb{E}_P\rho(P,C)=1.
+\label{eq:rank-baseline}
+\end{equation}
+The identity is a standard random-subspace result \cite{CollinsMatsumoto2017,Bendokat2024,Fernandez2025}. Its role here is to provide a controlled null model for readout orientation inside a fixed measurement-induced score space.
+
+Using standard Grassmann projector moments \cite{CollinsMatsumoto2017}, we obtain
+\begin{equation}
 \mathrm{Var}_P(\rho\mid C)
-&=\frac{2(N-r)\left[N\Tr(C^2)-1\right]}
+=\frac{2(N-r)\left[N\Tr(C^2)-1\right]}
 {r(N-1)(N+2)}.
 \label{eq:exact-var}
-\end{align}
-\end{theorem}
-
-Rotational invariance gives $\mathbb{E}P=(r/N)I$. The second moment follows by writing the invariant tensor form of $\mathbb{E}[P_{ij}P_{kl}]$ and imposing $\Tr P=r$ and $\Tr P^2=r$. The algebra is given in Appendix~\ref{app:random-projector}.
-
-\begin{theorem}[Concentration bound]
-For every admissible $N,r,C$,
+\end{equation}
+Using $N-r\le N-1$ and $N\Tr(C^2)-1\le(N+2)\Tr(C^2)$ yields
 \begin{equation}
 \mathrm{Var}_P(\rho\mid C)
 \le \frac{2\Tr(C^2)}{r}
 =\frac{2}{r\deff(C)}.
 \label{eq:var-bound}
 \end{equation}
-Hence, for every $\epsilon>0$,
+Consequently,
 \begin{equation}
 \Pr\left(|\rho-1|\ge\epsilon\mid C\right)
-\le \min\left\{1,\frac{2}{\epsilon^2r\deff(C)}\right\}.
+\le
+\min\left\{1,\frac{2}{\epsilon^2r\deff(C)}\right\}.
 \label{eq:cheb}
 \end{equation}
-\end{theorem}
 
-The condition is on the product $r\deff$. No assumption of the form $\deff/N\rightarrow1$ is needed.
+Equation~\eqref{eq:var-bound} is the key separation used below. Rank-typical overlap can coexist with strong anisotropy because concentration depends on $r\deff$, not on $\deff/N$ approaching one. Conversely, a physical readout can lie far above or below the rank reference if its orientation is systematically correlated or anticorrelated with the leading eigenspaces of $C$.
 
-\begin{corollary}[Fixed-weight readout]
-For the full centered computational-basis score space of $n$ qubits, $N_n=2^n-1$. The span of diagonal Pauli-$Z$ strings through fixed weight $k$ has
+\subsection{Fixed-weight diagonal readout}
+
+For computational-basis measurement on $n$ qubits with full support, the centered score-space dimension is
+\begin{equation}
+N_n=2^n-1.
+\end{equation}
+The span of diagonal Pauli-$Z$ strings through fixed weight $k$ has rank
 \begin{equation}
 r_k(n)=\sum_{j=1}^{k}\binom{n}{j}
 =\frac{n^k}{k!}\left[1+O(n^{-1})\right].
+\label{eq:rk}
 \end{equation}
-Under Haar/Grassmann relative orientation,
+Under random relative orientation, the expected retained fraction is therefore
 \begin{equation}
-\rho_k\xrightarrow{P}1,
-\end{equation}
-and
-\begin{equation}
-\Tr(P_kC_n)
-=(1+o_P(1))\frac{r_k(n)}{2^n-1}
-=(1+o_P(1))\frac{n^k}{k!2^n}.
+\mathbb{E}R_k=\frac{r_k(n)}{2^n-1}
+=O\!\left(\frac{n^k}{2^n}\right).
 \label{eq:fixed-weight}
 \end{equation}
-\end{corollary}
+This is a baseline for comparison, not a statement that any physical ansatz approaches a Haar-random orientation as $n$ increases.
 
-This corollary concerns a random relative orientation. It does not assert that a fixed physical circuit family approaches a Haar-distributed orientation.
+\begin{figure}[t]
+\centering
+\includegraphics[width=.98\linewidth]{production/fig_fixed_weight_rank_fraction.pdf}
+\caption{Rank-only scale for fixed-weight diagonal readout under full computational-basis support. For fixed Pauli weight, the retained subspace rank grows polynomially while the centered score-space dimension grows exponentially. The plotted fractions are geometric baselines only; physical retention depends on spectral orientation.}
+\label{fig:rank-fraction-production}
+\end{figure}
 
-\section{Numerical protocol}
 
-The rigorous-v2 campaign was specified before its outcomes were inspected. A fixed circuit instance is the independent statistical unit. Tangent directions drawn within a circuit are used to estimate that circuit's covariance and are not counted as independent circuits. All primary confidence intervals use 10,000 nonparametric bootstrap resamples of circuit instances. For the generic aggregate, means are first computed within each ansatz family and then averaged with equal family weight.
+\subsection{Optimal and cross-fitted same-rank subspaces}
 
-The primary profile uses $n=6,8,10,12$, depth $d=6n$, $M=128$ normalized Gaussian tangent directions, computational-basis measurement, and diagonal readouts through Pauli weight one and two. Five nonconserving circuit families are included, with 16 independent circuits per family and size: RY--RZ--CZ line, SU2--CNOT line, SU2--CZ ring, SU2--CZ random matching, and SU2--Haar-$U(4)$ brickwork. A half-filled $U(1)$-conserving RZ--XY family uses 20 circuits per size. The primary profile contains 400 independent circuits and 51,200 tangent directions.
-
-Practical rank-law equivalence was fixed in advance as
+For a fixed covariance $C$ with eigenvalues $\lambda_1\ge\cdots\ge\lambda_N$, the Ky Fan variational principle \cite{KyFan1949} gives
 \begin{equation}
-0.90\le \rho_k\le1.10,
+\max_{\operatorname{rank}(P)=r}\Tr(PC)=\sum_{j=1}^{r}\lambda_j.
+\label{eq:kyfan}
 \end{equation}
-with a pass only when the entire 95\% confidence interval lies inside that band. Separate frozen profiles examine tangent-count convergence, depth, spectral optima, measurement basis, direction sampler, coordinate visibility, orientation, and larger sizes. The $n=14,16$ extension contains three nonconserving families plus $U(1)$. The $n=18$ stress test contains Haar-$U(4)$ and $U(1)$ only.
+This optimization is standard linear algebra; its use here is diagnostic. It answers whether poor physical retention is forced by rank or caused by orientation. Because the same-sample optimum is statistically optimistic, the operational comparison uses a cross-fitted projector: the leading rank-$r$ score subspace is estimated from an independent set of tangent directions and evaluated on held-out tangents. We compare this aligned cross-fit subspace with both the physical low-weight readout and a random rank-matched projector.
 
-The primary run passed the prespecified numerical checks. The maximum state-normalization error was $2.52\times10^{-14}$, the maximum horizontal overlap was $4.51\times10^{-15}$, and the maximum probability-normalization error was $2.51\times10^{-14}$. For every tested tangent, the full computational-basis Fisher information obeyed $F_{\rm full}\le F_Q$, as required by quantum Fisher-information monotonicity under measurement \cite{BraunsteinCaves1994}. The repository contains the frozen profiles, analysis tables, raw shard outputs, and environment records.
+\section{Numerical strategy}
 
-\section{Finite-size rank law and anisotropy}
+The numerical campaign treats a circuit instance, not an individual tangent direction, as the independent statistical unit. Within each circuit, tangent directions estimate the score covariance and readout statistics. Confidence intervals are obtained by nonparametric bootstrap over independent circuit instances \cite{Efron1979}. The generic aggregate is family-balanced so that no ansatz family dominates by sample count.
 
-For the family-balanced generic ensemble, every one- and two-body confidence interval from $n=6$ through $n=16$ lies inside the preregistered equivalence band. The targeted Haar-$U(4)$ point at $n=18$ also lies inside the band,
+The baseline campaign uses computational-basis measurement, depth proportional to system size, and diagonal $Z$ readouts through weight one and two. The nonconserving ensemble includes RY--RZ--CZ, SU2--CNOT, SU2--CZ, random-matching SU2--CZ, and Haar-$U(4)$ brickwork families. A half-filled number-conserving RZ--XY family supplies the structured $U(1)$ case study. Larger-size extensions and dedicated cross-fit experiments use frozen profiles documented in the repository.
+
+For the operational comparison we hold fixed the circuit, the full computational-basis record, the readout rank, and the shot budget. We compare three rank-matched readouts: (i) the physical low-weight span, (ii) an independent random subspace, and (iii) a cross-fitted aligned subspace learned from independent tangent data. For an evaluation tangent $v$, the retained score energy $\|P u_v\|^2$ controls the directional signal available in that readout. Multiplying by the full-record Fisher scale gives the raw directional gradient-energy proxy used in the experiment. Finite-shot signal-to-noise is computed under the multinomial shot model at a fixed budget of $10^4$ shots.
+
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_ry_rz_cz.pdf}\hfill
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_cnot.pdf}\\[2pt]
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_cz_ring.pdf}\hfill
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_cz_random_matching.pdf}\\[2pt]
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_haar_u4.pdf}\hfill
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_u1_rz_xy.pdf}
+\caption{Circuit families used in the numerical campaign, rendered directly from PennyLane circuit definitions \cite{Bergholm2018}. From top left to bottom right: RY--RZ--CZ line, SU2--CNOT line, SU2--CZ ring, SU2--CZ random matching, SU2--Haar-$U(4)$ brickwork, and the half-filled $U(1)$ RZ--XY line. For legibility the drawings show $n=6$ and two representative layers; the production simulations use the depths and system sizes specified in the numerical protocol. The $U(1)$ panel begins from the alternating half-filled computational-basis state, matching the simulation code. Generic unitary boxes in the last row represent the actual two-qubit matrices used by the simulator rather than a gate decomposition.}
+\label{fig:circuits}
+\end{figure*}
+
+\section{Rank typicality without isotropy in generic circuits}
+
+For the family-balanced generic ensemble, the one- and two-body readouts remain within the preregistered rank-equivalence band through $n=16$. The targeted Haar-$U(4)$ stress test at $n=18$ gives
 \begin{equation}
-\rho_1=0.929\;[0.910,0.950],\qquad
+\rho_1=0.929\;[0.910,0.950],
+\qquad
 \rho_2=0.958\;[0.952,0.966].
 \label{eq:n18-rho}
 \end{equation}
-That $n=18$ point is a single-architecture stress test. It is not the multi-family generic estimator used at $n\le16$.
+The $n=18$ point is a single-architecture stress test rather than the family-balanced estimator used through $n=16$.
 
-The same data show a strong departure from an isotropic covariance. For the generic aggregate, $N\Tr(C^2)$ is about $1.35$ at $n=6$, $6.17$ at $n=12$, $17.52$ at $n=14$, and $49.84$ at $n=16$. The Haar-$U(4)$ stress-test value is about $146.8$ at $n=18$. Over the same range, $\deff/N$ decreases from $0.746$ at $n=6$ to $0.1767$ at $n=12$ and $0.0233$ at $n=16$; the Haar-$U(4)$ $n=18$ value is $0.00683$. The finite-size rank law therefore coexists with an increasingly concentrated spectrum.
+These near-rank values do not indicate isotropy. The normalized purity $N\Tr(C^2)$ grows from approximately $1.35$ at $n=6$ to $6.17$ at $n=12$, $17.52$ at $n=14$, and $49.84$ at $n=16$; the Haar-$U(4)$ $n=18$ stress point is approximately $146.8$. Correspondingly, $\deff/N$ falls from $0.746$ at $n=6$ to $0.1767$ at $n=12$ and $0.0233$ at $n=16$, with the $n=18$ Haar-$U(4)$ value near $0.00683$. Thus the physical low-weight readout can remain close to the rank reference while the covariance becomes highly concentrated spectrally.
 
 \begin{figure*}[t]
 \includegraphics[width=\textwidth]{fig2_rank_architecture_anisotropy.pdf}
-\caption{Rank-normalized retention and anisotropy. (a) The family-balanced generic one- and two-body estimates lie inside the preregistered $[0.90,1.10]$ band through $n=16$. Diamonds mark the targeted Haar-$U(4)$ $n=18$ stress test; this is a single-architecture point, not the multi-family generic mean used for $n\le16$. Error bars are 95\% circuit-bootstrap intervals. (b) Family-resolved one-body data show a persistent RY--RZ--CZ deficit. (c) The one-body rank statistic remains close to the rank reference while $N\Tr(C^2)$ increases. The $18^*$ label again denotes the single-architecture Haar-$U(4)$ test.}
+\caption{Rank-normalized retention and covariance anisotropy. Family-balanced generic low-weight readouts remain close to the rank reference over the tested sizes even while $N\Tr(C^2)$ grows and $\deff/N$ decreases. Architecture-resolved data show systematic deviations, demonstrating that the family-balanced result is not a claim of literal Haar orientation.}
 \label{fig:rank}
 \end{figure*}
 
-Equation~\eqref{eq:var-bound} explains why these two observations are compatible. Spectral anisotropy changes the width of the random-subspace overlap distribution; it does not, by itself, fix the orientation of the physical readout.
+Architecture-resolved results make the orientation dependence explicit. The RY--RZ--CZ family develops a persistent one-body deficit, with mean $\rho_1\simeq0.874$ at $n=14$ and $0.877$ at $n=16$. The full computational-basis Fisher fraction remains order one, so this deficit is specific to the low-weight projection rather than to disappearance of the measured tangent signal itself. We do not assign a microscopic gate-level cause in the present work.
 
-\subsection{Architecture-resolved deviations}
+\section{Equal rank does not imply equal accessibility}
 
-The family-balanced statement does not hold for every architecture at the same precision. The RY--RZ--CZ line has a persistent one-body deficit. Its mean $\rho_1$ is $0.934$ at $n=6$, $0.891$ at $n=10$, $0.886$ at $n=12$, $0.874$ at $n=14$, and $0.877$ at $n=16$. At $n=14$ and $n=16$, the full 95\% interval lies below $0.90$. The same computational-basis measurement still retains an order-one fraction of QFI before the one-body projection, so the observation is specific to the restricted readout rather than to the disappearance of all measured tangent information.
+The rank baseline becomes physically informative only if equal-rank subspaces can produce measurably different outcomes. The spectral experiments test this directly.
 
-The present data do not identify a gate-level cause. The circuit contains computational-basis-diagonal $R_Z$ and CZ operations interleaved with $R_Y$ rotations. That structure motivates a future mode-resolved or gate-ablation study, but assigning the observed deficit to commutativity, state trapping, or another microscopic mechanism would go beyond the measurements made here. We therefore report the deficit as an architecture-dependent orientation effect.
-
-SU2--CNOT remains inside the practical band through $n=16$. Haar-$U(4)$ also remains in the band at the larger sizes, although its mean lies below one. The data therefore do not justify treating any of these physical families as literally Haar-oriented.
-
-\section{Symmetry-constrained circuit}
-
-The half-filled $U(1)$ circuit behaves differently from the nonconserving families. Symmetry-preserving ansatzes are widely used to restrict a variational search to a physically relevant sector, and symmetry or equivariance has also been used as an inductive bias in QML models \cite{Gard2020,LaroccaInvariant2022,Meyer2023}. Here the same symmetry is associated with a large change in the orientation of tangent information relative to low-weight diagonal readout.
-
-The one-body enhancement grows from $\rho_1=2.06$ at $n=6$ to $25.49$ at $n=12$, $71.0$ at $n=14$, $205.3$ at $n=16$, and $615.5$ at $n=18$. The two-body enhancement reaches $128.2$ at $n=18$. We treat this as finite-size growth; no exponent is inferred.
-
-The enhancement is also visible on the raw-retention scale, rather than appearing only after normalization by the rank baseline. At $n=18$, the Haar-$U(4)$ one-body retained fraction is
+For Haar-$U(4)$ at $n=12$, the physical one-body readout retains
 \begin{equation}
-R_1^{\rm Haar}=6.38\times10^{-5},
+R_{\rm phys}=2.71\times10^{-3}.
 \end{equation}
-whereas the $U(1)$ value is
+A rank-matched cross-fitted leading tangent subspace retains
 \begin{equation}
-R_1^{U(1)}=0.215\;[0.209,0.221].
+R_{\rm xfit}=3.06\times10^{-2},
 \end{equation}
-The corresponding two-body values are $6.25\times10^{-4}$ and $0.401$. The $U(1)$ covariance is also more concentrated: at $n=18$, $N\Tr(C^2)\simeq571$ and $\deff/N\simeq1.76\times10^{-3}$.
+while the same-sample Ky Fan optimum retains $9.15\times10^{-2}$. The physical readout therefore misses tangent mass that is available at exactly the same rank. This is the central distinction between rank and orientation.
 
-\begin{figure*}[t]
-\includegraphics[width=\textwidth]{fig3_symmetry_accessibility.pdf}
-\caption{Accessibility in the half-filled $U(1)$ family. (a) Rank-normalized one- and two-body retention grows across the tested sizes; the plot is not used to infer an asymptotic exponent. (b) The raw one-body retained fraction remains of order $10^{-1}$ for $U(1)$ while the generic/Haar value decreases by more than three orders of magnitude. (c) The spectral covariance becomes more concentrated in both sets of circuits, with stronger concentration in the $U(1)$ family. The generic $n=18$ point is the targeted Haar-$U(4)$ stress test rather than a multi-family mean.}
-\label{fig:symmetry}
-\end{figure*}
-
-\section{Spectral comparison}
-
-A small physical retention can arise for two different reasons: the covariance may have little mass available to any subspace of that rank, or the physical subspace may miss the leading modes. The first possibility is bounded by the sum of the largest $r$ eigenvalues of $C$. This is the Ky Fan variational principle \cite{KyFan1949}. The dedicated $v2\_spectrum$ profile compares the physical readout with a same-sample Ky Fan optimum and with a cross-fit leading subspace estimated from independent tangent samples.
-
-For Haar-$U(4)$ at $n=12$, the one-body physical readout retains $2.71\times10^{-3}$ of normalized tangent mass. The cross-fit rank-matched subspace retains $3.06\times10^{-2}$, and the same-sample Ky Fan subspace retains $9.15\times10^{-2}$. A substantial amount of tangent mass is therefore available at the same rank, but the physical one-body span does not capture it.
-
-The $U(1)$ examples have a smaller orientation gap. At $n=10$, the one-body physical, cross-fit, and same-sample Ky Fan retentions are $0.364$, $0.432$, and $0.483$. At $n=12$ they are $0.292$, $0.375$, and $0.444$. The physical $U(1)$ readout remains below the optimum. Its gap to the rank-matched spectral benchmarks is nevertheless much smaller than in the generic Haar-$U(4)$ example.
-
-Depth changes the covariance spectrum as well. At $n=8$, the generic normalized purity decreases from about $11.6$ at $d/n=0.5$ to $1.69$ at $d/n=8$. The corresponding $U(1)$ values decrease from about $9.02$ to $3.86$. These are finite-depth observations. The data are consistent with faster spreading of the generic covariance, but the present depth scan is not a proof of a mixing rate.
+The $U(1)$ circuit behaves differently. At $n=12$, the physical one-body readout retains $0.292$, the cross-fitted aligned subspace $0.375$, and the same-sample Ky Fan subspace $0.444$. The physical readout is not optimal, but it is already much closer to the leading tangent subspace than the generic Haar-$U(4)$ readout.
 
 \begin{figure*}[t]
 \includegraphics[width=\textwidth]{fig4_spectral_mechanism_depth.pdf}
-\caption{Spectral comparison. (a) Representative one-body cells from the dedicated $M=512$ profile. In the generic Haar-$U(4)$ cells, rank-matched leading subspaces retain much more tangent mass than the physical one-body readout. The $U(1)$ readout is closer to the spectral benchmarks. (b) At $n=8$, increasing depth lowers the normalized covariance purity more rapidly for the generic circuits than for the $U(1)$ circuit.}
+\caption{Same-rank spectral comparison. Physical low-weight, cross-fitted aligned, and same-sample Ky Fan subspaces have identical rank but can retain very different tangent mass. The orientation gap is large in generic Haar-$U(4)$ circuits and substantially smaller in the $U(1)$ family.}
 \label{fig:spectrum}
 \end{figure*}
 
-\section{Full-record Fisher information}
+\section{Operational consequence at fixed rank and shot budget}
 
-The complete computational-basis record retains an order-one fraction of QFI in both sets of circuits. In the family-balanced generic data, $F_{\rm full}/F_Q$ is about $0.488$ at $n=6$, $0.495$ at $n=16$, and $0.497$ in the targeted Haar-$U(4)$ $n=18$ test. The $U(1)$ values remain near $0.47$--$0.48$. The difference at the full-record level is modest compared with the difference after one-body projection.
+The same-rank comparison is not only geometric. We evaluate directional gradient energy and finite-shot signal-to-noise while holding the circuit, computational-basis record, readout rank, and shot budget fixed.
 
-Figure~\ref{fig:fullrecord} shows these quantities on the same scale. The large separation in low-weight retention appears after restricting the measured score to the small observable subspace.
+For Haar-$U(4)$ circuits, replacing the physical one-body readout by the cross-fitted aligned subspace increases the mean directional gradient-energy proxy by factors
+\begin{equation}
+2.963,\quad 4.639,\quad 9.584
+\end{equation}
+for $n=8,10,12$, respectively. The corresponding finite-shot SNR gains are
+\begin{equation}
+1.734,\quad 2.125,\quad 3.111.
+\end{equation}
+A random rank-matched subspace remains close to the physical generic baseline, as expected from the rank-only null model.
+
+The $U(1)$ family shows a smaller orientation gain because its physical readout is already aligned. At $n=8,10,12$, the aligned-to-physical gradient-energy ratios are approximately $1.148$, $1.189$, and $1.210$, with SNR gains $1.068$, $1.097$, and $1.112$. The contrast between the two families is itself informative: equal rank leaves substantial room for readout design in generic circuits, while the structured $U(1)$ readout already captures much of the accessible leading tangent structure.
+
+These quantities are not supervised-loss gradient variances. They are controlled directional-signal diagnostics under a fixed measurement and finite-shot model. Their purpose is to show that spectral orientation has an operational consequence without introducing labels, a classical head, or an optimization trajectory.
+
+\section{Structured case study: a half-filled $U(1)$ circuit}
+
+The number-conserving RZ--XY family provides a regime in which physical low-weight diagonal readout lies far above the full-space random-orientation baseline. In the original large-size campaign, the one-body retained fraction remains of order $10^{-1}$ while the corresponding generic/Haar rank baseline becomes exponentially small in $n$. At $n=18$, for example, the one-body $U(1)$ retention is approximately $0.215$, compared with the Haar-$U(4)$ value $6.38\times10^{-5}$; the two-body values are approximately $0.401$ and $6.25\times10^{-4}$, respectively.
+
+The stronger diagnostic is direct subspace overlap. Let $P_{\rm top}$ denote the cross-fitted leading tangent subspace of rank equal to the centered one-body readout rank, and let $P_{\le k}$ denote the cumulative low-weight Walsh span. We use
+\begin{equation}
+A_k=\frac{1}{r_1}\Tr(P_{\le k}P_{\rm top})
+\label{eq:Ak}
+\end{equation}
+to quantify how much of the leading tangent subspace lies in low-weight sectors. This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new \cite{Fernandez2025}. Across $n=8,10,12,14,16,18$, the one-body values are $0.552$, $0.450$, $0.396$, $0.341$, $0.309$, and $0.284$, respectively. The final $n=18$ estimate is
+\begin{equation}
+A_1(18)=0.283586\;[0.277044,0.290865],
+\end{equation}
+while the cumulative weight-through-two overlap is
+\begin{equation}
+A_{\le2}(18)=0.463538\;[0.457425,0.469591].
+\end{equation}
+Each size uses 20 independent circuit instances.
+
+Over the tested window $n=8$--$18$, two-parameter log-space model comparison favors a finite-size power form over an exponential form. The fitted exponents are $0.8223\,[0.7694,0.8735]$ for $A_1$ and $0.7041\,[0.6798,0.7281]$ for $A_{\le2}$, with $\Delta\mathrm{AICc}=14.39$ and $12.82$, respectively, in favor of the power model. These are finite-size model-discrimination results only; they are not asymptotic lower bounds and are not identified with a hydrodynamic exponent.
 
 \begin{figure*}[t]
-\includegraphics[width=\textwidth]{fig5_full_record_vs_accessible.pdf}
-\caption{Full-record and low-weight information. (a) The complete computational-basis record retains a similar order-one fraction of QFI in the generic/Haar and $U(1)$ circuits. (b) Their one-body retained fractions differ by orders of magnitude at large $n$. (c) Selected sizes plotted against $F_{\rm full}/F_Q$ show that similar full-record Fisher fractions can correspond to very different low-weight accessibility.}
-\label{fig:fullrecord}
+\centering
+\includegraphics[width=.93\textwidth]{production/fig_u1_alignment_scaling.pdf}
+\caption{Finite-size low-weight alignment in the half-filled $U(1)$ family. Points and error bars are circuit-level means and 95\% bootstrap intervals for the cross-fitted leading rank-$r_1$ tangent subspace. Solid curves are the two-parameter power fits and dashed curves are exponential fits over $n=8$--$18$. Positive $\Delta$AICc favors the power model over the tested window. The comparison is descriptive finite-size model selection, not an asymptotic or hydrodynamic theorem.}
+\label{fig:u1-scaling}
 \end{figure*}
 
-\section{Relation to quantum machine learning}
+This observation should not be read as a new theorem that $U(1)$ symmetry improves trainability. Hamming-weight-preserving trainability, Lie-algebraic restrictions, low-bodyness concentration in structured quantum models, and readout-visible sector coherence in noisy equivariant circuits are established neighboring phenomena \cite{Monbroussou2025,Fontana2024,Ragone2024,Bermejo2026,UgailHoward2026}. In addition, fixed-charge slice geometry supplies a non-dynamical structural null \cite{Filmus2016}, while conserved-density hydrodynamics supplies a distinct dynamical mechanism in random circuits \cite{Khemani2018,Rakovszky2018}. The present result is narrower: in this specific half-filled variational family, the leading measurement-induced tangent subspace is unusually visible to low-weight diagonal $Z$ readout under the rank-controlled metric used throughout this paper.
 
-State-space geometry and measurement-accessible geometry answer different questions. QFI and the quantum geometric tensor characterize sensitivity before a measurement is selected \cite{BraunsteinCaves1994,Stokes2020,Haug2021}. Once a measurement and feature span are fixed, the accessible geometry depends on those choices \cite{HottaOzawa2004,LuLuoOh2012}. Whether the accessible directions help a learning task additionally depends on the data encoding, labels, loss function, and optimization trajectory \cite{SchuldKilloran2019,Havlicek2019,Thanasilp2023}.
+A separately archived pilot tests sensitivity to exact conservation at fixed trainable parameter count. At $n=8$, the unperturbed one-body alignment is $A_1=0.517\,[0.486,0.549]$. A symmetry-preserving $R_Z$ perturbation of strength $\epsilon=0.3$ leaves $A_1=0.481\,[0.454,0.518]$, whereas a nontrainable symmetry-breaking $R_X$ perturbation at the same strength gives $A_1=0.0295\,[0.0248,0.0338]$. The physical one-body retention simultaneously falls from $0.430$ to $0.0325$ in the breaking control. We use this as a sensitivity control, not as a mechanism-identification experiment: it does not separate readout--charge compatibility, fixed-charge harmonic geometry, restricted controllability, and hydrodynamic slow modes.
 
-For fixed Pauli weight, Eq.~\eqref{eq:fixed-weight} gives a random-orientation retained fraction of order $\mathrm{poly}(n)/2^n$. This is a statement about measurement-accessible tangent mass, not about $\mathrm{Var}(\partial_\theta L)$. It is nevertheless relevant to the trainability literature because cost locality and observable structure can change gradient scaling \cite{Cerezo2021,UvarovBiamonte2021,HolmesSharma2022}. A direct barren-plateau test can therefore record full tangent sensitivity, observable-accessible sensitivity, and task-gradient variance on the same circuit instances.
+\begin{figure}[t]
+\centering
+\includegraphics[width=.98\linewidth]{production/fig_symmetry_breaking_control.pdf}
+\caption{Verified symmetry-breaking pilot at $n=8$. Symmetry-preserving $R_Z$ perturbations leave the one-body tangent-subspace overlap comparatively stable, while nontrainable $R_X$ perturbations that break charge conservation suppress it toward the full-score-space rank scale. Error bars are 95\% circuit-bootstrap intervals over 10 circuit instances. The dotted line is a visual full-space rank reference after charge breaking, not a fit and not a sector-Haar null.}
+\label{fig:symmetry-breaking}
+\end{figure}
 
-The spectral calculation also gives an ansatz--measurement design criterion. Two readout subspaces with the same rank can retain very different tangent mass. In that setting, increasing the number of observables and changing which observables are measured are different interventions. Existing work has already shown that measurement strategy can be used to diagnose or avoid unfavorable trainability regions in other settings \cite{Sack2022}. The quantities used here give a direct way to check whether a physically simple feature span intersects the leading tangent modes before a full training experiment is run.
+\section{Full measurement record versus restricted readout}
 
-The $U(1)$ data add a symmetry-specific observation. Symmetry-preserving and equivariant circuit constructions are used in variational algorithms and QML to restrict the model to relevant sectors or encode known invariances \cite{Gard2020,LaroccaInvariant2022,Meyer2023}. Our result is more limited: in this circuit family, the symmetry-constrained tangent covariance is concentrated and its leading structure is unusually visible to low-weight diagonal observables. This does not imply that symmetry alone improves a learning task. Accessibility and task discriminativeness remain separate questions.
+The complete computational-basis record retains a similar order-one fraction of QFI in generic and $U(1)$ circuits. Across the generic data, $F_{\rm full}/F_Q$ is approximately $0.49$, while the $U(1)$ values remain near $0.47$--$0.48$. The orders-of-magnitude separation between the two circuit classes therefore appears primarily after projection onto the low-weight readout span.
 
-\section{Scope and limitations}
-
-The main numerical statements use a frozen protocol, circuit-level bootstrap resampling, equal weighting of the generic families, and a prespecified equivalence band. Family-level failures were retained. Leave-one-family-out sensitivity checks show that the primary generic point estimates are not set by one architecture.
-
-The campaign includes separate basis, direction-sampler, coordinate-visibility, tangent-count convergence, depth, orientation, and spectrum profiles. The basis and direction-sampler effects are generally small in absolute size but are not zero. The coordinate sampler probes a different visibility endpoint from the dense Gaussian tangent covariance. In the nested $M=32,64,128,256$ study, a small number of cells miss the strict preregistered convergence threshold; those misses limit precision claims for the affected cells.
-
-The asymptotic theorem is a theorem for random relative orientation. It does not prove that any physical family converges to that ensemble. The $n=18$ nonconserving stress test contains only Haar-$U(4)$. The larger-size profiles use fewer tangent directions than the primary profile. All simulations are noiseless and use diagonal low-weight $Z$ readout. Noise can change trainability and measurement statistics in variational circuits \cite{Wang2021}, and other POVMs or finite-shot estimators can change the accessible score geometry. These cases are outside the present numerical study.
-
-A direct follow-up for QML would measure loss-gradient variance together with full and accessible tangent sensitivity on the same circuits. That experiment would test whether the accessibility quantities introduced here predict task-level gradient concentration.
+This comparison prevents a misleading interpretation of the $U(1)$ result. The structured circuit does not simply preserve vastly more classical Fisher information under computational-basis measurement. Rather, a much larger fraction of the measured tangent information is oriented toward the low-weight functions retained by the readout.
 
 \section{Discussion}
 
-The data support a simple separation. The readout rank sets a useful reference value because a random rank-$r$ subspace has mean overlap $r/N$ with any trace-one covariance. The covariance spectrum controls the width of that random-orientation overlap. A physical circuit can still have a systematic positive or negative orientation bias.
+The results support a three-part separation. Rank fixes a null accessibility scale. The covariance spectrum controls how broadly random rank-matched subspaces fluctuate around that scale. The physical orientation of the readout relative to the tangent eigenspaces controls the actual retained mass. These quantities can vary independently enough that rank-typical retention coexists with strong anisotropy, while equal-rank readouts yield substantially different finite-shot signal.
 
-This separation explains the generic finite-size data. The covariance becomes strongly anisotropic with $n$, while the family-balanced low-weight overlap remains inside the practical rank-equivalence band. The two observations concern different properties of $C$ and $P$. The RY--RZ--CZ family then provides a negative orientation bias within the same protocol, and the $U(1)$ family provides a much larger positive bias. The full-record Fisher calculation shows that these low-weight differences are not accompanied by a comparable separation in $F_{\rm full}/F_Q$.
+The strongest evidence for the usefulness of this separation is the controlled same-rank experiment. The circuit and quantum measurement are unchanged; the rank and shot budget are unchanged; only the retained score subspace is changed. In generic Haar-$U(4)$ circuits, cross-fitted alignment increases the directional gradient-energy proxy by nearly an order of magnitude at $n=12$. This effect cannot be attributed to adding more observables, increasing the measurement budget, or changing the underlying state family. It is an orientation effect inside the same measurement-induced score space.
 
-The spectral profile is useful because it distinguishes missing information from inaccessible information at fixed rank. In the generic Haar-$U(4)$ example, the leading rank-matched subspace contains substantially more tangent mass than the physical one-body span. For the $U(1)$ example, the physical span is closer to the leading spectral subspace. This comparison motivates observable co-design. The relevant diagnostic is the tangent mass captured by the readout, in addition to the readout rank.
+The random-orientation formulas should therefore be interpreted as a baseline, not as the novelty claim by themselves. Similar Grassmann overlap identities are standard in random-projection theory and appear in neighboring classical subspace-overlap problems \cite{Fernandez2025}. Random-measurement work also establishes a distinct Haar-averaged CFIM--QFIM relation with variance and concentration bounds when the measurement basis itself is randomized \cite{LuSha2025}. Likewise, the Ky Fan optimum is standard spectral optimization \cite{KyFan1949}. The contribution here is the rank-controlled organization of these ingredients around measurement-induced VQC tangent scores, together with physical, random, and cross-fitted equal-rank controls and a finite-shot operational test.
+
+The $U(1)$ family illustrates why this organization is useful. Its physical readout is far from a generic random orientation and already points toward leading tangent directions. Existing Hamming-weight-preserving trainability and Lie-algebraic theories \cite{Monbroussou2025,Fontana2024,Ragone2024}, readout-visible equivariant coherence \cite{UgailHoward2026}, fixed-charge slice geometry \cite{Filmus2016}, and conserved-density hydrodynamics \cite{Khemani2018,Rakovszky2018} offer plausible but non-equivalent explanations for this structure. Determining which mechanism controls the observed overlap requires additional interventions---for example varying locality independently of conservation, comparing against fixed-charge random baselines, or resolving depth scaling---and is left for separate work.
+
+Finally, measurement accessibility is not the same as task usefulness. A supervised learning problem introduces another layer: the task gradient may occupy only a subset of the accessible tangent geometry. The present framework therefore sits between state-space geometry and task-level optimization geometry. It quantifies what the chosen measurement and readout make available before asking whether a specific loss uses those directions.
 
 \section{Conclusion}
 
-We studied the covariance of normalized measurement scores induced by quantum-state tangents and asked how much of that covariance is visible to a fixed low-weight readout. For random relative orientation, the rank-normalized overlap has mean one and variance bounded by $2/(r\deff)$. The result allows strong anisotropy and gives a fixed-weight retained fraction of order $n^k/2^n$ under the random-orientation model.
+We studied the fraction of measurement-induced tangent geometry retained by a restricted readout. For a trace-one tangent-score covariance $C$ and rank-$r$ readout projector $P$, the retained mass $R=\Tr(PC)$ makes the role of readout orientation explicit. The standard Grassmann mean $r/N$ provides a rank-only reference, while the spectrum of $C$ sets the null width through $\deff$.
 
-In the finite-size data, the family-balanced nonconserving circuits are practically rank typical while their covariance becomes increasingly anisotropic. RY--RZ--CZ has a persistent one-body deficit, whereas the half-filled $U(1)$ circuit has much larger low-weight retention and a smaller gap between the physical readout and rank-matched leading tangent subspaces. Readout rank is therefore useful as a reference value; the architecture-dependent correction is encoded in spectral orientation.
+The numerical results show why rank and orientation should be separated. Generic low-weight readouts can be close to their rank baseline even when the covariance is strongly anisotropic. At the same rank, cross-fitted leading tangent subspaces can retain much more information than physical low-weight observables, and that difference produces larger directional signal and finite-shot SNR at fixed measurement resources. A half-filled $U(1)$ circuit provides the complementary structured regime in which the physical low-weight readout is already strongly aligned with the leading tangent subspace.
+
+The practical conclusion is therefore not that low rank is intrinsically bad, nor that symmetry is intrinsically good. It is that readout rank specifies only how many score directions are retained. Which directions are retained---their spectral orientation relative to the tangent covariance---controls how much measured tangent information remains accessible.
 
 \begin{acknowledgments}
-The author thanks Mohamed Bennai (\href{https://orcid.org/0000-0002-7364-5171}{ORCID: 0000-0002-7364-5171}) for helpful discussions. ChatGPT (OpenAI) was used for language editing and revision of the manuscript. The author reviewed the scientific content and approved the final text.
+The author thanks Mohamed Bennai (\href{https://orcid.org/0000-0002-7364-5171}{ORCID: 0000-0002-7364-5171}) for helpful discussions. ChatGPT (OpenAI) was used for language editing and manuscript revision. The author reviewed the scientific content and approved the final text.
 \end{acknowledgments}
 
 \section*{Data and code availability}
-The frozen protocols, source code, aggregate tables, and shard-level numerical outputs used in this manuscript are available in the \href{https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws}{public project repository}. The principal result archives are \texttt{rigorous-v2\_primary}, \texttt{rigorous-v2\_large\_n}, and \texttt{rigorous-v2\_n18}. The asymptotic derivation is included with the paper sources.
-
-\appendix
-
-\section{Random-projector second moment}\label{app:random-projector}
-Let $P$ be the orthogonal projector onto a Haar-uniform real rank-$r$ subspace of $\mathbb{R}^N$. Orthogonal invariance and standard Grassmann/Haar integration formulas \cite{CollinsMatsumoto2017,Bendokat2024} give
-\begin{equation}
-\mathbb{E}[P_{ij}P_{kl}]=a\,\delta_{ij}\delta_{kl}+b(\delta_{ik}\delta_{jl}+\delta_{il}\delta_{jk}).
-\end{equation}
-The identities $\Tr P=r$ and $\Tr P^2=r$ imply
-\begin{align}
-aN^2+2bN&=r^2,\\
-aN+b(N^2+N)&=r,
-\end{align}
-so
-\begin{align}
-a&=\frac{r(Nr+r-2)}{N(N-1)(N+2)},\\
-b&=\frac{r(N-r)}{N(N-1)(N+2)}.
-\end{align}
-For a fixed real symmetric $C$ with $\Tr C=1$,
-\begin{equation}
-\mathbb{E}\!\left[\Tr(PC)^2\right]=a+2b\Tr(C^2).
-\end{equation}
-Subtracting $(r/N)^2$ gives
-\begin{equation}
-\mathrm{Var}[\Tr(PC)]=\frac{2r(N-r)\left[N\Tr(C^2)-1\right]}{N^2(N-1)(N+2)}.
-\end{equation}
-For $\rho=\Tr(PC)/(r/N)$,
-\begin{equation}
-\mathrm{Var}(\rho)=\frac{2(N-r)\left[N\Tr(C^2)-1\right]}{r(N-1)(N+2)}.
-\end{equation}
-Writing $q=\Tr(C^2)$ and using $N-r\le N-1$ and $Nq-1\le q(N+2)$ gives
-\begin{equation}
-\mathrm{Var}(\rho)\le\frac{2q}{r}=\frac{2}{r\deff}.
-\end{equation}
-Figure~\ref{fig:nullwidth} compares the exact standard deviation with the simpler envelope.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=.49\linewidth]{figS2_exact_null_width.pdf}
-\caption{Exact random-orientation standard deviation at $N=2^{14}-1$ for representative $\deff$, together with the covariance-independent $\sqrt{2/r}$ envelope.}
-\label{fig:nullwidth}
-\end{figure}
-
-\section{Effective spectral fraction}\label{app:deff-fraction}
-Figure~\ref{fig:defffrac} plots $\deff/N$. It decreases with system size for both circuit groups over the tested range.
-\begin{figure}[t]
-\centering
-\includegraphics[width=.49\linewidth]{figS1_deff_fraction.pdf}
-\caption{Effective dimension as a fraction of score-space dimension. The nonconserving $n=18$ point is the targeted Haar-$U(4)$ stress test.}
-\label{fig:defffrac}
-\end{figure}
-
-\section{Orientation diagnostic}\label{app:orientation-diagnostic}
-The main text emphasizes raw retention and $\rho$. The post-hoc population-null $z$ statistic is algebraically tied to $\rho-1$, so it is not treated as independent evidence. Figure~\ref{fig:zdiag} reports the large-size values for completeness.
-\begin{figure}[t]
-\centering
-\includegraphics[width=.49\linewidth]{figS3_orientation_z.pdf}
-\caption{Population-null orientation diagnostic for selected large-$n$ cells. The vertical axis uses a symmetric logarithmic scale.}
-\label{fig:zdiag}
-\end{figure}
-
-\section{Rank fraction for fixed Pauli weight}\label{app:rank-fraction}
-For full computational-basis support, the centered score-space dimension is exponential in $n$ while the number of diagonal Pauli-$Z$ strings through fixed weight is polynomial. Figure~\ref{fig:rankfrac} shows the corresponding rank fractions.
-\begin{figure}[t]
-\centering
-\includegraphics[width=.52\linewidth]{figS4_rank_fraction.pdf}
-\caption{Full-support rank fraction for one-body and up-to-two-body diagonal Pauli-$Z$ readouts. This full-support formula is not used for the symmetry-reduced $U(1)$ sector; there the archived score dimension and measured readout rank are used.}
-\label{fig:rankfrac}
-\end{figure}
-
-\section{Status of the numerical claims}\label{app:evidence-status}
-\begin{table*}[t]
-\caption{Evidence status for the main numerical statements. ``Confirmatory'' refers to quantities and decision rules fixed before the corresponding rigorous-v2 outcomes were inspected.}
-\centering
-\begin{tabular}{@{}ll@{}}
-\toprule
-\parbox[t]{0.25\textwidth}{\textbf{Claim}} & \parbox[t]{0.68\textwidth}{\textbf{Evidence status}} \\
-\midrule
-\parbox[t]{0.25\textwidth}{Generic practical rank typicality} & \parbox[t]{0.68\textwidth}{Confirmatory family-balanced primary inference for $n=6$--$12$, prespecified large-$n$ extension for $n=14,16$, and targeted Haar-$U(4)$ stress test at $n=18$.} \\
-\parbox[t]{0.25\textwidth}{Rank typicality with anisotropic covariance} & \parbox[t]{0.68\textwidth}{Exact random-orientation theorem plus confirmatory coexistence of $\rho\simeq1$ with increasing $N\Tr(C^2)$.} \\
-\parbox[t]{0.25\textwidth}{RY--RZ--CZ one-body deficit} & \parbox[t]{0.68\textwidth}{Confirmatory family-resolved exception; entire confidence intervals lie below $0.90$ at $n=14,16$.} \\
-\parbox[t]{0.25\textwidth}{$U(1)$ low-weight alignment} & \parbox[t]{0.68\textwidth}{Prespecified finite-size enhancement and orientation contrasts through $n=18$; no asymptotic enhancement exponent is claimed.} \\
-\parbox[t]{0.25\textwidth}{Generic information present at the same rank} & \parbox[t]{0.68\textwidth}{Dedicated $M=512$ spectral profile comparing physical, cross-fit, and same-sample Ky Fan retention.} \\
-\parbox[t]{0.25\textwidth}{Population-null bridge scaling} & \parbox[t]{0.68\textwidth}{Exploratory post-hoc reanalysis of archived circuits; no new quantum simulations and no primary confirmatory status.} \\
-\bottomrule
-\end{tabular}
-\end{table*}
+The frozen protocols, source code, aggregate tables, shard-level outputs, and analysis scripts are available in the public project repository. The manuscript rewrite is developed on a dedicated branch so that the frozen numerical record remains separate from editorial changes.
 
 \begin{thebibliography}{99}
 
@@ -497,7 +505,83 @@ Bootstrap Methods: Another Look at the Jackknife,
 Ann. Stat. \textbf{7}, 1 (1979),
 doi:10.1214/aos/1176344552.
 
+
+
+\bibitem{Fernandez2025}
+A. Fernandez, F. Schneider, M. Mahsereci, and P. Hennig,
+Connecting Parameter Magnitudes and Hessian Eigenspaces at Scale using Sketched Methods,
+Trans. Mach. Learn. Res. (2025), arXiv:2504.14701.
+
+\bibitem{LuSha2025}
+J. Lu and K. Sha,
+Quantum Fisher information matrix via its classical counterpart from random measurements,
+arXiv:2509.08196 (2025).
+
+\bibitem{Fontana2024}
+E. Fontana, D. Herman, S. Chakrabarti, N. Kumar, R. Yalovetzky, J. Heredge,
+S. H. Sureshbabu, and M. Pistoia,
+Characterizing barren plateaus in quantum ans\"atze with the adjoint representation,
+Nat. Commun. \textbf{15}, 7171 (2024),
+doi:10.1038/s41467-024-49910-w.
+
+\bibitem{Ragone2024}
+M. Ragone, B. N. Bakalov, F. Sauvage, A. F. Kemper, C. Ortiz Marrero,
+M. Larocca, and M. Cerezo,
+A Lie algebraic theory of barren plateaus for deep parameterized quantum circuits,
+Nat. Commun. \textbf{15}, 7172 (2024),
+doi:10.1038/s41467-024-49909-3.
+
+\bibitem{Monbroussou2025}
+L. Monbroussou, E. Z. Mamon, J. Landman, A. B. Grilo, R. Kukla, and E. Kashefi,
+Trainability and Expressivity of Hamming-Weight Preserving Quantum Circuits for Machine Learning,
+Quantum \textbf{9}, 1745 (2025),
+doi:10.22331/q-2025-05-15-1745.
+
+\bibitem{UgailHoward2026}
+H. Ugail and N. Howard,
+A Coherence Law for Trainability in Noisy Equivariant Quantum Neural Networks,
+arXiv:2606.30688 (2026).
+
+\bibitem{Bermejo2026}
+P. Bermejo, P. Braccia, M. S. Rudolph, Z. Holmes, L. Cincio, and M. Cerezo,
+Quantum Convolutional Neural Networks are Effectively Classically Simulable,
+PRX Quantum \textbf{7}, 020304 (2026),
+doi:10.1103/8qt9-72ts.
+
+\bibitem{Filmus2016}
+Y. Filmus,
+An Orthogonal Basis for Functions over a Slice of the Boolean Hypercube,
+Electron. J. Combin. \textbf{23}(1), P1.23 (2016),
+doi:10.37236/4567.
+
+\bibitem{Khemani2018}
+V. Khemani, A. Vishwanath, and D. A. Huse,
+Operator Spreading and the Emergence of Dissipative Hydrodynamics under Unitary Evolution with Conservation Laws,
+Phys. Rev. X \textbf{8}, 031057 (2018),
+doi:10.1103/PhysRevX.8.031057.
+
+\bibitem{Rakovszky2018}
+T. Rakovszky, F. Pollmann, and C. W. von Keyserlingk,
+Diffusive Hydrodynamics of Out-of-Time-Ordered Correlators with Charge Conservation,
+Phys. Rev. X \textbf{8}, 031058 (2018),
+doi:10.1103/PhysRevX.8.031058.
+
+
+
+\bibitem{Bergholm2018}
+V. Bergholm, J. Izaac, M. Schuld, C. Gogolin, S. Ahmed, V. Ajith, et al.,
+PennyLane: Automatic differentiation of hybrid quantum-classical computations,
+arXiv:1811.04968 (2018).
+
 \end{thebibliography}
 
+% -----------------------------------------------------------------------------
+% REWRITE STATUS
+% The main narrative is rewritten. Before replacing the production manuscript:
+% 1. verify/add bibliography entries for the hostile-audit prior art;
+% 2. final n=18 U(1) scaling point inserted and cross-checked against archived summary;
+% 3. integrate the final trainability/noise figures and appendix derivations;
+% 4. symmetry-breaking pilot verified against archived raw/summary CSV; retain pilot wording.
+% -----------------------------------------------------------------------------
 
 \end{document}
