@@ -50,10 +50,19 @@ jobs:
         run: python paper/prx/bibliography_visual_finalize.py
       - name: Apply final manuscript polish
         run: python paper/prx/final_submission_polish.py
-      - name: Apply base legacy figure cleanup
+      - name: Enforce final visual and ORCID policy
+        run: python paper/prx/final_visual_policy.py
+      - name: Move all legacy figure legends below plots
         run: python paper/prx/figure_scripts/legacy_visual_cleanup.py
-      - name: Put all legacy figure legends below plots
-        run: python paper/prx/figure_scripts/legend_below_policy.py
+      - name: Move publication figure legends below plots
+        run: python paper/prx/figure_scripts/publication_visual_cleanup.py
+      - name: Verify legend generator policy
+        run: |
+          if grep -q 'ax.legend' paper/prx/make_prx_figures.py; then
+            echo 'In-panel legend remains in legacy generator'
+            exit 1
+          fi
+          grep -q 'def legend_below' paper/prx/make_prx_figures.py
       - name: Generate legacy vector figures used by the rewrite
         run: |
           cd paper/prx
@@ -109,6 +118,7 @@ jobs:
           grep -q '\\email{aithaddou.marwan@outlook.com}' paper/prx/spectral_geometry_prx.tex
           grep -q 'Mohamed Bennai\\,\\orcidlink{0000-0002-7364-5171}' paper/prx/spectral_geometry_prx.tex
           grep -q 'GitHub reproducibility repository' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\begin{center}' paper/prx/spectral_geometry_prx.tex
           if grep -q '\\boxed{\\text{rank fixes a baseline' paper/prx/spectral_geometry_prx.tex; then
             echo 'Core prose message must not be boxed'
             exit 1
