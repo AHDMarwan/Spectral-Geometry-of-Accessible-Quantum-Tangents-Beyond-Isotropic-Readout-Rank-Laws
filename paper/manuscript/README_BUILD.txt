@@ -1,4 +1,4 @@
-PRX combined manuscript package
+Paper manuscript package
 
 The Supplemental Material has been integrated into the manuscript as Appendices A-E.
 Build from this directory with:
