@@ -39,14 +39,21 @@ jobs:
         run: python paper/prx/figure_scripts/make_publication_figures.py
       - name: Generate PennyLane circuit figures
         run: python paper/prx/figure_scripts/draw_circuits_pennylane.py
+      - name: Insert circuit figure and PennyLane citation
+        run: python paper/prx/insert_circuit_figure.py
       - name: Sanity-check generated files
         run: |
           test -s paper/prx/figures/production/fig_u1_alignment_scaling.pdf
           test -s paper/prx/figures/production/fig_symmetry_breaking_control.pdf
           test -s paper/prx/figures/production/fig_fixed_weight_rank_fraction.pdf
           test -s paper/prx/figures/generated_circuits/circuit_ry_rz_cz.pdf
+          test -s paper/prx/figures/generated_circuits/circuit_su2_cnot.pdf
+          test -s paper/prx/figures/generated_circuits/circuit_su2_cz_ring.pdf
+          test -s paper/prx/figures/generated_circuits/circuit_su2_cz_random_matching.pdf
           test -s paper/prx/figures/generated_circuits/circuit_su2_haar_u4.pdf
           test -s paper/prx/figures/generated_circuits/circuit_u1_rz_xy.pdf
+          grep -q '\\label{fig:circuits}' paper/prx/spectral_geometry_prx_rewrite.tex
+          grep -q '\\bibitem{Bergholm2018}' paper/prx/spectral_geometry_prx_rewrite.tex
       - name: Commit generated production assets
         if: github.event_name != 'pull_request'
         run: |
