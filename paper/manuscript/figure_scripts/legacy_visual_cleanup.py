@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 
-TARGET = Path(__file__).resolve().parents[1] / "make_prx_figures.py"
+TARGET = Path(__file__).resolve().parents[1] / "make_paper_figures.py"
 
 HELPER = r'''
 def legend_below(fig, ncol=4):

@@ -1,8 +1,8 @@
 from pathlib import Path
 
 PAPER = Path(__file__).resolve().parent
-CANONICAL = PAPER / "spectral_geometry_prx.tex"
-TARGET = PAPER / "spectral_geometry_prx_rewrite.tex"
+CANONICAL = PAPER / "spectral_geometry.tex"
+TARGET = PAPER / "spectral_geometry_rewrite.tex"
 
 ORCID = "0009-0008-1734-1721"
 EMAIL = "aithaddou.marwan@outlook.com"

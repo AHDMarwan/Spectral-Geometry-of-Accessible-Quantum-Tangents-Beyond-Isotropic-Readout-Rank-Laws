@@ -85,7 +85,7 @@ actual two-column PDF scale and to keep schematics faithful to the implementatio
 
 ## Final PDF inspection
 
-- [ ] Compile the canonical spectral_geometry_prx.pdf from spectral_geometry_prx_rewrite.tex.
+- [ ] Compile the canonical spectral_geometry.pdf from spectral_geometry_rewrite.tex.
 - [ ] Inspect every page visually after GitHub Actions produces the canonical PDF.
 - [ ] Verify no figure is clipped at page/column boundaries.
 - [ ] Verify no caption is cut off or separated awkwardly from its figure.

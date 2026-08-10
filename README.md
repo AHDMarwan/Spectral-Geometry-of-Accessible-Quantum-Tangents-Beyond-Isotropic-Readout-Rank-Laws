@@ -6,12 +6,12 @@ This repository contains the theory, frozen numerical protocols, archived result
 
 **Marwan Ait Haddou, _Measurement-Accessible Quantum Tangent Geometry: Rank Baselines and Spectral Orientation_ (2026).**
 
-- [Production manuscript PDF](paper/prx/spectral_geometry_prx.pdf)
-- [LaTeX source](paper/prx/spectral_geometry_prx.tex)
-- [Submission package](paper/prx/spectral_geometry_prx_submission_package.zip)
+- [Production manuscript PDF](paper/manuscript/spectral_geometry.pdf)
+- [LaTeX source](paper/manuscript/spectral_geometry.tex)
+- [Submission package](paper/manuscript/spectral_geometry_submission_package.zip)
 - [Rigorous-v2 protocol](docs/RIGOROUS_PROTOCOL_V2.md)
-- [Citation/equation audit](paper/prx/CITATION_EQUATION_AUDIT.md)
-- [Figure visual-QA checklist](paper/prx/FIGURE_VISUAL_QA_CHECKLIST.md)
+- [Citation/equation audit](paper/manuscript/CITATION_EQUATION_AUDIT.md)
+- [Figure visual-QA checklist](paper/manuscript/FIGURE_VISUAL_QA_CHECKLIST.md)
 - [Zenodo reproducibility archive](https://doi.org/10.5281/zenodo.21877379)
 - [Author ORCID](https://orcid.org/0009-0008-1734-1721)
 
@@ -260,9 +260,9 @@ The tested finite sizes are not presented as proofs of asymptotic physical behav
 ## Repository map
 
 ```text
-paper/prx/                         production manuscript, appendices, figures, source package
-paper/prx/data/                    paper-facing archived tables
-paper/prx/figure_scripts/          deterministic publication and appendix figure generation
+paper/manuscript/                         production manuscript, appendices, figures, source package
+paper/manuscript/data/                    paper-facing archived tables
+paper/manuscript/figure_scripts/          deterministic publication and appendix figure generation
 src/aqt/                           experiment and analysis code
 profiles/                          frozen experiment profiles
 docs/RIGOROUS_PROTOCOL_V2.md       confirmatory protocol and inference rules

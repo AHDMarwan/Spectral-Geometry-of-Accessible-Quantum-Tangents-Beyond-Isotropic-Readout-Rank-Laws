@@ -30,11 +30,11 @@ jobs:
           import subprocess
 
           replacements = (
-              ("paper/prx", "paper/manuscript"),
-              ("spectral_geometry_prx", "spectral_geometry"),
-              ("make_prx_figures.py", "make_paper_figures.py"),
-              ("build-prx-combined.yml", "build-paper.yml"),
-              ("Build combined PRX manuscript", "Build paper manuscript"),
+              ("paper/manuscript", "paper/manuscript"),
+              ("spectral_geometry", "spectral_geometry"),
+              ("make_paper_figures.py", "make_paper_figures.py"),
+              ("build-paper.yml", "build-paper.yml"),
+              ("Build paper manuscript", "Build paper manuscript"),
           )
 
           tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
@@ -62,23 +62,23 @@ jobs:
           test -f paper/manuscript/spectral_geometry.tex
           test -f paper/manuscript/spectral_geometry_rewrite.tex
           test -f paper/manuscript/make_paper_figures.py
-          test ! -e paper/prx
-          test ! -e .github/workflows/build-prx-combined.yml
+          test ! -e paper/manuscript
+          test ! -e .github/workflows/build-paper.yml
 
-          if git grep -I -n 'paper/prx'; then
-            echo 'Stale paper/prx path remains'
+          if git grep -I -n 'paper/manuscript'; then
+            echo 'Stale paper/manuscript path remains'
             exit 1
           fi
-          if git grep -I -n 'spectral_geometry_prx'; then
-            echo 'Stale spectral_geometry_prx reference remains'
+          if git grep -I -n 'spectral_geometry'; then
+            echo 'Stale spectral_geometry reference remains'
             exit 1
           fi
-          if git grep -I -n 'make_prx_figures.py'; then
-            echo 'Stale make_prx_figures.py reference remains'
+          if git grep -I -n 'make_paper_figures.py'; then
+            echo 'Stale make_paper_figures.py reference remains'
             exit 1
           fi
-          if git grep -I -n 'build-prx-combined.yml'; then
-            echo 'Stale build-prx-combined.yml reference remains'
+          if git grep -I -n 'build-paper.yml'; then
+            echo 'Stale build-paper.yml reference remains'
             exit 1
           fi
 

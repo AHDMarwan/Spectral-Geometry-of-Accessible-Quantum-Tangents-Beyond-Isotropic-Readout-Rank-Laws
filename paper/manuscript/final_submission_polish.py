@@ -1,7 +1,7 @@
 from pathlib import Path
 
 PAPER = Path(__file__).resolve().parent
-TARGET = PAPER / "spectral_geometry_prx_rewrite.tex"
+TARGET = PAPER / "spectral_geometry_rewrite.tex"
 
 
 def main() -> None:

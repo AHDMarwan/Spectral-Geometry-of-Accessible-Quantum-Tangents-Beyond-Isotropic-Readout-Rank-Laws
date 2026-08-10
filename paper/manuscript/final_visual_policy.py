@@ -2,7 +2,7 @@ from pathlib import Path
 import re
 
 PAPER = Path(__file__).resolve().parent
-TARGET = PAPER / "spectral_geometry_prx_rewrite.tex"
+TARGET = PAPER / "spectral_geometry_rewrite.tex"
 
 BENNAI_ORCID = "0000-0002-7364-5171"
 PRIOR_KEY = "AitHaddou2026IsotropicRankLaws"

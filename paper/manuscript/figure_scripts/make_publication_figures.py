@@ -3,7 +3,7 @@ from __future__ import annotations
 """Generate publication-grade figures used by the production rewrite.
 
 The script intentionally reads small, paper-facing CSV tables committed under
-``paper/prx/data`` so that figure generation is deterministic and does not
+``paper/manuscript/data`` so that figure generation is deterministic and does not
 require rerunning the quantum simulations.
 """
 
