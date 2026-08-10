@@ -211,6 +211,20 @@ The baseline campaign uses computational-basis measurement, depth proportional t
 
 For the operational comparison we hold fixed the circuit, the full computational-basis record, the readout rank, and the shot budget. We compare three rank-matched readouts: (i) the physical low-weight span, (ii) an independent random subspace, and (iii) a cross-fitted aligned subspace learned from independent tangent data. For an evaluation tangent $v$, the retained score energy $\|P u_v\|^2$ controls the directional signal available in that readout. Multiplying by the full-record Fisher scale gives the raw directional gradient-energy proxy used in the experiment. Finite-shot signal-to-noise is computed under the multinomial shot model at a fixed budget of $10^4$ shots.
 
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_ry_rz_cz.pdf}\hfill
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_cnot.pdf}\\[2pt]
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_cz_ring.pdf}\hfill
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_cz_random_matching.pdf}\\[2pt]
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_su2_haar_u4.pdf}\hfill
+\includegraphics[width=.49\textwidth]{generated_circuits/circuit_u1_rz_xy.pdf}
+\caption{Circuit families used in the numerical campaign, rendered directly from PennyLane circuit definitions \cite{Bergholm2018}. From top left to bottom right: RY--RZ--CZ line, SU2--CNOT line, SU2--CZ ring, SU2--CZ random matching, SU2--Haar-$U(4)$ brickwork, and the half-filled $U(1)$ RZ--XY line. For legibility the drawings show $n=6$ and two representative layers; the production simulations use the depths and system sizes specified in the numerical protocol. The $U(1)$ panel begins from the alternating half-filled computational-basis state, matching the simulation code. Generic unitary boxes in the last row represent the actual two-qubit matrices used by the simulator rather than a gate decomposition.}
+\label{fig:circuits}
+\end{figure*}
+
 \section{Rank typicality without isotropy in generic circuits}
 
 For the family-balanced generic ensemble, the one- and two-body readouts remain within the preregistered rank-equivalence band through $n=16$. The targeted Haar-$U(4)$ stress test at $n=18$ gives
@@ -551,6 +565,13 @@ T. Rakovszky, F. Pollmann, and C. W. von Keyserlingk,
 Diffusive Hydrodynamics of Out-of-Time-Ordered Correlators with Charge Conservation,
 Phys. Rev. X \textbf{8}, 031058 (2018),
 doi:10.1103/PhysRevX.8.031058.
+
+
+
+\bibitem{Bergholm2018}
+V. Bergholm, J. Izaac, M. Schuld, C. Gogolin, S. Ahmed, V. Ajith, et al.,
+PennyLane: Automatic differentiation of hybrid quantum-classical computations,
+arXiv:1811.04968 (2018).
 
 \end{thebibliography}
 
