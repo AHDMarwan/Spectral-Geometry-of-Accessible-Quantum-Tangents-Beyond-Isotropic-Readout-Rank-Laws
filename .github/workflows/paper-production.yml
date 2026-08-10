@@ -52,6 +52,8 @@ jobs:
         run: python paper/prx/final_submission_polish.py
       - name: Enforce final visual and ORCID policy
         run: python paper/prx/final_visual_policy.py
+      - name: Add comprehensive appendices
+        run: python paper/prx/appendices_finalize.py
       - name: Move all legacy figure legends below plots
         run: python paper/prx/figure_scripts/legacy_visual_cleanup.py
       - name: Move publication figure legends below plots
@@ -72,6 +74,8 @@ jobs:
           python make_prx_figures.py
       - name: Generate publication data figures
         run: python paper/prx/figure_scripts/make_publication_figures.py
+      - name: Generate appendix diagnostic figures
+        run: python paper/prx/figure_scripts/make_appendix_figures.py
       - name: Generate PennyLane circuit figures
         run: python paper/prx/figure_scripts/draw_circuits_pennylane.py
       - name: Insert circuit figure and PennyLane citation
@@ -85,6 +89,10 @@ jobs:
           test -s spectral_geometry_prx_rewrite.pdf
           if grep -q 'undefined citations' spectral_geometry_prx_rewrite.log; then
             echo 'Undefined citation detected'
+            exit 1
+          fi
+          if grep -q 'undefined references' spectral_geometry_prx_rewrite.log; then
+            echo 'Undefined cross-reference detected'
             exit 1
           fi
       - name: Promote rewrite to canonical manuscript
@@ -102,6 +110,9 @@ jobs:
           test -s paper/prx/figures/production/fig_u1_alignment_scaling.pdf
           test -s paper/prx/figures/production/fig_symmetry_breaking_control.pdf
           test -s paper/prx/figures/production/fig_fixed_weight_rank_fraction.pdf
+          test -s paper/prx/figures/appendix_operational_gains.pdf
+          test -s paper/prx/figures/appendix_noise_robustness.pdf
+          test -s paper/prx/figures/appendix_u1_fit_diagnostics.pdf
           test -s paper/prx/figures/generated_circuits/circuit_ry_rz_cz.pdf
           test -s paper/prx/figures/generated_circuits/circuit_su2_cnot.pdf
           test -s paper/prx/figures/generated_circuits/circuit_su2_cz_ring.pdf
@@ -110,6 +121,14 @@ jobs:
           test -s paper/prx/figures/generated_circuits/circuit_u1_rz_xy.pdf
           grep -q 'Rank Baselines and Spectral Orientation' paper/prx/spectral_geometry_prx.tex
           grep -q '\\label{fig:circuits}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\appendix' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\label{app:score_geometry}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\label{app:grassmann}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\label{app:walsh_rank}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\label{app:crossfit}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\label{app:operational}' paper/prx/spectral_geometry_prx.tex
+          grep -q 'Appendix~\\ref{app:grassmann}' paper/prx/spectral_geometry_prx.tex
+          grep -q 'Appendix~\\ref{app:walsh_rank}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{Fernandez2025}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{AitHaddou2026IsotropicRankLaws}' paper/prx/spectral_geometry_prx.tex
@@ -144,11 +163,13 @@ jobs:
                   paper/prx/spectral_geometry_prx_submission_package.zip \
                   paper/prx/spectral_geometry_prx_rewrite.tex \
                   paper/prx/figures/production \
-                  paper/prx/figures/generated_circuits
+                  paper/prx/figures/generated_circuits \
+                  paper/prx/figures/appendix_*.pdf \
+                  paper/prx/figures/appendix_*.png
           if git diff --cached --quiet; then
             echo "No production changes to commit."
           else
-            git commit -m "Promote production rewrite to canonical manuscript [skip ci]"
+            git commit -m "Promote production rewrite with appendices [skip ci]"
             git reset --hard HEAD
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin HEAD:"${GITHUB_REF_NAME}"
