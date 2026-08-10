@@ -65,19 +65,19 @@ jobs:
           test ! -e paper/prx
           test ! -e .github/workflows/build-prx-combined.yml
 
-          if git grep -n 'paper/prx'; then
+          if git grep -I -n 'paper/prx'; then
             echo 'Stale paper/prx path remains'
             exit 1
           fi
-          if git grep -n 'spectral_geometry_prx'; then
+          if git grep -I -n 'spectral_geometry_prx'; then
             echo 'Stale spectral_geometry_prx reference remains'
             exit 1
           fi
-          if git grep -n 'make_prx_figures.py'; then
+          if git grep -I -n 'make_prx_figures.py'; then
             echo 'Stale make_prx_figures.py reference remains'
             exit 1
           fi
-          if git grep -n 'build-prx-combined.yml'; then
+          if git grep -I -n 'build-prx-combined.yml'; then
             echo 'Stale build-prx-combined.yml reference remains'
             exit 1
           fi
