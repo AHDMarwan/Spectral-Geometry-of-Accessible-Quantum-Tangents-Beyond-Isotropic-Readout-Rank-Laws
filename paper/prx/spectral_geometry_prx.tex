@@ -205,9 +205,9 @@ This optimization is standard linear algebra; its use here is diagnostic. It ans
 
 \section{Numerical strategy}
 
-The numerical campaign treats a circuit instance, not an individual tangent direction, as the independent statistical unit. Within each circuit, tangent directions estimate the score covariance and readout statistics. Confidence intervals are obtained by nonparametric bootstrap over independent circuit instances \cite{Efron1979}. The generic aggregate is family-balanced so that no ansatz family dominates by sample count.
+The numerical campaign treats a circuit instance, not an individual tangent direction, as the independent statistical unit. Within each circuit, tangent directions estimate the score covariance and readout statistics. Confidence intervals are obtained by nonparametric bootstrap over independent circuit instances \cite{Efron1979}. The generic aggregate is family-balanced so that no ansatz family dominates by sample count. The source code, frozen experiment profiles, aggregate tables, shard-level outputs, and paper-facing result summaries used for the numerical claims are archived in the public reproducibility repository \cite{AitHaddou2026MeasurementAccessible}.
 
-The baseline campaign uses computational-basis measurement, depth proportional to system size, and diagonal $Z$ readouts through weight one and two. The nonconserving ensemble includes RY--RZ--CZ, SU2--CNOT, SU2--CZ, random-matching SU2--CZ, and Haar-$U(4)$ brickwork families. A half-filled number-conserving RZ--XY family supplies the structured $U(1)$ case study. Larger-size extensions and dedicated cross-fit experiments use frozen profiles documented in the repository.
+The baseline campaign uses computational-basis measurement, depth proportional to system size, and diagonal $Z$ readouts through weight one and two. The nonconserving ensemble includes RY--RZ--CZ, SU2--CNOT, SU2--CZ, random-matching SU2--CZ, and Haar-$U(4)$ brickwork families. A half-filled number-conserving RZ--XY family supplies the structured $U(1)$ case study. Larger-size extensions and dedicated cross-fit experiments use frozen profiles documented in the repository \cite{AitHaddou2026MeasurementAccessible}.
 
 For the operational comparison we hold fixed the circuit, the full computational-basis record, the readout rank, and the shot budget. We compare three rank-matched readouts: (i) the physical low-weight span, (ii) an independent random subspace, and (iii) a cross-fitted aligned subspace learned from independent tangent data. For an evaluation tangent $v$, the retained score energy $\|P u_v\|^2$ controls the directional signal available in that readout. Multiplying by the full-record Fisher scale gives the raw directional gradient-energy proxy used in the experiment. Finite-shot signal-to-noise is computed under the multinomial shot model at a fixed budget of $10^4$ shots.
 
@@ -356,7 +356,7 @@ The author thanks Mohamed Bennai (\href{https://orcid.org/0000-0002-7364-5171}{O
 \end{acknowledgments}
 
 \section*{Data and code availability}
-The frozen protocols, source code, aggregate tables, shard-level outputs, and analysis scripts are available in the public project repository. The manuscript rewrite is developed on a dedicated branch so that the frozen numerical record remains separate from editorial changes.
+The frozen protocols, source code, aggregate tables, shard-level outputs, analysis scripts, and the numerical results reported in this manuscript are available in the public project repository \cite{AitHaddou2026MeasurementAccessible}. The repository records the frozen numerical provenance separately from editorial manuscript changes.
 
 \begin{thebibliography}{99}
 
@@ -572,6 +572,15 @@ doi:10.1103/PhysRevX.8.031058.
 V. Bergholm, J. Izaac, M. Schuld, C. Gogolin, S. Ahmed, V. Ajith, et al.,
 PennyLane: Automatic differentiation of hybrid quantum-classical computations,
 arXiv:1811.04968 (2018).
+
+
+
+\bibitem{AitHaddou2026MeasurementAccessible}
+M. Ait Haddou,
+Measurement-Accessible Quantum Tangent Geometry: Rank Typicality Without Isotropy,
+Manuscript and reproducibility repository (2026),
+\url{https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws}.
+ORCID: 0009-0008-1734-1721.
 
 \end{thebibliography}
 
