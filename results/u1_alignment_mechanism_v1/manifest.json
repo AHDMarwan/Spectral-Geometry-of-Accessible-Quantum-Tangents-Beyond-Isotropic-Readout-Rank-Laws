@@ -1,0 +1,46 @@
+{
+  "profile": {
+    "name": "u1-alignment-mechanism-v1",
+    "master_seed": 20260810,
+    "families": [
+      "SU2-HaarU4-brickwork",
+      "U1-RZ-XY-line"
+    ],
+    "n_values": [
+      8,
+      10,
+      12
+    ],
+    "depth_factor": 6.0,
+    "instances": {
+      "default": 16,
+      "U1-RZ-XY-line": 20
+    },
+    "align_tangents": 128,
+    "eval_tangents": 128,
+    "readout_order": 1,
+    "max_walsh_order": 2,
+    "direction_sampler": "gaussian",
+    "measurement_basis": "Z",
+    "bitflip_rate": 0.0,
+    "simulation_batch_size": 32,
+    "probability_floor": 1e-13,
+    "svd_tolerance": 1e-10,
+    "min_regular_fraction": 0.95,
+    "shots": 10000,
+    "fd_epsilon": 0.01,
+    "fd_directions": 0,
+    "bootstrap_resamples": 10000
+  },
+  "cell_files": [
+    "downloaded/mechanism/next-mechanism-haar-n10/raw.csv",
+    "downloaded/mechanism/next-mechanism-haar-n12/raw.csv",
+    "downloaded/mechanism/next-mechanism-haar-n8/raw.csv",
+    "downloaded/mechanism/next-mechanism-u1-n10/raw.csv",
+    "downloaded/mechanism/next-mechanism-u1-n12/raw.csv",
+    "downloaded/mechanism/next-mechanism-u1-n8/raw.csv"
+  ],
+  "circuits": 108,
+  "rows": 216,
+  "mechanism_statistic": "Tr(Q_align^T P_{<=k} Q_align) / r1, evaluated with a cross-fitted rank-r1 aligned subspace"
+}
