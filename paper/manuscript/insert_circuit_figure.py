@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Insert the all-family PennyLane circuit figure into the production rewrite.
+"""Finalize the circuit figure, citation, and manuscript pagination boundaries.
 
 Idempotent: safe to run on every paper-production CI pass.
 """
@@ -33,6 +33,19 @@ arXiv:1811.04968 (2018).
 """
 
 
+def ensure_clearpage_before(text: str, marker: str) -> str:
+    """Ensure exactly one structural page break immediately before marker."""
+    idx = text.find(marker)
+    if idx < 0:
+        raise RuntimeError(f"required manuscript marker not found: {marker}")
+
+    prefix = text[:idx].rstrip()
+    if prefix.endswith(r"\clearpage"):
+        return text
+
+    return text[:idx] + "\\clearpage\n\n" + text[idx:]
+
+
 def main() -> None:
     text = TARGET.read_text(encoding="utf-8")
 
@@ -48,8 +61,14 @@ def main() -> None:
             raise RuntimeError("bibliography must be present before circuit citation insertion")
         text = text.replace(endbib, BIB + "\n" + endbib, 1)
 
+    # Keep the appendices and references as explicit new-page sections in the
+    # final production manuscript. This is intentionally applied after the
+    # appendices and bibliography have been assembled.
+    text = ensure_clearpage_before(text, r"\appendix")
+    text = ensure_clearpage_before(text, r"\begin{thebibliography}")
+
     TARGET.write_text(text, encoding="utf-8")
-    print(f"updated {TARGET}")
+    print(f"updated {TARGET}; enforced page breaks before appendices and references")
 
 
 if __name__ == "__main__":
