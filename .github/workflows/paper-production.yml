@@ -99,6 +99,10 @@ jobs:
             echo "No production changes to commit."
           else
             git commit -m "Promote production rewrite to canonical manuscript [skip ci]"
+            # make_prx_figures.py may leave deterministic tracked legacy figures
+            # modified but intentionally outside the production commit.  Clean those
+            # worktree-only changes before rebasing onto any concurrent main update.
+            git reset --hard HEAD
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin HEAD:"${GITHUB_REF_NAME}"
           fi
