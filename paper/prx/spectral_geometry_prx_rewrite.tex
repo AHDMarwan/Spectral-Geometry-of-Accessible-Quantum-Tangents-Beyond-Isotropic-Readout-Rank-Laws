@@ -65,10 +65,9 @@ We test this separation in several circuit families using computational-basis me
 A half-filled $U(1)$-conserving RZ--XY circuit family is included as a structured case study. Its low-weight diagonal readout is already strongly aligned with the leading tangent subspace, so the gain from replacing it with a learned same-rank spectral subspace is much smaller than in generic Haar-$U(4)$ circuits. This observation is consistent with several known mechanisms---symmetry-restricted controllability, fixed-charge geometry, readout compatibility with local charge, and slow operator structure under conservation laws---but the present paper does not identify which mechanism dominates. We therefore do not claim that $U(1)$ symmetry generically improves trainability, nor do we infer a hydrodynamic exponent from the finite-size data.
 
 The resulting message is deliberately limited:
-\begin{equation}
-\boxed{\text{rank fixes a baseline; spectral orientation controls actual retained tangent information.}}
-\label{eq:message}
-\end{equation}
+\begin{center}
+\emph{Rank fixes a baseline; spectral orientation controls actual retained tangent information.}
+\end{center}
 This is a statement about measurement-accessible tangent geometry. It is not, by itself, a barren-plateau theorem for a supervised loss. Task-level trainability additionally depends on the encoding, labels, classical postprocessing, loss function, and optimization trajectory.
 
 \begin{figure*}[t]
@@ -353,7 +352,7 @@ The numerical results show why rank and orientation should be separated. Generic
 The practical conclusion is therefore not that low rank is intrinsically bad, nor that symmetry is intrinsically good. It is that readout rank specifies only how many score directions are retained. Which directions are retained---their spectral orientation relative to the tangent covariance---controls how much measured tangent information remains accessible.
 
 \begin{acknowledgments}
-The author thanks Mohamed Bennai (\href{https://orcid.org/0000-0002-7364-5171}{ORCID: 0000-0002-7364-5171}) for helpful discussions. ChatGPT (OpenAI) was used for language editing and manuscript revision. The author reviewed the scientific content and approved the final text.
+The author thanks Mohamed Bennai\,\orcidlink{0000-0002-7364-5171} for helpful discussions. ChatGPT (OpenAI) was used for language editing and manuscript revision. The author reviewed the scientific content and approved the final text.
 \end{acknowledgments}
 
 \section*{Data and code availability}
