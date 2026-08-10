@@ -1,0 +1,80 @@
+{
+  "profile": {
+    "name": "trainability-bridge-robustness-v1",
+    "master_seed": 20260810,
+    "families": [
+      "SU2-HaarU4-brickwork",
+      "U1-RZ-XY-line"
+    ],
+    "n_values": [
+      8,
+      10,
+      12
+    ],
+    "depth_factor": 6.0,
+    "instances": {
+      "default": 16,
+      "U1-RZ-XY-line": 20
+    },
+    "align_tangents": 128,
+    "eval_tangents": 128,
+    "readout_order": 1,
+    "direction_sampler": "gaussian",
+    "measurement_basis": "Z",
+    "bitflip_rate": 0.0,
+    "bitflip_rates": [
+      0.0,
+      0.01,
+      0.03,
+      0.05
+    ],
+    "shot_budgets": [
+      100,
+      1000,
+      10000
+    ],
+    "simulation_batch_size": 32,
+    "probability_floor": 1e-13,
+    "svd_tolerance": 1e-10,
+    "min_regular_fraction": 0.95,
+    "shots": 10000,
+    "fd_epsilon": 0.01,
+    "fd_directions": 8,
+    "bootstrap_resamples": 10000
+  },
+  "noisy_cell_files": [
+    "downloaded/robustness/next-robustness-haar-n10-e001/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n10-e003/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n10-e005/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n12-e001/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n12-e003/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n12-e005/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n8-e001/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n8-e003/raw.csv",
+    "downloaded/robustness/next-robustness-haar-n8-e005/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n10-e001/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n10-e003/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n10-e005/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n12-e001/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n12-e003/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n12-e005/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n8-e001/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n8-e003/raw.csv",
+    "downloaded/robustness/next-robustness-u1-n8-e005/raw.csv"
+  ],
+  "baseline_raw": "results/trainability_bridge_v1/raw.csv",
+  "circuits": 108,
+  "rows": 3888,
+  "bitflip_rates": [
+    0.0,
+    0.01,
+    0.03,
+    0.05
+  ],
+  "shot_budgets": [
+    100,
+    1000,
+    10000
+  ],
+  "scope": "noise-aware readout geometry under an exact independent classical bit-flip channel; aligned subspace is re-estimated at each noise level"
+}
