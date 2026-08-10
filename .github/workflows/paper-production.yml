@@ -48,8 +48,12 @@ jobs:
         run: python paper/prx/prior_paper_temporary_citation.py
       - name: Compact bibliography links and remove numeric ORCID prose
         run: python paper/prx/bibliography_visual_finalize.py
-      - name: Apply legacy figure visual cleanup
+      - name: Apply final manuscript polish
+        run: python paper/prx/final_submission_polish.py
+      - name: Apply base legacy figure cleanup
         run: python paper/prx/figure_scripts/legacy_visual_cleanup.py
+      - name: Put all legacy figure legends below plots
+        run: python paper/prx/figure_scripts/legend_below_policy.py
       - name: Generate legacy vector figures used by the rewrite
         run: |
           cd paper/prx
@@ -97,14 +101,24 @@ jobs:
           grep -q '\\bibitem{Fernandez2025}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\bibitem{AitHaddou2026IsotropicRankLaws}' paper/prx/spectral_geometry_prx.tex
+          grep -q '\\cite{AitHaddou2026IsotropicRankLaws}' paper/prx/spectral_geometry_prx.tex
           grep -q 'arXiv identifier pending' paper/prx/spectral_geometry_prx.tex
           grep -q 'A_1(18)=0.283586' paper/prx/spectral_geometry_prx.tex
           grep -q '\\usepackage{orcidlink}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\orcidlink{0009-0008-1734-1721}' paper/prx/spectral_geometry_prx.tex
           grep -q '\\email{aithaddou.marwan@outlook.com}' paper/prx/spectral_geometry_prx.tex
+          grep -q 'Mohamed Bennai\\,\\orcidlink{0000-0002-7364-5171}' paper/prx/spectral_geometry_prx.tex
           grep -q 'GitHub reproducibility repository' paper/prx/spectral_geometry_prx.tex
+          if grep -q '\\boxed{\\text{rank fixes a baseline' paper/prx/spectral_geometry_prx.tex; then
+            echo 'Core prose message must not be boxed'
+            exit 1
+          fi
           if grep -q 'ORCID: 0009-0008-1734-1721' paper/prx/spectral_geometry_prx.tex; then
-            echo 'Numeric ORCID prose should not be visible in the manuscript'
+            echo 'Author numeric ORCID prose should not be visible'
+            exit 1
+          fi
+          if grep -q 'ORCID: 0000-0002-7364-5171' paper/prx/spectral_geometry_prx.tex; then
+            echo 'Acknowledgment numeric ORCID prose should not be visible'
             exit 1
           fi
       - name: Commit canonical rewritten PDF and assets
