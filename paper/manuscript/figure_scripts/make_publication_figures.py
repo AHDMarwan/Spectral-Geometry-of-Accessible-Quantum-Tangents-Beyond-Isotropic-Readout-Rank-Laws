@@ -14,8 +14,8 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "paper" / "prx" / "data"
-OUT = ROOT / "paper" / "prx" / "figures" / "production"
+DATA = ROOT / "paper" / "manuscript" / "data"
+OUT = ROOT / "paper" / "manuscript" / "figures" / "production"
 OUT.mkdir(parents=True, exist_ok=True)
 
 BLUE = "#0072B2"
