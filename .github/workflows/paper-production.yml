@@ -7,6 +7,12 @@ on:
     paths:
       - "paper/prx/**"
       - ".github/workflows/paper-production.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "paper/prx/**"
+      - ".github/workflows/paper-production.yml"
   workflow_dispatch:
 
 permissions:
@@ -19,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: paper-rewrite-rank-orientation
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -42,6 +48,7 @@ jobs:
           test -s paper/prx/figures/generated_circuits/circuit_su2_haar_u4.pdf
           test -s paper/prx/figures/generated_circuits/circuit_u1_rz_xy.pdf
       - name: Commit generated production assets
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
