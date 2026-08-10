@@ -15,18 +15,23 @@ def main() -> None:
     text = TARGET.read_text(encoding="utf-8")
 
     # Slightly larger legend type at journal column width.
-    text = replace(text, "'legend.fontsize': 7.5,", "'legend.fontsize': 8.2,")
+    text = replace(text, "'legend.fontsize': 7.5,", "'legend.fontsize': 8.0,")
 
-    # Fig. 2: move dense legends above the data rather than covering the lower band.
+    # Fig. 2 / manuscript Fig. 4: direct labels instead of legends above the
+    # axes.  This removes the title/legend collision visible in the proof.
     text = replace(
         text,
         "ax.legend(frameon=False,loc='lower left',handlelength=1.6)",
-        "ax.legend(frameon=False,loc='lower center',bbox_to_anchor=(.5,1.01),ncol=1,handlelength=1.6,borderaxespad=0.0)",
+        "ax.annotate('$k=1$',(16,generic_rho1[-1]),xytext=(-30,-10),textcoords='offset points',fontsize=7.4,color=BLUE)\n"
+        "ax.annotate('$k=2$',(16,generic_rho2[-1]),xytext=(-30,7),textcoords='offset points',fontsize=7.4,color=ORANGE)\n"
+        "ax.annotate('Haar $n=18$',(18,haar_rho1[-1]),xytext=(-45,-18),textcoords='offset points',fontsize=7.0,color=BLACK)",
     )
     text = replace(
         text,
         "ax.legend(frameon=False,loc='lower left',handlelength=1.5)",
-        "ax.legend(frameon=False,loc='lower center',bbox_to_anchor=(.5,1.01),ncol=1,handlelength=1.5,borderaxespad=0.0)",
+        "ax.annotate('RY-RZ-CZ',(16,ry_rho1[-1]),xytext=(-52,-13),textcoords='offset points',fontsize=6.9,color=ORANGE)\n"
+        "ax.annotate('SU2-CNOT',(16,cnot_rho1[-1]),xytext=(-52,5),textcoords='offset points',fontsize=6.9,color=GREEN)\n"
+        "ax.annotate('Haar-$U(4)$',(18,haar_rho1[-1]),xytext=(-57,-2),textcoords='offset points',fontsize=6.9,color=BLUE)",
     )
 
     # Fig. 3: keep legends away from the steep U(1) curves.
