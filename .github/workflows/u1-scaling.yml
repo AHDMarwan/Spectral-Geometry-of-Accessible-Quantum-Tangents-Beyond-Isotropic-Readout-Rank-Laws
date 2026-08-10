@@ -1,0 +1,179 @@
+name: U1 high-n scaling extension
+
+on:
+  pull_request:
+    paths:
+      - "src/aqt/u1_scaling.py"
+      - "profiles/u1_alignment_scaling_v1.json"
+      - ".github/workflows/u1-scaling.yml"
+      - ".gitignore"
+
+permissions:
+  contents: write
+
+env:
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+
+jobs:
+  technical-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - run: pytest
+      - name: Build scaling smoke profile
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          cfg = json.loads(Path('profiles/u1_alignment_scaling_v1.json').read_text())
+          cfg['name'] = 'u1-scaling-smoke'
+          cfg['n_values'] = [6]
+          cfg['instances'] = 1
+          cfg['depth_factor'] = 1.0
+          cfg['align_tangents'] = 16
+          cfg['eval_tangents'] = 16
+          cfg['simulation_batch_size'] = 8
+          cfg['bootstrap_resamples'] = 100
+          Path('u1_scaling_smoke.json').write_text(json.dumps(cfg, indent=2))
+          PY
+      - name: Run scaling smoke
+        run: >-
+          python -m aqt.u1_scaling run-chunk
+          --profile u1_scaling_smoke.json
+          --n 6
+          --instance-start 0
+          --instance-stop 1
+          --output smoke
+
+  scaling-chunks:
+    needs: technical-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - {tag: n14-i00-i05, n: 14, start: 0, stop: 5}
+          - {tag: n14-i05-i10, n: 14, start: 5, stop: 10}
+          - {tag: n14-i10-i15, n: 14, start: 10, stop: 15}
+          - {tag: n14-i15-i20, n: 14, start: 15, stop: 20}
+          - {tag: n16-i00-i05, n: 16, start: 0, stop: 5}
+          - {tag: n16-i05-i10, n: 16, start: 5, stop: 10}
+          - {tag: n16-i10-i15, n: 16, start: 10, stop: 15}
+          - {tag: n16-i15-i20, n: 16, start: 15, stop: 20}
+          - {tag: n18-i00-i04, n: 18, start: 0, stop: 4}
+          - {tag: n18-i04-i08, n: 18, start: 4, stop: 8}
+          - {tag: n18-i08-i12, n: 18, start: 8, stop: 12}
+          - {tag: n18-i12-i16, n: 18, start: 12, stop: 16}
+          - {tag: n18-i16-i20, n: 18, start: 16, stop: 20}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Run U1 scaling chunk
+        run: >-
+          python -m aqt.u1_scaling run-chunk
+          --profile profiles/u1_alignment_scaling_v1.json
+          --n "${{ matrix.n }}"
+          --instance-start "${{ matrix.start }}"
+          --instance-stop "${{ matrix.stop }}"
+          --output cell
+      - name: Record provenance
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p cell
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "tag=${{ matrix.tag }}"
+            echo "n=${{ matrix.n }}"
+            echo "instance_start=${{ matrix.start }}"
+            echo "instance_stop=${{ matrix.stop }}"
+            python --version
+            python -m pip freeze
+          } > cell/environment.txt
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: u1-scaling-${{ matrix.tag }}
+          path: cell/
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate-and-save:
+    needs: scaling-chunks
+    if: ${{ always() && needs.scaling-chunks.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: u1-scaling-*
+          path: downloaded
+      - name: Aggregate and fit scaling models
+        run: >-
+          python -m aqt.u1_scaling aggregate
+          --profile profiles/u1_alignment_scaling_v1.json
+          --input-dir downloaded
+          --low-n-raw results/u1_alignment_mechanism_v1/raw.csv
+          --output results/u1_alignment_scaling_v1
+      - name: Record aggregate environment
+        shell: bash
+        run: |
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "source_event=${GITHUB_EVENT_NAME}"
+            python --version
+            python -m pip freeze
+          } > results/u1_alignment_scaling_v1/environment.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: u1-alignment-scaling-v1-results
+          path: results/u1_alignment_scaling_v1/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Commit results to branch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/u1_alignment_scaling_v1
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+          else
+            git commit -m "Save U1 n14-n18 scaling results"
+            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          fi
