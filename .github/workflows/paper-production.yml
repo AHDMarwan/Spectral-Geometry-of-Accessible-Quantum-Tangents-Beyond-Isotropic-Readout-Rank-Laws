@@ -36,6 +36,8 @@ jobs:
           pip install numpy pandas matplotlib pennylane
           sudo apt-get update
           sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
+      - name: Make production pass rerun-safe
+        run: python paper/prx/production_idempotency_hotfix.py
       - name: Apply production manuscript pass
         run: python paper/prx/production_finalize.py
       - name: Apply code and results repository citation
