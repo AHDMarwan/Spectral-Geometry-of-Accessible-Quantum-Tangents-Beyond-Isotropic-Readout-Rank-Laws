@@ -1,0 +1,270 @@
+name: Next trainability experiments
+
+on:
+  pull_request:
+    paths:
+      - "src/aqt/next_experiments.py"
+      - "profiles/trainability_bridge_robustness_v1.json"
+      - "profiles/u1_alignment_mechanism_v1.json"
+      - ".github/workflows/next-experiments.yml"
+      - ".gitignore"
+
+permissions:
+  contents: write
+
+env:
+  PYTHONHASHSEED: "0"
+  OMP_NUM_THREADS: "1"
+  OPENBLAS_NUM_THREADS: "1"
+  MKL_NUM_THREADS: "1"
+  NUMEXPR_NUM_THREADS: "1"
+
+jobs:
+  technical-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - run: pytest
+      - name: Build smoke profiles
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          r = json.loads(Path("profiles/trainability_bridge_robustness_v1.json").read_text())
+          r["name"] = "next-experiments-robustness-smoke"
+          r["instances"] = 1
+          r["align_tangents"] = 16
+          r["eval_tangents"] = 16
+          r["depth_factor"] = 1.0
+          r["fd_directions"] = 1
+          r["shot_budgets"] = [100, 1000]
+          r["bootstrap_resamples"] = 100
+          Path("robustness_smoke.json").write_text(json.dumps(r, indent=2))
+
+          m = json.loads(Path("profiles/u1_alignment_mechanism_v1.json").read_text())
+          m["name"] = "next-experiments-mechanism-smoke"
+          m["instances"] = 1
+          m["align_tangents"] = 16
+          m["eval_tangents"] = 16
+          m["depth_factor"] = 1.0
+          m["bootstrap_resamples"] = 100
+          Path("mechanism_smoke.json").write_text(json.dumps(m, indent=2))
+          PY
+      - name: Robustness smoke
+        run: >-
+          python -m aqt.next_experiments robustness-cell
+          --profile robustness_smoke.json
+          --family SU2-HaarU4-brickwork
+          --n 6
+          --bitflip-rate 0.01
+          --output smoke/robustness
+      - name: Mechanism smoke
+        run: >-
+          python -m aqt.next_experiments mechanism-cell
+          --profile mechanism_smoke.json
+          --family U1-RZ-XY-line
+          --n 6
+          --output smoke/mechanism
+
+  robustness-cells:
+    needs: technical-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - {tag: haar-n8-e001, family: SU2-HaarU4-brickwork, n: 8, eta: 0.01}
+          - {tag: haar-n8-e003, family: SU2-HaarU4-brickwork, n: 8, eta: 0.03}
+          - {tag: haar-n8-e005, family: SU2-HaarU4-brickwork, n: 8, eta: 0.05}
+          - {tag: haar-n10-e001, family: SU2-HaarU4-brickwork, n: 10, eta: 0.01}
+          - {tag: haar-n10-e003, family: SU2-HaarU4-brickwork, n: 10, eta: 0.03}
+          - {tag: haar-n10-e005, family: SU2-HaarU4-brickwork, n: 10, eta: 0.05}
+          - {tag: haar-n12-e001, family: SU2-HaarU4-brickwork, n: 12, eta: 0.01}
+          - {tag: haar-n12-e003, family: SU2-HaarU4-brickwork, n: 12, eta: 0.03}
+          - {tag: haar-n12-e005, family: SU2-HaarU4-brickwork, n: 12, eta: 0.05}
+          - {tag: u1-n8-e001, family: U1-RZ-XY-line, n: 8, eta: 0.01}
+          - {tag: u1-n8-e003, family: U1-RZ-XY-line, n: 8, eta: 0.03}
+          - {tag: u1-n8-e005, family: U1-RZ-XY-line, n: 8, eta: 0.05}
+          - {tag: u1-n10-e001, family: U1-RZ-XY-line, n: 10, eta: 0.01}
+          - {tag: u1-n10-e003, family: U1-RZ-XY-line, n: 10, eta: 0.03}
+          - {tag: u1-n10-e005, family: U1-RZ-XY-line, n: 10, eta: 0.05}
+          - {tag: u1-n12-e001, family: U1-RZ-XY-line, n: 12, eta: 0.01}
+          - {tag: u1-n12-e003, family: U1-RZ-XY-line, n: 12, eta: 0.03}
+          - {tag: u1-n12-e005, family: U1-RZ-XY-line, n: 12, eta: 0.05}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Run robustness cell
+        run: >-
+          python -m aqt.next_experiments robustness-cell
+          --profile profiles/trainability_bridge_robustness_v1.json
+          --family "${{ matrix.family }}"
+          --n "${{ matrix.n }}"
+          --bitflip-rate "${{ matrix.eta }}"
+          --output cell
+      - name: Record provenance
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p cell
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "tag=${{ matrix.tag }}"
+            echo "family=${{ matrix.family }}"
+            echo "n=${{ matrix.n }}"
+            echo "eta=${{ matrix.eta }}"
+            python --version
+            python -m pip freeze
+          } > cell/environment.txt
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: next-robustness-${{ matrix.tag }}
+          path: cell/
+          if-no-files-found: error
+          retention-days: 30
+
+  mechanism-cells:
+    needs: technical-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include:
+          - {tag: haar-n8, family: SU2-HaarU4-brickwork, n: 8}
+          - {tag: haar-n10, family: SU2-HaarU4-brickwork, n: 10}
+          - {tag: haar-n12, family: SU2-HaarU4-brickwork, n: 12}
+          - {tag: u1-n8, family: U1-RZ-XY-line, n: 8}
+          - {tag: u1-n10, family: U1-RZ-XY-line, n: 10}
+          - {tag: u1-n12, family: U1-RZ-XY-line, n: 12}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - name: Run mechanism cell
+        run: >-
+          python -m aqt.next_experiments mechanism-cell
+          --profile profiles/u1_alignment_mechanism_v1.json
+          --family "${{ matrix.family }}"
+          --n "${{ matrix.n }}"
+          --output cell
+      - name: Record provenance
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p cell
+          {
+            echo "git_sha=${GITHUB_SHA}"
+            echo "tag=${{ matrix.tag }}"
+            echo "family=${{ matrix.family }}"
+            echo "n=${{ matrix.n }}"
+            python --version
+            python -m pip freeze
+          } > cell/environment.txt
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: next-mechanism-${{ matrix.tag }}
+          path: cell/
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate-and-save:
+    needs: [robustness-cells, mechanism-cells]
+    if: ${{ always() && needs.robustness-cells.result == 'success' && needs.mechanism-cells.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: pip install -r requirements/reproducible.txt
+      - run: pip install --no-deps -e .
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: next-robustness-*
+          path: downloaded/robustness
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: next-mechanism-*
+          path: downloaded/mechanism
+      - name: Aggregate robustness
+        run: >-
+          python -m aqt.next_experiments robustness-aggregate
+          --profile profiles/trainability_bridge_robustness_v1.json
+          --input-dir downloaded/robustness
+          --baseline-raw results/trainability_bridge_v1/raw.csv
+          --output results/trainability_bridge_robustness_v1
+      - name: Aggregate symmetry mechanism
+        run: >-
+          python -m aqt.next_experiments mechanism-aggregate
+          --profile profiles/u1_alignment_mechanism_v1.json
+          --input-dir downloaded/mechanism
+          --output results/u1_alignment_mechanism_v1
+      - name: Record aggregate environment
+        shell: bash
+        run: |
+          for d in results/trainability_bridge_robustness_v1 results/u1_alignment_mechanism_v1; do
+            {
+              echo "git_sha=${GITHUB_SHA}"
+              echo "source_event=${GITHUB_EVENT_NAME}"
+              python --version
+              python -m pip freeze
+            } > "$d/environment.txt"
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: next-experiments-full-results
+          path: |
+            results/trainability_bridge_robustness_v1/
+            results/u1_alignment_mechanism_v1/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Commit results to branch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/trainability_bridge_robustness_v1 results/u1_alignment_mechanism_v1
+          if git diff --cached --quiet; then
+            echo "No result changes to commit."
+          else
+            git commit -m "Save next trainability experiment results"
+            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          fi
