@@ -2,6 +2,9 @@ name: Full trainability bridge experiment
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - trainability-bridge-full-run-4
 
 permissions:
   contents: write
