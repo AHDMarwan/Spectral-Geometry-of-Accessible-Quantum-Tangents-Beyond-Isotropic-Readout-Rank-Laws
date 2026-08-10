@@ -1,4 +1,4 @@
-\documentclass[aps,prx,reprint,superscriptaddress,nofootinbib,longbibliography]{revtex4-2}
+\documentclass[aps,pra,reprint,superscriptaddress,nofootinbib,longbibliography]{revtex4-2}
 
 \usepackage{amsmath,amssymb,bm,mathtools}
 \usepackage{graphicx}
@@ -18,6 +18,7 @@
 \newcommand{\deff}{d_{\rm eff}}
 
 \begin{document}
+% PRA-V2-AUTOMATED-REVISION
 
 \title{Measurement-Accessible Quantum Tangent Geometry: Rank Baselines and Spectral Orientation}
 
@@ -33,7 +34,7 @@ A fixed quantum measurement can expose substantially more tangent information th
 \le \frac{2}{r\deff},
 \qquad \deff=\frac{1}{\Tr(C^2)}.
 \end{equation*}
-We use this identity as a null model rather than as a new random-projection theorem. Numerically, family-balanced one- and two-body readouts remain close to the rank reference through $n=16$ even as the tangent covariance becomes strongly anisotropic. Rank matching alone is nevertheless insufficient: in generic circuits, cross-fitted leading tangent subspaces of the same rank retain substantially more mass than the physical low-weight readout. This difference is operational. At fixed circuit, measurement record, readout rank, and shot budget, changing only the readout orientation changes directional gradient energy and finite-shot signal-to-noise ratio, while random rank-matched subspaces track the rank baseline. A half-filled $U(1)$-conserving family provides a structured counterexample to generic orientation: physical low-weight $Z$ readouts are already strongly aligned with leading tangent directions over the tested finite-size range. We treat this symmetry result as a case study, not as a claim that $U(1)$ symmetry generically prevents barren plateaus or that hydrodynamics is the established mechanism. The results isolate readout orientation as a degree of freedom that is invisible to rank alone but directly controls how much measured tangent information remains usable after readout restriction.
+We use this identity as a null model rather than as a new random-projection theorem. The decisive comparison holds the circuit, measurement record, readout rank, and shot budget fixed: a cross-fitted leading tangent subspace of the same rank can retain substantially more tangent mass and produce a larger finite-shot directional signal than the physical low-weight readout. Numerically, family-balanced one- and two-body readouts remain close to the rank reference through $n=16$ even as the tangent covariance becomes strongly anisotropic. Rank matching alone is nevertheless insufficient: in generic circuits, cross-fitted leading tangent subspaces of the same rank retain substantially more mass than the physical low-weight readout. This difference is operational. At fixed circuit, measurement record, readout rank, and shot budget, changing only the readout orientation changes directional gradient energy and finite-shot signal-to-noise ratio, while random rank-matched subspaces track the rank baseline. A half-filled $U(1)$-conserving family provides a structured counterexample to generic orientation: physical low-weight $Z$ readouts are already strongly aligned with leading tangent directions over the tested finite-size range. We treat this symmetry result as a case study, not as a claim that $U(1)$ symmetry generically prevents barren plateaus or that hydrodynamics is the established mechanism. The results isolate readout orientation as a degree of freedom that is invisible to rank alone but directly controls how much measured tangent information remains usable after readout restriction.
 \end{abstract}
 
 \maketitle
@@ -295,7 +296,7 @@ The stronger diagnostic is direct subspace overlap. Let $P_{\rm top}$ denote the
 A_k=\frac{1}{r_1}\Tr(P_{\le k}P_{\rm top})
 \label{eq:Ak}
 \end{equation}
-to quantify how much of the leading tangent subspace lies in low-weight sectors. This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new \cite{Fernandez2025}. Across $n=8,10,12,14,16,18$, the one-body values are $0.552$, $0.450$, $0.396$, $0.341$, $0.309$, and $0.284$, respectively. The final $n=18$ estimate is
+to quantify how much of the leading tangent subspace lies in low-weight sectors. A sector-corrected random-orientation control is available without assuming full-space isotropy. If $P_{\rm top}$ is Haar-random inside the same half-filled centered score sector, then $\mathbb E A_k=r_{\le k}/N_{\rm hf}$; its exact variance follows from Eq.~\eqref{eq:exact-var} by setting $C=P_{\le k}/r_{\le k}$ and the random projector rank to $r_1$. At $n=18$ the corresponding null means are $0.00035$ for $k=1$ and $0.00313$ for $k\le2$, while the observed overlaps are approximately $811\times$ and $148\times$ larger, respectively. Thus the persistent alignment is not an artifact of comparing a fixed-charge family with the full $2^n$ score-space rank scale. This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new \cite{Fernandez2025}. Across $n=8,10,12,14,16,18$, the one-body values are $0.552$, $0.450$, $0.396$, $0.341$, $0.309$, and $0.284$, respectively. The final $n=18$ estimate is
 \begin{equation}
 A_1(18)=0.283586\;[0.277044,0.290865],
 \end{equation}
@@ -304,6 +305,13 @@ while the cumulative weight-through-two overlap is
 A_{\le2}(18)=0.463538\;[0.457425,0.469591].
 \end{equation}
 Each size uses 20 independent circuit instances \cite{AitHaddou2026MeasurementAccessible}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=.95\textwidth]{production/fig_u1_sector_null.pdf}
+\caption{Sector-corrected random-orientation control for the half-filled $U(1)$ alignment statistic. The null draws the leading rank-$r_1$ subspace randomly inside the same half-filled centered score sector, rather than comparing with the full computational-basis score space. Points are the measured cross-fitted alignment means with circuit-bootstrap intervals; dashed curves are the exact random-orientation means and shaded bands show two null standard deviations from Grassmann projector moments. The observed alignment remains orders of magnitude above the sector null at the largest sizes.}
+\label{fig:u1-sector-null}
+\end{figure*}
 
 Over the tested window $n=8$--$18$, two-parameter log-space model comparison favors a finite-size power form over an exponential form. The fitted exponents are $0.8223\,[0.7694,0.8735]$ for $A_1$ and $0.7041\,[0.6798,0.7281]$ for $A_{\le2}$, with $\Delta\mathrm{AICc}=14.39$ and $12.82$, respectively, in favor of the power model. These are finite-size model-discrimination results only; they are not asymptotic lower bounds and are not identified with a hydrodynamic exponent \cite{AitHaddou2026MeasurementAccessible}.
 
@@ -474,7 +482,7 @@ For a covariance estimate $\widehat C_{\rm fit}$ obtained from one tangent ensem
 \|P_{\rm xfit}u_a^{\rm(eval)}\|_2^2.
 \label{eq:app-crossfit}
 \end{equation}
-This separation prevents the same tangent samples from both selecting and evaluating the subspace.  By contrast, the same-sample Ky Fan quantity
+This separation prevents the same tangent samples from both selecting and evaluating the subspace. The frozen operational profile uses 128 alignment tangents and 128 independent evaluation tangents per circuit; the generic Haar-$U(4)$ cells use 16 circuits per size and the $U(1)$ cells use 20, with a $10,000$-shot finite-shot evaluation model and 8 held-out finite-difference directions. The alignment sample is therefore a separate calibration resource: the fixed-shot comparison isolates the effect of readout orientation at fixed evaluation resources, but it is not an end-to-end claim that learning the aligned projector is free. A hardware implementation should account separately for the shots or derivative queries required to estimate $P_{\rm xfit}$.  By contrast, the same-sample Ky Fan quantity
 \begin{equation}
  R_{\rm KF}=\sum_{j=1}^r\lambda_j(\widehat C)
 \end{equation}
