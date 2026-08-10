@@ -52,7 +52,7 @@ def _brickwork_pairs(n: int, layer: int) -> list[tuple[int, int]]:
 
 def _rot_block(axis_set: tuple[str, ...], n: int, layer: int) -> None:
     # Deterministic non-special angles keep labels compact while making each
-    # layer visually distinct.  These are schematic values only.
+    # layer visually distinct. These are schematic values only.
     for q in range(n):
         for j, axis in enumerate(axis_set):
             angle = 0.31 + 0.13 * layer + 0.07 * q + 0.05 * j
@@ -138,8 +138,14 @@ CIRCUITS = {
 
 
 def draw_one(name: str, fn, n: int = 6, layers: int = 2) -> None:
-    drawer = qml.draw_mpl(fn, decimals=2, style="pennylane", fontsize=10)
-    fig, ax = drawer(n=n, layers=layers)
+    # PennyLane 0.45 uses ``layers`` internally in draw_mpl; passing a circuit
+    # argument with the same name can collide. Wrap the circuit with ``reps``
+    # to keep the public drawing call unambiguous.
+    def wrapped(n: int = 6, reps: int = 2) -> None:
+        fn(n=n, layers=reps)
+
+    drawer = qml.draw_mpl(wrapped, decimals=2, style="pennylane", fontsize=10)
+    fig, ax = drawer(n=n, reps=layers)
     ax.set_title(name.replace("circuit_", "").replace("_", " ").upper(), pad=14, fontsize=12)
     fig.set_size_inches(12.0, 3.8)
     fig.tight_layout()
