@@ -1,7 +1,7 @@
-git_sha=302837ff428d64e8f1dcaa468cded36c143309e8
+git_sha=c6235fe467cafde3d6f6250bb639f843dc13c288
 source_event=pull_request
 Python 3.12.13
--e git+https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws@776ba840f9382d3e001b2fb23834ca547ed3ef80#egg=accessible_quantum_tangents
+-e git+https://github.com/AHDMarwan/Spectral-Geometry-of-Accessible-Quantum-Tangents-Beyond-Isotropic-Readout-Rank-Laws@4688dd64c93c6c58336ab6bda8a688cacd59ec96#egg=accessible_quantum_tangents
 contourpy==1.3.3
 cycler==0.12.1
 fonttools==4.63.0
