@@ -7,8 +7,8 @@ HELPER = r'''
 def legend_below(fig, ncol=4):
     """Place one deduplicated shared legend below the plotted axes.
 
-    The legend is kept inside the exported figure canvas so that, when LaTeX
-    places the caption, the visual order is: plot -> legend -> caption.
+    The legend stays inside the exported figure canvas so the visual order in
+    the manuscript is plot -> legend -> caption.
     """
     handles = []
     labels = []
@@ -28,7 +28,7 @@ def legend_below(fig, ncol=4):
         handles,
         labels,
         loc='lower center',
-        bbox_to_anchor=(0.5, 0.015),
+        bbox_to_anchor=(0.5, 0.018),
         ncol=cols,
         frameon=False,
         handlelength=1.8,
@@ -36,7 +36,7 @@ def legend_below(fig, ncol=4):
         columnspacing=1.05,
         fontsize=7.8,
     )
-    fig.subplots_adjust(bottom=0.24)
+    fig.subplots_adjust(bottom=0.27)
 '''
 
 
@@ -44,33 +44,46 @@ def main() -> None:
     text = TARGET.read_text(encoding="utf-8")
     text = text.replace("'legend.fontsize': 7.5,", "'legend.fontsize': 8.0,")
 
-    # Add the shared-legend helper once, immediately after the panel helper.
-    if "def legend_below(fig, ncol=4):" not in text:
-        anchor = "def panel(ax, label):\n    ax.text(-0.13, 1.06, label, transform=ax.transAxes, fontsize=10.5,\n            fontweight='bold', va='top', ha='left')\n"
-        if anchor not in text:
-            raise RuntimeError("panel helper anchor not found")
-        text = text.replace(anchor, anchor + "\n" + HELPER + "\n", 1)
-
-    # Remove every axes-level legend from the generator.  These were the
-    # source of the duplicated keys visible in the proof.
+    # First remove every axes-level legend and any old figure-level legend from
+    # the ORIGINAL generator.  This must happen before adding the helper; an
+    # earlier version removed the helper's own fig.legend call as well.
     text = re.sub(r"(?m)^\s*ax\.legend\([^\n]*\)\s*\n", "", text)
-
-    # Remove any prior figure-level legend blocks if a previous production
-    # pass inserted one.  The helper above will create exactly one legend.
     text = re.sub(
         r"(?ms)^\s*fig\.legend\(.*?\n\s*\)\s*\n",
         "",
         text,
     )
 
-    # Insert exactly one shared legend immediately before every exported
-    # figure.  Figures with no labelled artists simply get no key.
+    # Remove a stale helper definition from a previous ephemeral workflow pass,
+    # then insert one known-good helper.
+    text = re.sub(
+        r"(?ms)^def legend_below\(fig, ncol=4\):.*?(?=^# -------------------- data --------------------)",
+        "",
+        text,
+    )
+    anchor = (
+        "def panel(ax, label):\n"
+        "    ax.text(-0.13, 1.06, label, transform=ax.transAxes, fontsize=10.5,\n"
+        "            fontweight='bold', va='top', ha='left')\n"
+    )
+    if anchor not in text:
+        raise RuntimeError("panel helper anchor not found")
+    text = text.replace(anchor, anchor + "\n" + HELPER + "\n", 1)
+
+    # Ensure every exported legacy figure calls the shared legend helper once.
+    text = text.replace("legend_below(fig)\nfig.savefig(", "fig.savefig(")
+    text = text.replace("fig.savefig(", "legend_below(fig)\nfig.savefig(")
+    text = text.replace("fig.tight_layout(); legend_below(fig)", "fig.tight_layout()\nlegend_below(fig)")
+
+    # Hard validation: do not silently produce figures with the legend helper
+    # stripped out again.
+    if "fig.legend(" not in text:
+        raise RuntimeError("shared fig.legend call missing after cleanup")
     if "legend_below(fig)\nfig.savefig" not in text:
-        text = text.replace("fig.savefig(", "legend_below(fig)\nfig.savefig(")
-        text = text.replace("fig.tight_layout(); legend_below(fig)", "fig.tight_layout()\nlegend_below(fig)")
+        raise RuntimeError("legend_below call missing before figure export")
 
     TARGET.write_text(text, encoding="utf-8")
-    print(f"moved all legacy figure legends below the plots in {TARGET}")
+    print(f"renderable shared legends placed below legacy plots in {TARGET}")
 
 
 if __name__ == "__main__":
