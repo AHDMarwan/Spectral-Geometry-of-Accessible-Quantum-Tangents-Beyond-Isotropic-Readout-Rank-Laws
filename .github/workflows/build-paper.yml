@@ -1,68 +1,100 @@
-name: Build combined PRX manuscript
+name: Finalize paper layout migration
 
 on:
   pull_request:
     branches: [main]
     paths:
-      - 'paper/prx/**'
-      - '.github/workflows/build-prx-combined.yml'
+      - '.github/workflows/build-paper.yml'
 
 permissions:
   contents: write
   pull-requests: read
 
 jobs:
-  build:
+  migrate-references:
     if: github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
+          fetch-depth: 0
           persist-credentials: true
 
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.11'
-
-      - name: Install Python dependencies
-        run: python -m pip install --upgrade pip numpy pandas matplotlib
-
-      - name: Install TeX
+      - name: Rewrite stale paper paths and filenames
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
 
-      - name: Generate vector figures
-        run: |
-          cd paper/prx
-          python make_prx_figures.py
+          replacements = (
+              ("paper/prx", "paper/manuscript"),
+              ("spectral_geometry_prx", "spectral_geometry"),
+              ("make_prx_figures.py", "make_paper_figures.py"),
+              ("build-prx-combined.yml", "build-paper.yml"),
+              ("Build combined PRX manuscript", "Build paper manuscript"),
+          )
 
-      - name: Compile manuscript
-        run: |
-          cd paper/prx
-          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_prx.tex
-          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_prx.tex
-          pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_prx.tex
-          if grep -q 'Overfull' spectral_geometry_prx.log; then
-            echo 'Overfull box detected'
-            grep 'Overfull' spectral_geometry_prx.log
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
+          changed = []
+          for raw in tracked:
+              if not raw:
+                  continue
+              path = Path(raw.decode("utf-8"))
+              if not path.exists() or path.is_dir():
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              updated = text
+              for old, new in replacements:
+                  updated = updated.replace(old, new)
+              if updated != text:
+                  path.write_text(updated, encoding="utf-8")
+                  changed.append(str(path))
+          print("updated files:")
+          print("\n".join(changed))
+          PY
+
+          test -f paper/manuscript/spectral_geometry.tex
+          test -f paper/manuscript/spectral_geometry_rewrite.tex
+          test -f paper/manuscript/make_paper_figures.py
+          test ! -e paper/prx
+          test ! -e .github/workflows/build-prx-combined.yml
+
+          if git grep -n 'paper/prx'; then
+            echo 'Stale paper/prx path remains'
+            exit 1
+          fi
+          if git grep -n 'spectral_geometry_prx'; then
+            echo 'Stale spectral_geometry_prx reference remains'
+            exit 1
+          fi
+          if git grep -n 'make_prx_figures.py'; then
+            echo 'Stale make_prx_figures.py reference remains'
+            exit 1
+          fi
+          if git grep -n 'build-prx-combined.yml'; then
+            echo 'Stale build-prx-combined.yml reference remains'
             exit 1
           fi
 
-      - name: Build manuscript packages
-        run: |
-          cd paper/prx
-          rm -f spectral_geometry_prx_source.zip spectral_geometry_prx_submission_package.zip
-          zip -qr spectral_geometry_prx_source.zip spectral_geometry_prx.tex README_BUILD.txt popular_summary.txt make_prx_figures.py figures
-          zip -qr spectral_geometry_prx_submission_package.zip spectral_geometry_prx.pdf spectral_geometry_prx.tex README_BUILD.txt popular_summary.txt make_prx_figures.py figures
+          python -m compileall -q paper/manuscript
+          git diff --check
 
-      - name: Commit generated manuscript artifacts
+      - name: Commit rewritten references
+        shell: bash
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add paper/prx/spectral_geometry_prx.tex paper/prx/make_prx_figures.py paper/prx/README_BUILD.txt paper/prx/popular_summary.txt paper/prx/figures paper/prx/spectral_geometry_prx.pdf paper/prx/spectral_geometry_prx_source.zip paper/prx/spectral_geometry_prx_submission_package.zip
-          if ! git diff --cached --quiet; then
-            git commit -m 'Build combined PRX manuscript [skip ci]'
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No reference changes needed.'
+          else
+            git commit -m "Update paper references after layout rename [skip ci]"
             git push origin HEAD:${{ github.head_ref }}
           fi
