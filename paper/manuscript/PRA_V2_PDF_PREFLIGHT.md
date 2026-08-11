@@ -3,10 +3,10 @@
 Status: PASS
 
 - PDF: `paper/manuscript/spectral_geometry_rewrite.pdf`
-- Pages: 15
-- File size: 673,549 bytes
-- Fonts reported by `pdffonts`: 70; all embedded.
-- Rendered pages checked at 120 dpi: 15
+- Pages: 16
+- File size: 667,213 bytes
+- Fonts reported by `pdffonts`: 68; all embedded.
+- Rendered pages checked at 120 dpi: 16
 - Minimum raster ink margin: 48 px
 - Nearly blank pages: none
 - Ink touching outer 3-pixel page boundary: none
