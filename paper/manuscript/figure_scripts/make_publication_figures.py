@@ -88,10 +88,15 @@ def u1_scaling() -> None:
         ax.set_xticks([8, 10, 12, 14, 16, 18])
         ax.set_xlim(7.5, 18.5)
         ax.grid(axis="y", alpha=0.18, lw=0.6)
+        annotation = (
+            rf"$\alpha={fit.power_alpha:.2f}$"
+            + "\n"
+            + rf"$\Delta$AICc={fit.delta_aicc_exp_minus_power:.1f}"
+        )
         ax.text(
             0.04,
             0.07,
-            rf"$\alpha={fit.power_alpha:.2f}$\n$\Delta$AICc={fit.delta_aicc_exp_minus_power:.1f}",
+            annotation,
             transform=ax.transAxes,
             fontsize=8.6,
             linespacing=1.15,
