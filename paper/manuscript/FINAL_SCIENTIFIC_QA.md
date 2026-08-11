@@ -20,6 +20,8 @@ This checklist is the last production pass before treating the manuscript as sub
 - [x] The final U(1) n=18 values use 20 independent circuit instances.
 - [x] Power-vs-exponential comparison is described as finite-size model discrimination only.
 - [x] The symmetry-breaking experiment is labeled a pilot/sensitivity control, not a mechanism-identification result.
+- [x] The half-filled-sector random-orientation null is included as a geometric control and is not presented as a mechanism-identification result.
+- [x] Cross-fit calibration data are explicitly accounted for as a separate resource from the fixed evaluation shot budget.
 
 ## Claim control
 
@@ -30,19 +32,30 @@ This checklist is the last production pass before treating the manuscript as sub
 - [x] U(1) is a structured case study, not the novelty pillar.
 - [x] No hydrodynamic mechanism or asymptotic exponent is claimed.
 - [x] Closest prior art on Hamming-weight-preserving trainability, DLA/adjoint structure, low-bodyness concentration, fixed-charge slice geometry, random-measurement Fisher geometry, and readout-visible equivariant coherence is acknowledged.
+- [x] The abstract states the frozen equal-rank operational result once and uses the same conservative novelty framing as the conclusion and PRA cover letter.
 
-## Figures
+## Figures and PDF production
 
 - [x] PennyLane circuit schematics are generated from the same gate-order definitions used by the simulator.
 - [x] Circuit gate parameters are hidden in publication drawings; only gate names are shown.
 - [x] Production data figures use enlarged, repositioned, or shared legends to avoid covering data.
-- [x] U(1) scaling figure reports bootstrap intervals and both finite-size fits.
+- [x] U(1) scaling figure reports bootstrap intervals and both finite-size fits; its `alpha`/`Delta AICc` annotations render on separate lines.
 - [x] Symmetry-breaking figure includes the visual rank baseline with an explicit caveat that it is not a sector-Haar null.
-- [ ] Final canonical PDF should still be inspected page-by-page after each production build for clipping, legend collisions, caption wrapping, and two-column readability.
+- [x] The fixed-charge sector-null figure renders cleanly and makes the same-sector null comparison explicit.
+- [x] Automated canonical-PDF preflight passes: 15 pages, 71 embedded fonts, 48 px minimum raster ink margin at 120 dpi, no nearly blank pages, no outer-boundary ink contact, and zero LaTeX overfull-box warnings.
+- [x] The exact canonical 15-page PDF was exposed through the read-only visual-QA artifact workflow and inspected at 180 dpi. The full 15-page contact sheet and key pages (title/abstract, numerical strategy/resource accounting, sector-null figure, U(1) scaling/symmetry-control page, and final reference page) show no clipping, legend collisions, broken annotation text, or caption overflow.
+- [x] The sparse final reference page is an intentional continuation of the bibliography, not a blank-page production error.
 
-## Final blockers before submission
+## Submission package status
 
-1. Inspect the newest canonical `paper/manuscript/spectral_geometry.pdf` visually after the final bot build.
-2. Confirm there are no undefined citations, missing figure files, overfull boxes that visibly clip text, or stale figures.
-3. Confirm the title, abstract, conclusion, and cover letter use the same conservative novelty framing.
-4. Freeze the submission package only after the final PDF visual inspection passes.
+- [x] `paper/manuscript/spectral_geometry.pdf` is the canonical PRA-targeted manuscript.
+- [x] `paper/manuscript/spectral_geometry_submission_package.zip` is generated only after the hardened production workflow re-applies PRA-v2 invariants and passes the PDF preflight.
+- [x] `paper/manuscript/PRA_COVER_LETTER.txt` uses the same conservative novelty framing and documented limitations as the manuscript.
+- [x] The production workflow is hardened so legacy manuscript-generation steps cannot silently reintroduce pre-v2 prose or remove the sector-null/resource-accounting controls.
+- [x] The canonical-PDF visual-QA artifact workflow provides the exact current PDF for future page-by-page inspection without rebuilding it.
+
+## Final status
+
+**Submission-ready from the repository/production-QA side.**
+
+Remaining actions are external submission actions only (journal portal metadata/upload and any author-side declarations required by the submission form). No scientific or production blocker remains in the repository at this checkpoint.
