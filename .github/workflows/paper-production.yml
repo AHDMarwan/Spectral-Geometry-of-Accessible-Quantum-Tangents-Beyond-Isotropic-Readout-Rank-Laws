@@ -45,7 +45,7 @@ jobs:
         run: python paper/manuscript/production_finalize.py
       - name: Apply code and results repository citation
         run: python paper/manuscript/repository_citation_finalize.py
-      - name: Cite submitted isotropic rank-law manuscript
+      - name: Cite archived isotropic rank-law manuscript
         run: python paper/manuscript/prior_paper_temporary_citation.py
       - name: Compact bibliography links and remove numeric ORCID prose
         run: python paper/manuscript/bibliography_visual_finalize.py
@@ -159,7 +159,11 @@ jobs:
           grep -q '\\bibitem{AitHaddou2026MeasurementAccessible}' paper/manuscript/spectral_geometry.tex
           grep -q '\\bibitem{AitHaddou2026IsotropicRankLaws}' paper/manuscript/spectral_geometry.tex
           grep -q '\\cite{AitHaddou2026IsotropicRankLaws}' paper/manuscript/spectral_geometry.tex
-          grep -q 'arXiv identifier pending' paper/manuscript/spectral_geometry.tex
+          grep -q 'arXiv:2608.07628' paper/manuscript/spectral_geometry.tex
+          if grep -q 'arXiv identifier pending' paper/manuscript/spectral_geometry.tex; then
+            echo 'Stale pending arXiv identifier remains in canonical manuscript'
+            exit 1
+          fi
           grep -q 'A_1(18)=0.283586' paper/manuscript/spectral_geometry.tex
           grep -q '\\usepackage{orcidlink}' paper/manuscript/spectral_geometry.tex
           grep -q '\\orcidlink{0009-0008-1734-1721}' paper/manuscript/spectral_geometry.tex
