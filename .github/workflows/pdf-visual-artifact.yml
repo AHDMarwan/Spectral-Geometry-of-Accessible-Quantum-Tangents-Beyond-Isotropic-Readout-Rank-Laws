@@ -1,0 +1,33 @@
+name: Canonical PDF visual QA artifact
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pdf-visual-artifact.yml'
+      - 'paper/manuscript/spectral_geometry.pdf'
+      - 'paper/manuscript/PRA_V2_PDF_PREFLIGHT.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  expose-canonical-pdf:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+      - name: Verify canonical PDF exists
+        run: |
+          test -s paper/manuscript/spectral_geometry.pdf
+          test -s paper/manuscript/PRA_V2_PDF_PREFLIGHT.md
+      - uses: actions/upload-artifact@v7
+        with:
+          name: canonical-pdf-visual-qa
+          path: |
+            paper/manuscript/spectral_geometry.pdf
+            paper/manuscript/PRA_V2_PDF_PREFLIGHT.md
+          if-no-files-found: error
+          retention-days: 30
