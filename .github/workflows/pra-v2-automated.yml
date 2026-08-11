@@ -9,16 +9,20 @@ on:
       - '.github/workflows/pra-v2-automated.yml'
       - 'paper/manuscript/pra_v2_sector_null.py'
       - 'paper/manuscript/pra_v2_finalize.py'
+      - 'paper/manuscript/pra_v2_text_cleanup.py'
       - 'paper/manuscript/pra_v2_pdf_preflight.py'
       - 'paper/manuscript/figure_scripts/make_pra_v2_figures.py'
+      - 'paper/manuscript/figure_scripts/make_publication_figures.py'
   pull_request:
     branches: [main]
     paths:
       - '.github/workflows/pra-v2-automated.yml'
       - 'paper/manuscript/pra_v2_sector_null.py'
       - 'paper/manuscript/pra_v2_finalize.py'
+      - 'paper/manuscript/pra_v2_text_cleanup.py'
       - 'paper/manuscript/pra_v2_pdf_preflight.py'
       - 'paper/manuscript/figure_scripts/make_pra_v2_figures.py'
+      - 'paper/manuscript/figure_scripts/make_publication_figures.py'
   workflow_dispatch:
 
 permissions:
@@ -69,11 +73,17 @@ jobs:
       - name: Build sector-corrected U1 null audit
         run: python paper/manuscript/pra_v2_sector_null.py
 
+      - name: Regenerate publication data figures
+        run: python paper/manuscript/figure_scripts/make_publication_figures.py
+
       - name: Generate PRA v2 control figure
         run: python paper/manuscript/figure_scripts/make_pra_v2_figures.py
 
       - name: Apply idempotent PRA v2 manuscript revision
         run: python paper/manuscript/pra_v2_finalize.py
+
+      - name: Apply idempotent PRA v2 prose cleanup
+        run: python paper/manuscript/pra_v2_text_cleanup.py
 
       - name: Compile PRA v2 manuscript
         run: |
@@ -105,6 +115,7 @@ jobs:
           grep -q 'not an end-to-end claim that learning' paper/manuscript/spectral_geometry_rewrite.tex
           grep -q 'fig_u1_sector_null.pdf' paper/manuscript/spectral_geometry_rewrite.tex
           test -s paper/manuscript/figures/production/fig_u1_sector_null.pdf
+          test -s paper/manuscript/figures/production/fig_u1_alignment_scaling.pdf
           test -s paper/manuscript/data/pra_v2_u1_sector_null.csv
           test -s paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md
           test -s paper/manuscript/PRA_V2_PDF_PREFLIGHT.md
@@ -123,6 +134,12 @@ jobs:
           assert abstract.count('cross-fitted') == 1, 'abstract should state the cross-fit result once'
           assert '9.584' in abstract and '3.111' in abstract
           assert 'evaluation shot budget fixed' in abstract
+          provenance = 'The source code, frozen experiment profiles, aggregate tables, shard-level outputs, and paper-facing result summaries used for the numerical claims are archived in the public reproducibility repository'
+          assert text.count(provenance) == 1, 'reproducibility provenance sentence should occur exactly once'
+
+          figsrc = Path('paper/manuscript/figure_scripts/make_publication_figures.py').read_text()
+          assert 'annotation = (' in figsrc
+          assert 'rf"$\\alpha={fit.power_alpha:.2f}$\\n$\\Delta$AICc' not in figsrc
           print(n18[['observed_mean','sector_null_mean','observed_over_null']])
           PY
 
@@ -134,7 +151,7 @@ jobs:
           rm -f spectral_geometry_submission_package.zip
           zip -qr spectral_geometry_submission_package.zip \
             spectral_geometry.pdf spectral_geometry.tex \
-            PRA_V2_SECTOR_NULL_AUDIT.md \
+            PRA_V2_SECTOR_NULL_AUDIT.md PRA_V2_PDF_PREFLIGHT.md \
             data/pra_v2_u1_sector_null.csv \
             figures/production/fig_u1_sector_null.pdf \
             figures/production/fig_u1_sector_null.png \
@@ -161,7 +178,9 @@ jobs:
           - n=18 one-body observed/null ratio: {n18.loc[1, 'observed_over_null']:.1f}x.
           - n=18 weight-through-two observed/null ratio: {n18.loc[2, 'observed_over_null']:.1f}x.
           - Cross-fit resource accounting: {p['align_tangents']} fit tangents, {p['eval_tangents']} held-out evaluation tangents, {p['shots']} evaluation shots, {p['fd_directions']} finite-difference directions.
-          - Abstract novelty framing now reports the frozen n=12 operational gains once, without repetition.
+          - Abstract novelty framing reports the frozen n=12 operational gains once, without repetition.
+          - Publication U(1) scaling annotations were regenerated with real line breaks.
+          - Duplicated reproducibility prose was removed.
           - REVTeX target is PRA.
 
           ## Interpretation guardrails
@@ -184,6 +203,8 @@ jobs:
             paper/manuscript/data/pra_v2_u1_sector_null.csv
             paper/manuscript/figures/production/fig_u1_sector_null.pdf
             paper/manuscript/figures/production/fig_u1_sector_null.png
+            paper/manuscript/figures/production/fig_u1_alignment_scaling.pdf
+            paper/manuscript/figures/production/fig_u1_alignment_scaling.png
           if-no-files-found: error
           retention-days: 90
 
@@ -205,8 +226,7 @@ jobs:
             paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md \
             paper/manuscript/PRA_V2_PDF_PREFLIGHT.md \
             paper/manuscript/data/pra_v2_u1_sector_null.csv \
-            paper/manuscript/figures/production/fig_u1_sector_null.pdf \
-            paper/manuscript/figures/production/fig_u1_sector_null.png
+            paper/manuscript/figures/production
           if git diff --cached --quiet; then
             echo 'No generated PRA v2 changes to commit.'
           else
