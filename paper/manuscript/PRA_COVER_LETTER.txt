@@ -1,0 +1,34 @@
+August 11, 2026
+
+Editors
+Physical Review A
+
+Dear Editors,
+
+Please consider the manuscript
+
+“Measurement-Accessible Quantum Tangent Geometry: Rank Baselines and Spectral Orientation”
+
+by Marwan Ait Haddou for publication as a Regular Article in Physical Review A.
+
+The manuscript studies a measurement-level restriction that is distinct from the usual state-space quantum geometry. After a quantum measurement has been fixed, a practical readout generally retains only a subspace of the resulting classical score geometry. We ask how much measurement-visible tangent information remains accessible when the readout rank is fixed but its orientation relative to the tangent covariance is allowed to vary.
+
+The rank-only reference used in the paper is standard Grassmann geometry and is not presented as a new random-projection theorem. The main contribution is the rank-controlled organization of measurement-induced variational-quantum-circuit tangent scores together with physical, random, and cross-fitted equal-rank controls and a finite-shot operational comparison.
+
+The central numerical result holds the circuit, computational-basis measurement record, readout rank, and evaluation shot budget fixed and changes only the retained score-space orientation. For Haar-U(4) circuits at n = 12, the cross-fitted aligned readout increases the mean directional gradient-energy proxy by a factor of 9.584 and the finite-shot signal-to-noise ratio by a factor of 3.111 relative to the physical one-body readout, while a random rank-matched subspace remains near the rank baseline. This demonstrates that equal rank does not imply equal measurement accessibility or equal finite-shot directional signal.
+
+A complementary half-filled U(1)-conserving case study shows that the physical low-weight Z readout can already be strongly aligned with leading tangent directions. To control for the reduced fixed-charge Hilbert-space support, the revised manuscript includes a sector-corrected random-orientation null inside the same half-filled centered score sector. At n = 18, the measured one-body and cumulative-through-two aligned-subspace overlaps are approximately 811 and 148 times their corresponding sector-null means. We interpret this as a structured finite-size alignment effect, not as a theorem that U(1) symmetry generically improves trainability and not as evidence for a specific hydrodynamic exponent.
+
+The manuscript is deliberately limited to measurement-accessible tangent geometry. The directional gradient-energy and finite-shot SNR results are controlled diagnostics rather than claims about an arbitrary supervised-loss barren plateau. The revised text also states explicitly that the independent tangent sample used to learn the cross-fitted projector is a separate calibration resource from the fixed evaluation shot budget.
+
+The work is fully reproducible: frozen protocols, source code, aggregate tables, shard-level outputs, analysis scripts, paper-facing data, and the production manuscript are archived in the public project repository and reproducibility release referenced in the manuscript.
+
+We believe the paper is appropriate for Physical Review A because it connects quantum measurement and Fisher geometry, variational quantum circuits, symmetry-restricted quantum dynamics, and experimentally relevant readout design at finite measurement resources.
+
+Thank you for considering the manuscript.
+
+Sincerely,
+
+Marwan Ait Haddou
+Independent Researcher
+aithaddou.marwan@outlook.com
