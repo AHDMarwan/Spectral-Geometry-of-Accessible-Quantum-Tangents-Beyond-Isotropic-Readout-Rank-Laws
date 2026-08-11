@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - paper-rewrite-rank-orientation
+      - 'agent/pra-v2-*'
     paths:
       - "paper/manuscript/**"
       - ".github/workflows/paper-production.yml"
@@ -22,7 +23,7 @@ permissions:
 jobs:
   build-paper-assets:
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v6
         with:
@@ -33,9 +34,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install numpy pandas matplotlib pennylane
+          pip install numpy pandas matplotlib pennylane pillow
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
+          sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip poppler-utils
       - name: Restore complete rewrite and apply author metadata
         run: python paper/manuscript/author_metadata_finalize.py
       - name: Make production pass rerun-safe
@@ -80,6 +81,20 @@ jobs:
         run: python paper/manuscript/figure_scripts/draw_circuits_pennylane.py
       - name: Insert circuit figure and PennyLane citation
         run: python paper/manuscript/insert_circuit_figure.py
+
+      # The legacy production passes above can reconstruct text from older
+      # manuscript templates. Re-apply the deterministic PRA-v2 layer last so
+      # production never reintroduces superseded prose or drops referee-facing
+      # controls.
+      - name: Rebuild PRA v2 sector-corrected null audit
+        run: python paper/manuscript/pra_v2_sector_null.py
+      - name: Regenerate PRA v2 sector-null control figure
+        run: python paper/manuscript/figure_scripts/make_pra_v2_figures.py
+      - name: Re-apply PRA v2 referee-facing manuscript layer
+        run: python paper/manuscript/pra_v2_finalize.py
+      - name: Apply PRA v2 idempotent prose cleanup
+        run: python paper/manuscript/pra_v2_text_cleanup.py
+
       - name: Compile rewritten manuscript
         run: |
           cd paper/manuscript
@@ -87,14 +102,16 @@ jobs:
           pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
           pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
           test -s spectral_geometry_rewrite.pdf
-          if grep -q 'undefined citations' spectral_geometry_rewrite.log; then
+          if grep -qi 'undefined citations' spectral_geometry_rewrite.log; then
             echo 'Undefined citation detected'
             exit 1
           fi
-          if grep -q 'undefined references' spectral_geometry_rewrite.log; then
+          if grep -qi 'undefined references' spectral_geometry_rewrite.log; then
             echo 'Undefined cross-reference detected'
             exit 1
           fi
+      - name: Automated PRA v2 PDF preflight
+        run: python paper/manuscript/pra_v2_pdf_preflight.py
       - name: Promote rewrite to canonical manuscript
         run: |
           cd paper/manuscript
@@ -103,13 +120,15 @@ jobs:
           rm -f spectral_geometry_submission_package.zip
           zip -qr spectral_geometry_submission_package.zip \
             spectral_geometry.pdf spectral_geometry.tex \
+            PRA_V2_SECTOR_NULL_AUDIT.md PRA_V2_PDF_PREFLIGHT.md \
             CITATION_EQUATION_AUDIT.md FIGURE_VISUAL_QA_CHECKLIST.md data figure_scripts figures
-      - name: Sanity-check production files
+      - name: Sanity-check production files and PRA v2 invariants
         run: |
           test -s paper/manuscript/spectral_geometry.pdf
           test -s paper/manuscript/figures/production/fig_u1_alignment_scaling.pdf
           test -s paper/manuscript/figures/production/fig_symmetry_breaking_control.pdf
           test -s paper/manuscript/figures/production/fig_fixed_weight_rank_fraction.pdf
+          test -s paper/manuscript/figures/production/fig_u1_sector_null.pdf
           test -s paper/manuscript/figures/appendix_operational_gains.pdf
           test -s paper/manuscript/figures/appendix_noise_robustness.pdf
           test -s paper/manuscript/figures/appendix_u1_fit_diagnostics.pdf
@@ -119,8 +138,15 @@ jobs:
           test -s paper/manuscript/figures/generated_circuits/circuit_su2_cz_random_matching.pdf
           test -s paper/manuscript/figures/generated_circuits/circuit_su2_haar_u4.pdf
           test -s paper/manuscript/figures/generated_circuits/circuit_u1_rz_xy.pdf
+          test -s paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md
+          test -s paper/manuscript/PRA_V2_PDF_PREFLIGHT.md
+          grep -q '\\documentclass\[aps,pra,reprint' paper/manuscript/spectral_geometry.tex
+          grep -q 'PRA-V2-AUTOMATED-REVISION' paper/manuscript/spectral_geometry.tex
           grep -q 'Rank Baselines and Spectral Orientation' paper/manuscript/spectral_geometry.tex
           grep -q '\\label{fig:circuits}' paper/manuscript/spectral_geometry.tex
+          grep -q '\\label{fig:u1-sector-null}' paper/manuscript/spectral_geometry.tex
+          grep -q 'Figure~\\ref{fig:u1-sector-null}' paper/manuscript/spectral_geometry.tex
+          grep -q 'separate calibration resource and is not counted as free measurement cost' paper/manuscript/spectral_geometry.tex
           grep -q '\\appendix' paper/manuscript/spectral_geometry.tex
           grep -q '\\label{app:score_geometry}' paper/manuscript/spectral_geometry.tex
           grep -q '\\label{app:grassmann}' paper/manuscript/spectral_geometry.tex
@@ -141,6 +167,24 @@ jobs:
           grep -q 'Mohamed Bennai\\,\\orcidlink{0000-0002-7364-5171}' paper/manuscript/spectral_geometry.tex
           grep -q 'GitHub reproducibility repository' paper/manuscript/spectral_geometry.tex
           grep -q '\\begin{center}' paper/manuscript/spectral_geometry.tex
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+
+          text = Path('paper/manuscript/spectral_geometry.tex').read_text()
+          abstract = text.split('\\begin{abstract}', 1)[1].split('\\end{abstract}', 1)[0]
+          assert abstract.count('cross-fitted') == 1
+          assert '9.584' in abstract and '3.111' in abstract
+          provenance = 'The source code, frozen experiment profiles, aggregate tables, shard-level outputs, and paper-facing result summaries used for the numerical claims are archived in the public reproducibility repository'
+          assert text.count(provenance) == 1, 'reproducibility provenance sentence should occur exactly once'
+          assert 'public reproducibility release' not in text, 'superseded duplicate reproducibility wording returned'
+
+          d = pd.read_csv('paper/manuscript/data/pra_v2_u1_sector_null.csv')
+          assert (d.observed_ci_low > d.null_plus_5sd).all()
+          n18 = d[d.n == 18].set_index('walsh_order')
+          assert n18.loc[1, 'observed_over_null'] > 500
+          assert n18.loc[2, 'observed_over_null'] > 100
+          PY
           if grep -q '\\boxed{\\text{rank fixes a baseline' paper/manuscript/spectral_geometry.tex; then
             echo 'Core prose message must not be boxed'
             exit 1
@@ -162,6 +206,9 @@ jobs:
                   paper/manuscript/spectral_geometry.pdf \
                   paper/manuscript/spectral_geometry_submission_package.zip \
                   paper/manuscript/spectral_geometry_rewrite.tex \
+                  paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md \
+                  paper/manuscript/PRA_V2_PDF_PREFLIGHT.md \
+                  paper/manuscript/data/pra_v2_u1_sector_null.csv \
                   paper/manuscript/figures/production \
                   paper/manuscript/figures/generated_circuits \
                   paper/manuscript/figures/appendix_*.pdf \
@@ -169,7 +216,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No production changes to commit."
           else
-            git commit -m "Promote production rewrite with appendices [skip ci]"
+            git commit -m "Promote PRA v2 production rewrite [skip ci]"
             git reset --hard HEAD
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push origin HEAD:"${GITHUB_REF_NAME}"
