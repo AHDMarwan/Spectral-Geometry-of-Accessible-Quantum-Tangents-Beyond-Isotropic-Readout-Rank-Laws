@@ -41,18 +41,45 @@ def main() -> None:
     if MARKER not in text:
         text = text.replace("\\begin{document}\n", "\\begin{document}\n" + MARKER + "\n", 1)
 
-    # Put the same-rank operational result before the reader can misidentify the
-    # standard Grassmann identity as the novelty claim.
-    abstract_anchor = (
-        "We use this identity as a null model rather than as a new random-projection theorem."
+    # Make the abstract lead with the empirical equal-rank result rather than
+    # repeating the standard Grassmann baseline. Quantitative gains are frozen
+    # values from the existing operational campaign.
+    pre_v2_abstract = (
+        "We use this identity as a null model rather than as a new random-projection theorem. "
+        "Numerically, family-balanced one- and two-body readouts remain close to the rank reference through $n=16$ even as "
+        "the tangent covariance becomes strongly anisotropic. Rank matching alone is nevertheless insufficient: "
+        "in generic circuits, cross-fitted leading tangent subspaces of the same rank retain substantially more mass than "
+        "the physical low-weight readout. This difference is operational. At fixed circuit, measurement record, readout rank, "
+        "and shot budget, changing only the readout orientation changes directional gradient energy and finite-shot "
+        "signal-to-noise ratio, while random rank-matched subspaces track the rank baseline."
     )
-    abstract_insert = (
-        abstract_anchor
-        + " The decisive comparison holds the circuit, measurement record, readout rank, and shot budget fixed: "
-        + "a cross-fitted leading tangent subspace of the same rank can retain substantially more tangent mass and "
-        + "produce a larger finite-shot directional signal than the physical low-weight readout."
+    redundant_v2_abstract = (
+        "We use this identity as a null model rather than as a new random-projection theorem. "
+        "The decisive comparison holds the circuit, measurement record, readout rank, and shot budget fixed: "
+        "a cross-fitted leading tangent subspace of the same rank can retain substantially more tangent mass and "
+        "produce a larger finite-shot directional signal than the physical low-weight readout. "
+        "Numerically, family-balanced one- and two-body readouts remain close to the rank reference through $n=16$ even as "
+        "the tangent covariance becomes strongly anisotropic. Rank matching alone is nevertheless insufficient: "
+        "in generic circuits, cross-fitted leading tangent subspaces of the same rank retain substantially more mass than "
+        "the physical low-weight readout. This difference is operational. At fixed circuit, measurement record, readout rank, "
+        "and shot budget, changing only the readout orientation changes directional gradient energy and finite-shot "
+        "signal-to-noise ratio, while random rank-matched subspaces track the rank baseline."
     )
-    text = replace_once(text, abstract_anchor, abstract_insert, "abstract emphasis")
+    polished_abstract = (
+        "We use this identity as a null model rather than as a new random-projection theorem. "
+        "Numerically, family-balanced one- and two-body readouts remain close to the rank reference through $n=16$ even as "
+        "the tangent covariance becomes strongly anisotropic. The decisive equal-rank comparison then holds the circuit, "
+        "measurement record, readout rank, and evaluation shot budget fixed. For Haar-$U(4)$ at $n=12$, cross-fitted alignment "
+        "increases the mean directional gradient-energy proxy by a factor $9.584$ and the finite-shot signal-to-noise ratio by "
+        "a factor $3.111$ relative to the physical one-body readout, while a random rank-matched subspace remains near the rank baseline."
+    )
+    if polished_abstract not in text:
+        if redundant_v2_abstract in text:
+            text = text.replace(redundant_v2_abstract, polished_abstract, 1)
+        elif pre_v2_abstract in text:
+            text = text.replace(pre_v2_abstract, polished_abstract, 1)
+        else:
+            raise RuntimeError("abstract emphasis: known pre-v2/v2 target not found")
 
     null = pd.read_csv(SECTOR_NULL)
     n18 = null[null["n"] == 18].set_index("walsh_order")
@@ -77,9 +104,25 @@ def main() -> None:
         f"${mu1:.3g}$ for $k=1$ and ${mu2:.3g}$ for $k\\le2$, while the observed overlaps are "
         f"approximately ${ratio1:.0f}\\times$ and ${ratio2:.0f}\\times$ larger, respectively. "
         "Thus the persistent alignment is not an artifact of comparing a fixed-charge family with the full $2^n$ score-space rank scale. "
+        "Figure~\\ref{fig:u1-sector-null} summarizes the sector-corrected comparison over the full tested window. "
         "This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new"
     )
-    text = replace_once(text, alignment_anchor, alignment_insert, "sector-corrected null paragraph")
+    old_sector_sentence = (
+        "Thus the persistent alignment is not an artifact of comparing a fixed-charge family with the full $2^n$ score-space rank scale. "
+        "This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new"
+    )
+    new_sector_sentence = (
+        "Thus the persistent alignment is not an artifact of comparing a fixed-charge family with the full $2^n$ score-space rank scale. "
+        "Figure~\\ref{fig:u1-sector-null} summarizes the sector-corrected comparison over the full tested window. "
+        "This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new"
+    )
+    if alignment_insert not in text:
+        if alignment_anchor in text:
+            text = text.replace(alignment_anchor, alignment_insert, 1)
+        elif old_sector_sentence in text:
+            text = text.replace(old_sector_sentence, new_sector_sentence, 1)
+        else:
+            raise RuntimeError("sector-corrected null paragraph: known pre-v2/v2 target not found")
 
     figure_anchor = (
         "Each size uses 20 independent circuit instances \\cite{AitHaddou2026MeasurementAccessible}.\n\n"
@@ -109,6 +152,23 @@ def main() -> None:
     fd_dirs = int(profile["fd_directions"])
     default_instances = int(profile["instances"]["default"])
     u1_instances = int(profile["instances"]["U1-RZ-XY-line"])
+
+    main_resource_anchor = (
+        "For the operational comparison we hold fixed the circuit, the full computational-basis record, the readout rank, and the shot budget. "
+        "We compare three rank-matched readouts: (i) the physical low-weight span, (ii) an independent random subspace, and (iii) a cross-fitted aligned subspace learned from independent tangent data. "
+        "For an evaluation tangent $v$, the retained score energy $\\|P u_v\\|^2$ controls the directional signal available in that readout. "
+        "Multiplying by the full-record Fisher scale gives the raw directional gradient-energy proxy used in the experiment. "
+        "Finite-shot signal-to-noise is computed under the multinomial shot model at a fixed budget of $10^4$ shots."
+    )
+    main_resource_insert = (
+        "For the operational comparison we hold fixed the circuit, the full computational-basis record, the readout rank, and the evaluation shot budget. "
+        "We compare three rank-matched readouts: (i) the physical low-weight span, (ii) an independent random subspace, and (iii) a cross-fitted aligned subspace learned from independent tangent data. "
+        "For an evaluation tangent $v$, the retained score energy $\\|P u_v\\|^2$ controls the directional signal available in that readout. "
+        "Multiplying by the full-record Fisher scale gives the raw directional gradient-energy proxy used in the experiment. "
+        "Finite-shot signal-to-noise is computed under the multinomial shot model at a fixed budget of $10^4$ shots. "
+        "The independent alignment sample used to estimate the cross-fitted projector is a separate calibration resource and is not counted as free measurement cost in this fixed-evaluation-budget comparison."
+    )
+    text = replace_once(text, main_resource_anchor, main_resource_insert, "main-text resource accounting")
 
     crossfit_anchor = (
         "This separation prevents the same tangent samples from both selecting and evaluating the subspace.  "

@@ -3,19 +3,26 @@ name: PRA v2 automated revision
 on:
   push:
     branches:
-      - agent/pra-v2-automated-revision
+      - main
+      - 'agent/pra-v2-*'
     paths:
       - '.github/workflows/pra-v2-automated.yml'
       - 'paper/manuscript/pra_v2_sector_null.py'
       - 'paper/manuscript/pra_v2_finalize.py'
+      - 'paper/manuscript/pra_v2_text_cleanup.py'
+      - 'paper/manuscript/pra_v2_pdf_preflight.py'
       - 'paper/manuscript/figure_scripts/make_pra_v2_figures.py'
+      - 'paper/manuscript/figure_scripts/make_publication_figures.py'
   pull_request:
     branches: [main]
     paths:
       - '.github/workflows/pra-v2-automated.yml'
       - 'paper/manuscript/pra_v2_sector_null.py'
       - 'paper/manuscript/pra_v2_finalize.py'
+      - 'paper/manuscript/pra_v2_text_cleanup.py'
+      - 'paper/manuscript/pra_v2_pdf_preflight.py'
       - 'paper/manuscript/figure_scripts/make_pra_v2_figures.py'
+      - 'paper/manuscript/figure_scripts/make_publication_figures.py'
   workflow_dispatch:
 
 permissions:
@@ -36,7 +43,7 @@ concurrency:
 jobs:
   revise-audit-build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 55
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
         with:
@@ -53,11 +60,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements/reproducible.txt
           pip install --no-deps -e .
+          pip install pillow
 
-      - name: Install TeX toolchain
+      - name: Install TeX and PDF QA toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip
+          sudo apt-get install -y texlive-latex-extra texlive-publishers texlive-science zip poppler-utils
 
       - name: Repository technical tests
         run: pytest -q
@@ -65,11 +73,17 @@ jobs:
       - name: Build sector-corrected U1 null audit
         run: python paper/manuscript/pra_v2_sector_null.py
 
+      - name: Regenerate publication data figures
+        run: python paper/manuscript/figure_scripts/make_publication_figures.py
+
       - name: Generate PRA v2 control figure
         run: python paper/manuscript/figure_scripts/make_pra_v2_figures.py
 
       - name: Apply idempotent PRA v2 manuscript revision
         run: python paper/manuscript/pra_v2_finalize.py
+
+      - name: Apply idempotent PRA v2 prose cleanup
+        run: python paper/manuscript/pra_v2_text_cleanup.py
 
       - name: Compile PRA v2 manuscript
         run: |
@@ -78,14 +92,17 @@ jobs:
           pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
           pdflatex -interaction=nonstopmode -halt-on-error spectral_geometry_rewrite.tex
           test -s spectral_geometry_rewrite.pdf
-          if grep -q 'undefined citations' spectral_geometry_rewrite.log; then
+          if grep -qi 'undefined citations' spectral_geometry_rewrite.log; then
             echo 'Undefined citation detected'
             exit 1
           fi
-          if grep -q 'undefined references' spectral_geometry_rewrite.log; then
+          if grep -qi 'undefined references' spectral_geometry_rewrite.log; then
             echo 'Undefined cross-reference detected'
             exit 1
           fi
+
+      - name: Automated PDF render and font preflight
+        run: python paper/manuscript/pra_v2_pdf_preflight.py
 
       - name: Scientific and journal-target invariants
         shell: bash
@@ -93,18 +110,36 @@ jobs:
           grep -q '\\documentclass\[aps,pra,reprint' paper/manuscript/spectral_geometry_rewrite.tex
           grep -q 'PRA-V2-AUTOMATED-REVISION' paper/manuscript/spectral_geometry_rewrite.tex
           grep -q 'sector-corrected random-orientation control' paper/manuscript/spectral_geometry_rewrite.tex
+          grep -q 'Figure~\\ref{fig:u1-sector-null}' paper/manuscript/spectral_geometry_rewrite.tex
+          grep -q 'separate calibration resource and is not counted as free measurement cost' paper/manuscript/spectral_geometry_rewrite.tex
           grep -q 'not an end-to-end claim that learning' paper/manuscript/spectral_geometry_rewrite.tex
           grep -q 'fig_u1_sector_null.pdf' paper/manuscript/spectral_geometry_rewrite.tex
           test -s paper/manuscript/figures/production/fig_u1_sector_null.pdf
+          test -s paper/manuscript/figures/production/fig_u1_alignment_scaling.pdf
           test -s paper/manuscript/data/pra_v2_u1_sector_null.csv
           test -s paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md
+          test -s paper/manuscript/PRA_V2_PDF_PREFLIGHT.md
           python - <<'PY'
+          from pathlib import Path
           import pandas as pd
+
           d = pd.read_csv('paper/manuscript/data/pra_v2_u1_sector_null.csv')
           assert (d.observed_ci_low > d.null_plus_5sd).all()
           n18 = d[d.n == 18].set_index('walsh_order')
           assert n18.loc[1, 'observed_over_null'] > 500
           assert n18.loc[2, 'observed_over_null'] > 100
+
+          text = Path('paper/manuscript/spectral_geometry_rewrite.tex').read_text()
+          abstract = text.split('\\begin{abstract}', 1)[1].split('\\end{abstract}', 1)[0]
+          assert abstract.count('cross-fitted') == 1, 'abstract should state the cross-fit result once'
+          assert '9.584' in abstract and '3.111' in abstract
+          assert 'evaluation shot budget fixed' in abstract
+          provenance = 'The source code, frozen experiment profiles, aggregate tables, shard-level outputs, and paper-facing result summaries used for the numerical claims are archived in the public reproducibility repository'
+          assert text.count(provenance) == 1, 'reproducibility provenance sentence should occur exactly once'
+
+          figsrc = Path('paper/manuscript/figure_scripts/make_publication_figures.py').read_text()
+          assert 'annotation = (' in figsrc
+          assert 'rf"$\\alpha={fit.power_alpha:.2f}$\\n$\\Delta$AICc' not in figsrc
           print(n18[['observed_mean','sector_null_mean','observed_over_null']])
           PY
 
@@ -116,7 +151,7 @@ jobs:
           rm -f spectral_geometry_submission_package.zip
           zip -qr spectral_geometry_submission_package.zip \
             spectral_geometry.pdf spectral_geometry.tex \
-            PRA_V2_SECTOR_NULL_AUDIT.md \
+            PRA_V2_SECTOR_NULL_AUDIT.md PRA_V2_PDF_PREFLIGHT.md \
             data/pra_v2_u1_sector_null.csv \
             figures/production/fig_u1_sector_null.pdf \
             figures/production/fig_u1_sector_null.png \
@@ -135,7 +170,7 @@ jobs:
           p = json.loads(Path('profiles/trainability_bridge_v1.json').read_text())
           report = f'''# PRA v2 automation report
 
-          Status: all technical and manuscript gates passed in this job.
+          Status: all technical, manuscript, and automated PDF-preflight gates passed in this job.
 
           ## Added referee-facing controls
 
@@ -143,11 +178,14 @@ jobs:
           - n=18 one-body observed/null ratio: {n18.loc[1, 'observed_over_null']:.1f}x.
           - n=18 weight-through-two observed/null ratio: {n18.loc[2, 'observed_over_null']:.1f}x.
           - Cross-fit resource accounting: {p['align_tangents']} fit tangents, {p['eval_tangents']} held-out evaluation tangents, {p['shots']} evaluation shots, {p['fd_directions']} finite-difference directions.
-          - REVTeX target switched from PRX to PRA.
+          - Abstract novelty framing reports the frozen n=12 operational gains once, without repetition.
+          - Publication U(1) scaling annotations were regenerated with real line breaks.
+          - Duplicated reproducibility prose was removed.
+          - REVTeX target is PRA.
 
           ## Interpretation guardrails
 
-          The sector-null control is geometric and does not identify the U(1) mechanism. The fixed-shot comparison isolates evaluation-time orientation effects; calibration cost for learning the aligned projector remains separate.
+          The sector-null control is geometric and does not identify the U(1) mechanism. The fixed-shot comparison isolates evaluation-time orientation effects; calibration cost for learning the aligned projector remains separate. Automated PDF preflight does not replace final human visual inspection.
           '''
           Path('paper/manuscript/PRA_V2_AUTOMATION_REPORT.md').write_text('\n'.join(line.strip() for line in report.splitlines()) + '\n')
           PY
@@ -161,9 +199,12 @@ jobs:
             paper/manuscript/spectral_geometry_submission_package.zip
             paper/manuscript/PRA_V2_AUTOMATION_REPORT.md
             paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md
+            paper/manuscript/PRA_V2_PDF_PREFLIGHT.md
             paper/manuscript/data/pra_v2_u1_sector_null.csv
             paper/manuscript/figures/production/fig_u1_sector_null.pdf
             paper/manuscript/figures/production/fig_u1_sector_null.png
+            paper/manuscript/figures/production/fig_u1_alignment_scaling.pdf
+            paper/manuscript/figures/production/fig_u1_alignment_scaling.png
           if-no-files-found: error
           retention-days: 90
 
@@ -183,13 +224,13 @@ jobs:
             paper/manuscript/spectral_geometry_submission_package.zip \
             paper/manuscript/PRA_V2_AUTOMATION_REPORT.md \
             paper/manuscript/PRA_V2_SECTOR_NULL_AUDIT.md \
+            paper/manuscript/PRA_V2_PDF_PREFLIGHT.md \
             paper/manuscript/data/pra_v2_u1_sector_null.csv \
-            paper/manuscript/figures/production/fig_u1_sector_null.pdf \
-            paper/manuscript/figures/production/fig_u1_sector_null.png
+            paper/manuscript/figures/production
           if git diff --cached --quiet; then
             echo 'No generated PRA v2 changes to commit.'
           else
-            git commit -m 'Generate PRA v2 referee-facing revision [skip ci]'
+            git commit -m 'Generate polished PRA v2 submission artifacts [skip ci]'
             git pull --rebase origin "$BRANCH_NAME"
             git push origin HEAD:"$BRANCH_NAME"
           fi
