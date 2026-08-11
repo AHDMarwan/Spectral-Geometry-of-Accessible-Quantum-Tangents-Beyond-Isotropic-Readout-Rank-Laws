@@ -4,7 +4,7 @@ PAPER = Path(__file__).resolve().parent
 TARGET = PAPER / "spectral_geometry_rewrite.tex"
 KEY = "AitHaddou2026IsotropicRankLaws"
 
-BIB = r"""
+OLD_BIB = r"""
 
 \bibitem{AitHaddou2026IsotropicRankLaws}
 M. Ait Haddou,
@@ -12,12 +12,20 @@ M. Ait Haddou,
 manuscript submitted to arXiv (2026), arXiv identifier pending.
 """
 
+BIB = r"""
+
+\bibitem{AitHaddou2026IsotropicRankLaws}
+M. Ait Haddou,
+\textit{Readout-Rank Laws for Isotropic Quantum Tangents},
+\href{https://arxiv.org/abs/2608.07628}{arXiv:2608.07628} [quant-ph] (2026).
+"""
+
 
 def add_after(text: str, anchor: str, addition: str) -> str:
     if addition in text:
         return text
     if anchor not in text:
-        raise RuntimeError(f"temporary prior-paper citation anchor not found: {anchor[:140]}")
+        raise RuntimeError(f"prior-paper citation anchor not found: {anchor[:140]}")
     return text.replace(anchor, anchor + addition, 1)
 
 
@@ -59,11 +67,17 @@ def main() -> None:
     )
     text = add_after(text, u1_anchor, u1_add)
 
-    if f"\\bibitem{{{KEY}}}" not in text:
+    # Migrate the temporary pre-arXiv entry if it is already present in a
+    # production template. Otherwise insert the final arXiv entry once.
+    if OLD_BIB in text:
+        text = text.replace(OLD_BIB, BIB, 1)
+    elif f"\\bibitem{{{KEY}}}" not in text:
         text = text.replace("\\end{thebibliography}", BIB + "\n\\end{thebibliography}", 1)
+    elif "arXiv:2608.07628" not in text:
+        raise RuntimeError("prior-paper bibliography entry exists but is neither the temporary nor final arXiv form")
 
     TARGET.write_text(text, encoding="utf-8")
-    print(f"temporary prior-paper citation applied to {TARGET}")
+    print(f"prior-paper arXiv citation applied to {TARGET}")
 
 
 if __name__ == "__main__":
