@@ -44,7 +44,16 @@ def main() -> None:
     # Make the abstract lead with the empirical equal-rank result rather than
     # repeating the standard Grassmann baseline. Quantitative gains are frozen
     # values from the existing operational campaign.
-    redundant_abstract = (
+    pre_v2_abstract = (
+        "We use this identity as a null model rather than as a new random-projection theorem. "
+        "Numerically, family-balanced one- and two-body readouts remain close to the rank reference through $n=16$ even as "
+        "the tangent covariance becomes strongly anisotropic. Rank matching alone is nevertheless insufficient: "
+        "in generic circuits, cross-fitted leading tangent subspaces of the same rank retain substantially more mass than "
+        "the physical low-weight readout. This difference is operational. At fixed circuit, measurement record, readout rank, "
+        "and shot budget, changing only the readout orientation changes directional gradient energy and finite-shot "
+        "signal-to-noise ratio, while random rank-matched subspaces track the rank baseline."
+    )
+    redundant_v2_abstract = (
         "We use this identity as a null model rather than as a new random-projection theorem. "
         "The decisive comparison holds the circuit, measurement record, readout rank, and shot budget fixed: "
         "a cross-fitted leading tangent subspace of the same rank can retain substantially more tangent mass and "
@@ -64,14 +73,13 @@ def main() -> None:
         "increases the mean directional gradient-energy proxy by a factor $9.584$ and the finite-shot signal-to-noise ratio by "
         "a factor $3.111$ relative to the physical one-body readout, while a random rank-matched subspace remains near the rank baseline."
     )
-    if redundant_abstract in text:
-        text = text.replace(redundant_abstract, polished_abstract, 1)
-    elif polished_abstract not in text:
-        # Backward-compatible path if the pass is ever applied to the pre-v2 manuscript.
-        abstract_anchor = (
-            "We use this identity as a null model rather than as a new random-projection theorem."
-        )
-        text = replace_once(text, abstract_anchor, polished_abstract, "abstract emphasis")
+    if polished_abstract not in text:
+        if redundant_v2_abstract in text:
+            text = text.replace(redundant_v2_abstract, polished_abstract, 1)
+        elif pre_v2_abstract in text:
+            text = text.replace(pre_v2_abstract, polished_abstract, 1)
+        else:
+            raise RuntimeError("abstract emphasis: known pre-v2/v2 target not found")
 
     null = pd.read_csv(SECTOR_NULL)
     n18 = null[null["n"] == 18].set_index("walsh_order")
@@ -99,10 +107,6 @@ def main() -> None:
         "Figure~\\ref{fig:u1-sector-null} summarizes the sector-corrected comparison over the full tested window. "
         "This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new"
     )
-    text = replace_once(text, alignment_anchor, alignment_insert, "sector-corrected null paragraph")
-
-    # If the first PRA-v2 pass already inserted the sector-null paragraph, add
-    # the missing in-text figure reference without duplicating the paragraph.
     old_sector_sentence = (
         "Thus the persistent alignment is not an artifact of comparing a fixed-charge family with the full $2^n$ score-space rank scale. "
         "This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new"
@@ -112,8 +116,13 @@ def main() -> None:
         "Figure~\\ref{fig:u1-sector-null} summarizes the sector-corrected comparison over the full tested window. "
         "This is a VQC-specific use of a standard projector/subspace-overlap construction rather than a claim that subspace overlap itself is new"
     )
-    if old_sector_sentence in text and new_sector_sentence not in text:
-        text = text.replace(old_sector_sentence, new_sector_sentence, 1)
+    if alignment_insert not in text:
+        if alignment_anchor in text:
+            text = text.replace(alignment_anchor, alignment_insert, 1)
+        elif old_sector_sentence in text:
+            text = text.replace(old_sector_sentence, new_sector_sentence, 1)
+        else:
+            raise RuntimeError("sector-corrected null paragraph: known pre-v2/v2 target not found")
 
     figure_anchor = (
         "Each size uses 20 independent circuit instances \\cite{AitHaddou2026MeasurementAccessible}.\n\n"
