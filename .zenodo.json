@@ -1,0 +1,21 @@
+{
+  "title": "Spectral Orientation of Measurement-Accessible Quantum Tangent Geometry in Variational Quantum Circuits: Reproducibility Suite",
+  "description": "Frozen source code, numerical protocols, aggregate tables, shard-level outputs, analysis scripts, manuscript-facing summaries, and AQT submission materials supporting the study of spectral orientation in measurement-accessible variational-quantum-circuit tangent geometry.",
+  "creators": [
+    {
+      "name": "Ait Haddou, Marwan",
+      "orcid": "0009-0008-1734-1721",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "keywords": [
+    "variational quantum circuits",
+    "quantum information geometry",
+    "quantum measurements",
+    "readout design",
+    "Fisher information",
+    "quantum machine learning",
+    "reproducibility"
+  ],
+  "access_right": "open"
+}
