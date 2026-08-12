@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive-latex-extra texlive-science
-      - name: Compile AQT manuscript
+      - name: Compile AQT main manuscript
         run: |
           cd paper/aqt
           pdflatex -interaction=nonstopmode -halt-on-error aqt_spectral_geometry.tex
@@ -30,18 +30,48 @@ jobs:
           pdflatex -interaction=nonstopmode -halt-on-error aqt_spectral_geometry.tex
           test -s aqt_spectral_geometry.pdf
           if grep -qi 'undefined citations' aqt_spectral_geometry.log; then
-            echo 'Undefined citation detected'
+            echo 'Undefined citation detected in main manuscript'
             exit 1
           fi
           if grep -qi 'undefined references' aqt_spectral_geometry.log; then
-            echo 'Undefined cross-reference detected'
+            echo 'Undefined cross-reference detected in main manuscript'
             exit 1
           fi
-      - name: Upload AQT PDF and log
+      - name: Compile AQT Supporting Information
+        run: |
+          cd paper/aqt
+          pdflatex -interaction=nonstopmode -halt-on-error AQT_SUPPORTING_INFORMATION.tex
+          pdflatex -interaction=nonstopmode -halt-on-error AQT_SUPPORTING_INFORMATION.tex
+          pdflatex -interaction=nonstopmode -halt-on-error AQT_SUPPORTING_INFORMATION.tex
+          test -s AQT_SUPPORTING_INFORMATION.pdf
+          if grep -qi 'undefined citations' AQT_SUPPORTING_INFORMATION.log; then
+            echo 'Undefined citation detected in Supporting Information'
+            exit 1
+          fi
+          if grep -qi 'undefined references' AQT_SUPPORTING_INFORMATION.log; then
+            echo 'Undefined cross-reference detected in Supporting Information'
+            exit 1
+          fi
+      - name: Verify AQT metadata and ToC assets
+        run: |
+          test -s paper/aqt/AQT_TOC_GRAPHIC.svg
+          test -s paper/aqt/make_aqt_toc_graphic.py
+          grep -q 'Independent Researcher' paper/aqt/aqt_spectral_geometry.tex
+          grep -q 'aithaddou.marwan@outlook.com' paper/aqt/aqt_spectral_geometry.tex
+          grep -q 'declares no conflict of interest' paper/aqt/aqt_spectral_geometry.tex
+          grep -q 'received no specific funding' paper/aqt/aqt_spectral_geometry.tex
+          grep -q 'GrossRieser2026' paper/aqt/AQT_INTRODUCTION_DRAFT.tex
+          grep -q '9.584' paper/aqt/aqt_spectral_geometry.tex
+          grep -q '3.111' paper/aqt/aqt_spectral_geometry.tex
+      - name: Upload AQT PDFs, logs, and ToC source
         uses: actions/upload-artifact@v4
         with:
-          name: aqt-manuscript
+          name: aqt-submission-package
           path: |
             paper/aqt/aqt_spectral_geometry.pdf
             paper/aqt/aqt_spectral_geometry.log
+            paper/aqt/AQT_SUPPORTING_INFORMATION.pdf
+            paper/aqt/AQT_SUPPORTING_INFORMATION.log
+            paper/aqt/AQT_TOC_GRAPHIC.svg
+            paper/aqt/make_aqt_toc_graphic.py
           if-no-files-found: error
