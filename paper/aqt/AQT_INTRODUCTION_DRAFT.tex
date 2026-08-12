@@ -1,8 +1,35 @@
 % Advanced Quantum Technologies working Introduction
-% Stage 2 currently covers paragraphs 1--2 only.
+% AQT-facing rewrite. Scientific scope is intentionally separated from the isotropic-rank and AQNG papers.
 
 \section{Introduction}
 
-Variational quantum circuits interact with a classical learning or control loop through measured data. Quantum Fisher information (QFI) and related state-space metrics describe local changes of the quantum state before an experimental measurement is specified \cite{BraunsteinCaves1994,Stokes2020,Haug2021}. A fixed measurement restricts this geometry to the information carried by its outcome distribution, and a subsequent choice of observables or classical features can discard additional tangent directions \cite{BraunsteinCaves1994,HottaOzawa2004,LuLuoOh2012}. This second restriction is the subject of the present work.
+Variational quantum circuits interact with classical learning and control loops through measured data. Quantum Fisher information (QFI) and related state-space metrics characterize local changes of a parameterized quantum state before a measurement is specified \cite{BraunsteinCaves1994,Stokes2020,Haug2021}. A fixed measurement restricts this geometry to the information carried by its outcome distribution. Retaining only selected observables or classical features imposes a second restriction on the same measurement record \cite{BraunsteinCaves1994,HottaOzawa2004,LuLuoOh2012}. The present work studies this readout stage while keeping the quantum measurement fixed.
 
-Readout restriction is distinct from established mechanisms that alter variational-circuit trainability. Observable locality, circuit controllability, dynamical Lie-algebra structure, and symmetry restrictions can change gradient concentration or the accessible state manifold \cite{Cerezo2021,UvarovBiamonte2021,Larocca2022,HolmesSharma2022}. Randomized measurements can also recover quantum Fisher geometry after averaging over measurement bases \cite{LuSha2025}. Here the quantum measurement is held fixed. The question is what remains visible after its outcome record is compressed to a readout subspace of fixed dimension.
+Measurement-limited visibility also appears in other quantum-learning settings. Gross and Rieser formulate quantum extreme learning machines through Pauli-transfer matrices and characterize which encoded Pauli features can be reconstructed from the row space exposed by reservoir dynamics and measured observables \cite{GrossRieser2026}. Their local-injectivity condition asks whether the effective readout map remains injective on the tangent space of the classical input feature map. The object considered here is different. The circuit parameters themselves are varied, the resulting probability derivatives are represented as Fisher-normalized scores after a fixed measurement, and the readout is evaluated by how much of the covariance of these parameter tangents it retains. The resulting question is therefore differential and parameter-geometric rather than a Pauli-feature decoding problem.
+
+Let $u_v$ denote a normalized measurement-score vector for a parameter-space direction $v$, and let
+\begin{equation}
+C=\mathbb{E}_v[u_vu_v^{\mathsf T}],
+\qquad C\succeq0,
+\qquad \operatorname{Tr}C=1,
+\end{equation}
+be the covariance of these tangent directions in an $N$-dimensional centered score space. A retained readout span is represented by an orthogonal projector $P$ of rank $r$. Its mean retained tangent mass is
+\begin{equation}
+R(P,C)=\operatorname{Tr}(PC),
+\qquad
+\rho(P,C)=\frac{\operatorname{Tr}(PC)}{r/N}.
+\label{eq:aqt-intro-rho}
+\end{equation}
+Here $r/N$ is the mean overlap for a rank-$r$ subspace under random relative orientation. It serves as a rank-only reference; it is not an assumption that a physical circuit or readout is Haar-oriented.
+
+The isotropic limit supplies a useful boundary case. A companion analysis derives exact finite-size readout-rank laws when the joint state--tangent frame is isotropic \cite{AitHaddou2026IsotropicRankLaws}. The present paper addresses the regime in which that assumption is absent. For an arbitrary trace-one covariance, the rank fixes the random-orientation mean, the eigenvalue spectrum determines the width of the random-orientation distribution, and the orientation of the physical readout relative to the covariance eigenspaces determines the observed retention. The effective spectral dimension
+\begin{equation}
+ d_{\mathrm{eff}}(C)=\frac{1}{\operatorname{Tr}(C^2)}
+\end{equation}
+quantifies spectral concentration. Standard Grassmann projector moments give a null variance bounded by $2/(r d_{\mathrm{eff}})$. A readout can therefore lie near its rank reference even when $d_{\mathrm{eff}}/N$ is small. Near-rank retention is not evidence of isotropic tangent geometry.
+
+The numerical study tests this distinction with computational-basis measurement and low-weight diagonal $Z$ readouts across several variational circuit families. Family-balanced generic circuits remain close to the rank reference for one- and two-body readouts over the tested sizes while their tangent covariance becomes strongly anisotropic. Architecture-resolved deviations show that this aggregate behavior is not literal Haar orientation. The decisive control keeps the circuit, measurement record, readout rank, and evaluation resources fixed while changing only the retained score subspace. In Haar-$U(4)$ circuits, a cross-fitted leading tangent subspace retains substantially more tangent mass than the physical one-body span at the same rank. The difference persists in finite-shot directional-signal diagnostics, whereas an independent random rank-matched subspace remains close to the rank baseline.
+
+A half-filled $U(1)$-conserving RZ--XY family provides a structured contrast. Its low-weight diagonal readout is already strongly aligned with leading tangent directions, including after the random-orientation reference is corrected to the fixed-charge score sector. A symmetry-breaking pilot suppresses this alignment, but the data do not identify a unique microscopic mechanism. Readout--charge compatibility, fixed-charge harmonic geometry, restricted controllability, and slow modes under conservation remain distinct possible contributions. The reported finite-size fits are used only to describe the tested range and are not interpreted as asymptotic or hydrodynamic exponents.
+
+The contribution is a rank-controlled spectral description of measurement-accessible parameter tangents in trainable variational circuits. Standard random-subspace identities and the Ky Fan variational principle are used as reference tools rather than novelty claims. The new evidence is the combination of covariance-resolved orientation diagnostics, physical/random/cross-fitted readouts at equal rank, a sector-corrected structured case study, and a finite-shot operational comparison. These results identify readout orientation as a design variable at the quantum-measurement/classical-processing interface. They do not by themselves establish supervised-loss trainability or a barren-plateau theorem; those questions additionally depend on the task gradient, classical postprocessing, and optimization dynamics.
