@@ -1,0 +1,66 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\graphicspath{{../manuscript/figures/}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\deff}{d_{\mathrm{eff}}}
+
+\begin{document}
+
+\title{Spectral Orientation of Measurement-Accessible Quantum Tangent Geometry in Variational Quantum Circuits}
+\author{Marwan Ait Haddou\\
+Independent Researcher\\
+\texttt{aithaddou.marwan@outlook.com}}
+\date{}
+\maketitle
+
+% AQT title-page note: before submission, confirm a complete affiliation and an institutional/company corresponding-author email as requested by the journal guidance.
+
+\noindent\textbf{Keywords:} variational quantum circuits; quantum information geometry; quantum measurements; readout design; Fisher information; quantum machine learning
+
+\begin{abstract}
+After a fixed measurement of a trainable variational quantum circuit, readout subspaces of the same dimension can retain different amounts of parameter-tangent information. This dependence is resolved by the covariance spectrum of Fisher-normalized measurement scores and by the orientation of the retained readout subspace within that score space. Random rank-matched subspaces provide a rank-only reference. Across five generic circuit families, one- and two-body diagonal readouts remain near this reference through 16 qubits although the tangent covariance becomes strongly anisotropic. For Haar-$U(4)$ circuits at 12 qubits, a cross-fitted aligned readout of the same rank as the physical one-body readout increases the mean directional gradient-energy proxy by a factor of 9.584 and the finite-shot signal-to-noise ratio by a factor of 3.111. A random rank-matched subspace remains near the reference. A half-filled $U(1)$-conserving family shows a different regime in which low-weight $Z$ readouts are already aligned with leading tangent directions. Spectral orientation therefore determines how much measured parameter-tangent information remains accessible after readout restriction and can alter finite-shot directional signal without changing the quantum measurement or readout rank.
+\end{abstract}
+
+\input{AQT_INTRODUCTION_DRAFT.tex}
+
+\paragraph{Figure roadmap.}
+Figure~\ref{fig:framework-aqt} summarizes the measurement-score construction. Figure~\ref{fig:rank-aqt} shows the coexistence of near-rank retention and covariance anisotropy. Figure~\ref{fig:spectrum-aqt} compares equal-rank physical and spectrally aligned subspaces, Figure~\ref{fig:operational-aqt} reports the corresponding finite-shot directional-signal gains, and Figure~\ref{fig:u1-aqt} gives the fixed-charge sector-corrected $U(1)$ alignment control.
+
+\input{AQT_MAIN_TEXT_REWRITE.tex}
+
+% For submission assembly, LaTeX floats may be placed by the engine. The five figures below are the recommended AQT main-text display set.
+\input{AQT_MAIN_FIGURES.tex}
+
+\section*{Acknowledgements}
+The author thanks Mohamed Bennai for helpful discussions.
+
+\section*{Artificial Intelligence Disclosure}
+ChatGPT (OpenAI) was used during manuscript preparation to assist with language editing, structural revision, comparison against journal author guidelines, and drafting of alternative prose. It was not used to generate, alter, or analyze the original research data or numerical results. The author checked the scientific claims, equations, citations, and reported numerical values against the research record and takes full responsibility for the manuscript.
+
+\section*{Data Availability Statement}
+The frozen numerical protocols, source code, aggregate tables, shard-level outputs, analysis scripts, and paper-facing result summaries supporting this study are available in the public project repository cited with the manuscript. A submission-specific archival release or DOI should replace the mutable repository reference in the final submitted version.
+
+\section*{Conflict of Interest}
+\textbf{TO CONFIRM BEFORE SUBMISSION.} If accurate, replace this line with: ``The author declares no conflict of interest.''
+
+\section*{Funding}
+\textbf{TO CONFIRM BEFORE SUBMISSION.} List all funding that supported the work, or state that no specific funding was received if that is accurate.
+
+\input{AQT_REFERENCES.tex}
+
+\section*{Table of Contents Text}
+This study shows that readouts of the same quantum measurement and the same dimension can expose very different parameter-tangent geometry. By comparing physical, random, and cross-fitted readouts at fixed rank, it isolates spectral orientation as the controlling variable and links that orientation to finite-shot directional signal, with a number-conserving circuit providing a structured high-alignment regime.
+
+% ToC text: 55 words. A separate original ToC graphic is required before submission.
+
+\end{document}
