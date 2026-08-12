@@ -1,0 +1,23 @@
+Dear Editors of Advanced Quantum Technologies,
+
+Please consider the manuscript “Spectral Orientation of Measurement-Accessible Quantum Tangent Geometry in Variational Quantum Circuits” for publication as a Research Article in Advanced Quantum Technologies.
+
+The manuscript studies a measurement-and-readout limitation that arises in variational quantum circuits. After the quantum measurement is fixed, the complete outcome record can contain substantially more local parameter information than a restricted set of observables retains. The paper asks what determines this loss when the readout dimension is held fixed.
+
+The analysis represents measurement-visible parameter derivatives as Fisher-normalized score vectors and studies their covariance in the centered outcome space. A rank-matched random subspace supplies a dimension-only reference. The main result is that this reference can remain accurate even when the tangent covariance is strongly anisotropic, because the actual retained information also depends on the orientation of the readout relative to the covariance eigenspaces. This distinction is tested directly by comparing physical, random rank-matched, and cross-fitted aligned readouts without changing the quantum measurement or readout rank.
+
+The controlled comparison has a finite-shot consequence. For Haar-U(4) circuits at 12 qubits, the cross-fitted aligned readout increases the mean directional gradient-energy proxy by a factor of 9.584 and the finite-shot signal-to-noise ratio by a factor of 3.111 relative to the physical one-body readout at the same rank and evaluation shot budget. A half-filled U(1)-conserving circuit provides a complementary structured regime: low-weight diagonal readouts are already strongly aligned with leading tangent directions, including against a fixed-charge sector-corrected random-orientation reference.
+
+The manuscript is intended for the journal’s interdisciplinary quantum-technology readership because it concerns the interface between quantum measurement and classical processing in variational devices. The result is relevant to readout design, measurement-aware feature selection, and finite-shot use of parameter sensitivity without claiming a universal optimizer or a barren-plateau theorem.
+
+Related work is disclosed explicitly. The separate preprint “Readout-Rank Laws for Isotropic Quantum Tangents,” arXiv:2608.07628, derives exact rank laws under joint state–tangent isotropy. The present manuscript addresses the non-isotropic regime and uses the isotropic result only as a baseline. It does not duplicate the Beta-law derivations of that work. The manuscript also discusses Gross and Rieser, arXiv:2602.18377, whose Pauli-transfer-matrix framework treats feature decodability in quantum extreme learning machines. The present paper instead studies Fisher-normalized parameter tangents of a trainable variational circuit after a fixed measurement and tests covariance-weighted orientation at equal readout rank.
+
+[TO CONFIRM BEFORE SUBMISSION: If the AQNG manuscript has been submitted, is in press, or is planned for imminent submission, add a sentence disclosing it and explaining that it is an algorithmic follow-up that uses accessible geometry as an optimization metric and does not duplicate the results submitted here.]
+
+The numerical protocols, source code, aggregate tables, analysis scripts, and paper-facing result summaries are publicly available through the accompanying reproducibility repository. Generative AI use during manuscript preparation is disclosed in the manuscript in accordance with Wiley policy; the author remains responsible for all scientific content and has checked the reported claims and numerical values against the research record.
+
+Thank you for considering this manuscript.
+
+Sincerely,
+Marwan Ait Haddou
+[Corresponding-author institutional email to be confirmed]
