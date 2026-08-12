@@ -9,6 +9,7 @@
 \usepackage{siunitx}
 \usepackage{xcolor}
 \usepackage{enumitem}
+\usepackage{docmute}
 
 \graphicspath{{../manuscript/figures/}}
 \newcommand{\Tr}{\operatorname{Tr}}
@@ -54,11 +55,42 @@ The author declares no conflict of interest.
 \section*{Funding}
 The author received no specific funding for this work.
 
-\input{AQT_REFERENCES.tex}
-
 \section*{Table of Contents Text}
 This study shows that readouts of the same quantum measurement and the same dimension can expose very different parameter-tangent geometry. By comparing physical, random, and cross-fitted readouts at fixed rank, it isolates spectral orientation as the controlling variable and links that orientation to finite-shot directional signal, with a number-conserving circuit providing a structured high-alignment regime.
 
 % ToC text: 55 words. A separate original ToC graphic is prepared for submission.
+
+% Flush all main-text floats so that the reference list begins cleanly on its own page.
+\clearpage
+\input{AQT_REFERENCES.tex}
+
+% Append Supporting Information immediately after the single consolidated reference list.
+% docmute suppresses the standalone SI preamble/document wrapper. The local \input
+% wrapper suppresses the duplicate bibliography that appears at the end of the standalone SI.
+\clearpage
+\begingroup
+\setcounter{section}{0}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{equation}{0}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\renewcommand{\theHsection}{S\arabic{section}}
+\renewcommand{\theHfigure}{S\arabic{figure}}
+\renewcommand{\theHtable}{S\arabic{table}}
+\renewcommand{\theHequation}{S\arabic{equation}}
+\let\AQToriginalinput\input
+\def\AQTrefsfile{AQT_REFERENCES.tex}
+\def\input#1{%
+  \def\AQTcandidate{#1}%
+  \ifx\AQTcandidate\AQTrefsfile
+  \else
+    \AQToriginalinput{#1}%
+  \fi
+}
+\AQToriginalinput{AQT_SUPPORTING_INFORMATION.tex}
+\endgroup
 
 \end{document}
