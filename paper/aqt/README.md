@@ -1,17 +1,9 @@
 # AQT submission source
 
-`main.tex` contains the complete *Advanced Quantum Technologies* manuscript, the consolidated reference list, and the Supporting Information in one file.
+`main.tex` contains the complete *Advanced Quantum Technologies* manuscript, the consolidated reference list, and the Supporting Information in one file. It uses the Wiley/AQT `USG` class from the journal template supplied for this submission.
 
-The Wiley template support files needed for compilation are stored in `template_support.zip`. No font files are redistributed in this repository package. Figures are reused from `../manuscript/figures/`.
+Figures are reused directly from `../manuscript/figures/`.
 
-## Build
+To compile, place the non-font support files from the supplied Wiley template next to `main.tex` (`USG.cls`, `lettersp.sty`, `NJDnatbib.sty`, the Wiley logo, and the ORCID logo in `images/`), then run `pdflatex` three times. Template font files are not redistributed in this repository.
 
-```bash
-cd paper/aqt
-unzip -o template_support.zip
-pdflatex -interaction=nonstopmode -halt-on-error main.tex
-pdflatex -interaction=nonstopmode -halt-on-error main.tex
-pdflatex -interaction=nonstopmode -halt-on-error main.tex
-```
-
-The manuscript uses the Wiley `USG` class from the supplied AQT template. References begin after an explicit `\clearpage`; Supporting Information follows the references in the same PDF with `S`-prefixed section, figure, table, and equation numbering.
+References begin after an explicit `\clearpage`; Supporting Information follows the references in the same PDF with `S`-prefixed section, figure, table, and equation numbering.
