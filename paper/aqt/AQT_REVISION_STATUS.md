@@ -6,11 +6,11 @@ Target: *Advanced Quantum Technologies* Research Article
 ## Editorial/scientific rewrite completed
 
 - [x] AQT-specific title and six keywords.
-- [x] Abstract rewritten to 175 words, impersonal present tense, no references or displayed equation.
+- [x] Abstract rewritten to <=200 words, impersonal present tense, no references or displayed equation.
 - [x] Introduction fully rewritten for a quantum-technology readership.
 - [x] Gross & Rieser (arXiv:2602.18377) added as explicit closest related work; broad novelty claims about subspace visibility/projector geometry removed.
 - [x] Separate isotropic rank-law paper positioned as the isotropic baseline rather than duplicated here.
-- [x] AQNG kept outside the contribution of this manuscript.
+- [x] AQNG kept outside the contribution of this manuscript; current status recorded as an unsubmitted manuscript in preparation.
 - [x] Main theory rewritten around Fisher-normalized VQC parameter tangents, covariance spectrum, readout rank, and spectral orientation.
 - [x] Standard Grassmann moments and Ky Fan optimization identified as reference tools rather than novelty claims.
 - [x] Numerical protocol consolidated, including circuit-instance statistical unit, bootstrap, cross-fitting, finite-shot budget, and calibration-cost qualification.
@@ -22,12 +22,33 @@ Target: *Advanced Quantum Technologies* Research Article
 - [x] Discussion and Conclusion rewritten to remove repeated defensive prose and generic significance language.
 - [x] Five-figure main-text plan prepared; secondary diagnostics assigned to Supporting Information.
 - [x] AQT-facing references assembled in first-citation order, including Gross & Rieser.
-- [x] Cover-letter draft prepared with related-manuscript disclosure language.
-- [x] Detailed AI-use disclosure drafted in line with Wiley policy.
-- [x] Data Availability draft and 55-word Table-of-Contents text prepared.
+- [x] Cover letter finalized for current metadata and related-work status.
+- [x] AI-use disclosure updated, including assistance with the schematic graphical ToC; no AI-generated or AI-altered research data/results.
+- [x] Data Availability draft prepared pending the final Zenodo DOI.
+- [x] 55-word Table-of-Contents text prepared.
+- [x] Original 110 mm x 20 mm graphical-ToC schematic prepared in SVG plus a reproducible Python generator.
 - [x] Integrated free-format LaTeX manuscript assembled at `paper/aqt/aqt_spectral_geometry.tex`.
-- [x] AQT-specific GitHub Actions build added.
-- [x] CI compilation completed successfully for the integrated AQT manuscript with checks for undefined citations and cross-references.
+- [x] AQT-specific GitHub Actions build added and previously compiled successfully with checks for undefined citations and cross-references.
+
+## Author metadata confirmed
+
+- [x] Affiliation: `Independent Researcher`.
+- [x] Corresponding email: `aithaddou.marwan@outlook.com`.
+- [x] Conflict of Interest: `The author declares no conflict of interest.`
+- [x] Funding: `The author received no specific funding for this work.`
+- [x] AQNG status: manuscript in preparation only; not submitted and not posted as a preprint.
+
+## Reproducibility release preparation
+
+- [x] `.zenodo.json` added at repository root with AQT-specific metadata.
+- [x] `CITATION.cff` updated to version `0.2.0` and the AQT-facing title.
+- [x] Frozen release-candidate branch created: `aqt-release-v0.2.0`.
+- [ ] Create the GitHub **Release** from the frozen AQT release-candidate commit and assign tag `v0.2.0`.
+- [ ] Ensure this GitHub repository is enabled in the author's Zenodo GitHub integration.
+- [ ] Wait for Zenodo to ingest the GitHub release and mint the version DOI.
+- [ ] Replace the pending sentence in the Data Availability Statement with that DOI.
+
+The GitHub connector available in this editing session can create branches and repository files but does not expose GitHub Release/tag publication or authenticated Zenodo deposition actions. Those final publication clicks therefore remain an author-side action.
 
 ## Files that constitute the AQT working package
 
@@ -40,31 +61,19 @@ Target: *Advanced Quantum Technologies* Research Article
 - `AQT_SUPPORTING_INFORMATION_PLAN.md` — main/SI split.
 - `AQT_RELATED_WORK_AUDIT.md` — novelty boundary versus Gross & Rieser.
 - `AQT_COVER_LETTER_DRAFT.txt` — journal-specific cover letter.
-- `AQT_SUBMISSION_METADATA.tex` — disclosure, data statement, ToC text, and unresolved metadata.
+- `AQT_SUBMISSION_METADATA.tex` — final author declarations plus pending DOI.
+- `AQT_TOC_GRAPHIC.svg` — graphical ToC source at the required wide aspect ratio.
+- `make_aqt_toc_graphic.py` — reproducible PNG/SVG generator.
 - `AQT_REVISION_CHECKLIST.md` — journal/scientific checklist.
 - `AQT_WRITING_STYLE_GUIDE.md` — prose audit.
 - `AQT_LINE_BY_LINE_LOG.md` — editorial rationale and change log.
 
-## Author-confirmation blockers before submission
+## Remaining final-pass items
 
-These fields cannot be inferred or invented from the manuscript:
-
-1. Complete affiliation wording for the title page.
-2. Institutional/company corresponding-author email requested by the AQT author guidance.
-3. Funding statement.
-4. Conflict-of-interest statement.
-5. Status of the AQNG manuscript: if submitted, in press, or planned for imminent submission, it should be disclosed to the editor as related work.
-6. Submission-specific archival release/DOI or frozen tag for the numerical record.
-7. Original Table-of-Contents graphic.
-
-## Final technical pass after author metadata is supplied
-
-- Replace all `TO CONFIRM` placeholders.
-- Freeze the final data/code release and update Data Availability.
-- Insert final ToC graphic.
-- Re-run CI compilation and PDF visual preflight.
-- Check word count and main-text display count on the final assembled version.
-- Verify every reference against the final numbered citation order.
-- Create the submission-ready source/PDF/SI package.
-
-No scientific claim should be strengthened during this final pass unless a theorem, cited source, or archived result directly supports the change.
+1. Publish GitHub release/tag `v0.2.0` and obtain the Zenodo version DOI.
+2. Insert DOI into Data Availability and cover-letter reproducibility sentence if desired.
+3. Re-run AQT CI after the final DOI insertion.
+4. Run final PDF visual preflight and word/display-item count.
+5. Assemble the Supporting Information as a separate final file.
+6. Export the graphical ToC to the exact file format preferred at upload (the 110 mm x 20 mm PNG preview is 1300 px wide; the SVG source is preserved).
+7. Create the final submission-ready source/PDF/SI package.
