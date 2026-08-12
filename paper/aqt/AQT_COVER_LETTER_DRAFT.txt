@@ -12,12 +12,15 @@ The manuscript is intended for the journal’s interdisciplinary quantum-technol
 
 Related work is disclosed explicitly. The separate preprint “Readout-Rank Laws for Isotropic Quantum Tangents,” arXiv:2608.07628, derives exact rank laws under joint state–tangent isotropy. The present manuscript addresses the non-isotropic regime and uses the isotropic result only as a baseline. It does not duplicate the Beta-law derivations of that work. The manuscript also discusses Gross and Rieser, arXiv:2602.18377, whose Pauli-transfer-matrix framework treats feature decodability in quantum extreme learning machines. The present paper instead studies Fisher-normalized parameter tangents of a trainable variational circuit after a fixed measurement and tests covariance-weighted orientation at equal readout rank.
 
-[TO CONFIRM BEFORE SUBMISSION: If the AQNG manuscript has been submitted, is in press, or is planned for imminent submission, add a sentence disclosing it and explaining that it is an algorithmic follow-up that uses accessible geometry as an optimization metric and does not duplicate the results submitted here.]
+A separate manuscript on Accessible Quantum Natural Gradient is in preparation but has not been submitted or posted as a preprint. It is an algorithmic follow-up and does not duplicate the geometric results or equal-rank finite-shot analysis submitted here.
 
-The numerical protocols, source code, aggregate tables, analysis scripts, and paper-facing result summaries are publicly available through the accompanying reproducibility repository. Generative AI use during manuscript preparation is disclosed in the manuscript in accordance with Wiley policy; the author remains responsible for all scientific content and has checked the reported claims and numerical values against the research record.
+The numerical protocols, source code, aggregate tables, analysis scripts, and paper-facing result summaries are publicly available through the accompanying reproducibility repository. A frozen release is being prepared for Zenodo archival. Generative AI use during manuscript preparation is disclosed in the manuscript in accordance with Wiley policy; the author remains responsible for all scientific content and has checked the reported claims and numerical values against the research record.
+
+The author declares no conflict of interest and received no specific funding for this work.
 
 Thank you for considering this manuscript.
 
 Sincerely,
 Marwan Ait Haddou
-[Corresponding-author institutional email to be confirmed]
+Independent Researcher
+aithaddou.marwan@outlook.com
