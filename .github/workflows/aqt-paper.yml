@@ -1,0 +1,47 @@
+name: AQT manuscript build
+
+on:
+  push:
+    branches:
+      - aqt-submission
+    paths:
+      - "paper/aqt/**"
+      - ".github/workflows/aqt-paper.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-aqt:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-extra texlive-science
+      - name: Compile AQT manuscript
+        run: |
+          cd paper/aqt
+          pdflatex -interaction=nonstopmode -halt-on-error aqt_spectral_geometry.tex
+          pdflatex -interaction=nonstopmode -halt-on-error aqt_spectral_geometry.tex
+          pdflatex -interaction=nonstopmode -halt-on-error aqt_spectral_geometry.tex
+          test -s aqt_spectral_geometry.pdf
+          if grep -qi 'undefined citations' aqt_spectral_geometry.log; then
+            echo 'Undefined citation detected'
+            exit 1
+          fi
+          if grep -qi 'undefined references' aqt_spectral_geometry.log; then
+            echo 'Undefined cross-reference detected'
+            exit 1
+          fi
+      - name: Upload AQT PDF and log
+        uses: actions/upload-artifact@v4
+        with:
+          name: aqt-manuscript
+          path: |
+            paper/aqt/aqt_spectral_geometry.pdf
+            paper/aqt/aqt_spectral_geometry.log
+          if-no-files-found: error
